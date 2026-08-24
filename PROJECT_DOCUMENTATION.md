@@ -1,173 +1,119 @@
-# Enterprise Authority — Strategy, GRC & BCM Operating Suite
-## Technical Architecture, Functional Specifications & RBAC Documentation
+# Enterprise Authority — Strategy, Risk & Governance Suite
+## Executive Overview & Product Reference Guide
 
 ---
 
-> **Enterprise Platform Status**: Sovereign Grade Prototype  
-> **Compliance Benchmarks**: ISO 31000 (ERM), ISO 22301 (BCM), NCA ECC (Cybersecurity Controls)  
-> **Tech Stack**: React 18, TypeScript, Vite, Tailwind CSS, Recharts, Lucide Icons, React Router  
+> **Document Purpose**: This guide provides a complete, easy-to-understand overview of the Enterprise Authority Suite for executives, board members, department leaders, auditors, and non-technical stakeholders.
 
 ---
 
-## 1. Executive Summary
+## 1. What is the Enterprise Authority Suite?
 
-**Enterprise Authority GRC & Strategy Suite** is a high-fidelity, sovereign-grade enterprise SaaS dashboard platform designed for institutional leadership, executive committees, risk managers, auditors, and department heads. 
+**Enterprise Authority** is an institutional-grade SaaS command center that brings an organization's **Strategy, Risk Management, Corporate Governance, Cybersecurity, and Business Continuity** into one unified, real-time platform.
 
-The platform integrates six core organizational domains into a single pane of glass:
-1. **Strategic Execution & OKRs** (Institutional Performance & Initiative Masterplan)
-2. **Enterprise Risk Management (ERM)** (ISO 31000 5×5 Matrix & Severity Breakdown)
-3. **Cybersecurity Risk Oversight** (NCA ECC Compliance & Threat Exposure)
-4. **Corporate Governance & Policies** (Board Committee Meetings & Policy Renewal)
-5. **Business Continuity Management (BCM)** (ISO 22301 BIA & Recovery Time Objectives)
-6. **Centralized Action Item Governance** (Cross-Domain Corrective Action Tracking)
+In traditional organizations, strategic goals are trapped in static spreadsheets, risks are buried in isolated department reports, and compliance audits require weeks of manual effort. **Enterprise Authority** solves this by providing top leadership and management with a clear, 360-degree dashboard of operational health, progress, and regulatory readiness.
 
----
-
-## 2. Technical Architecture & Tech Stack
-
-```mermaid
-graph TD
-    A[Browser Client / User] --> B[React + TypeScript Frontend]
-    B --> C[AppContext State & RBAC Engine]
-    C --> D[Permissions Map utils/permissions.ts]
-    C --> E[Mock Data Repository data/mockData.ts]
-    C --> F[Protected Navigation Router App.tsx]
-    F --> G[Executive Dashboard / Modules]
-    F --> H[Session Storage Auth Persistence]
 ```
-
-### Stack Breakdown
-- **UI Framework**: React 18 (TypeScript)
-- **Bundler & Dev Server**: Vite 6
-- **Styling**: Tailwind CSS (Executive Navy & Slate Palette)
-- **Data Visualization**: Recharts (OKR Trajectory, Objective Portfolios, Performance Trends)
-- **Icons**: Lucide React Icons
-- **Notifications**: Sonner Toast Engine
-- **Navigation**: React Router 6 with `ProtectedRoute` wrappers
-
----
-
-## 3. Role-Based Access Control (RBAC) Architecture
-
-The platform enforces strict persona-based access gating across all routes, actions, modals, and data modification features.
-
-### Persona Definitions & Permission Matrix
-
-| Role Persona | Role Description | Allowed Navigation Routes | Key Write Permissions | Read-Only |
-| :--- | :--- | :--- | :--- | :---: |
-| **Executive** | C-Level Oversight & Strategic Governance | `All Routes` (`/`, `/strategy`, `/performance`, `/enterprise-risk`, `/cyber-risk`, `/governance`, `/compliance`, `/bcm`, `/actions`, `/tasks`, `/documents`, `/reports`, `/admin`) | `canCreateRisk`, `canCreateAction`, `canManageUsers` | ❌ |
-| **Risk Manager** | ERM & Cyber Exposure Coordinator | `/`, `/enterprise-risk`, `/cyber-risk`, `/actions`, `/reports` | `canCreateRisk`, `canCreateAction` | ❌ |
-| **Department Head** | Operational & Tactical Execution Owner | `/`, `/strategy`, `/performance`, `/actions`, `/tasks`, `/documents` | `canCreateAction` | ❌ |
-| **Auditor** | Independent Regulatory Compliance Inspector | `/`, `/compliance`, `/governance`, `/reports`, `/documents` | None (View & Audit Only) | ✅ |
-| **Viewer** | Enterprise Read-Only Stakeholder | `/`, `/strategy`, `/performance` | None (View Only) | ✅ |
-
-### Security Gating Implementations
-1. **Unauthenticated Redirect**: Unauthenticated requests to any route are intercepted and redirected to `/login`.
-2. **Session Persistence**: Session status and active persona are persisted in `sessionStorage` (`eda_auth` and `eda_user`).
-3. **Access Denied View**: Attempts to access unauthorized routes trigger an **RBAC Access Denied Screen** showing the user's role limits.
-4. **Read-Only Disablement**: Write buttons (*Register Risk*, *New Action Plan*, status dropdowns) automatically hide or disable for `Auditor` and `Viewer` personas.
-
----
-
-## 4. Core System Modules
-
-### 4.1 Executive Command Center (`DashboardPage.tsx`)
-- **Institutional Scorecard**: 8 Key Performance Indicators (Institutional Performance 88.4%, Strategic OKRs, Risk Exposures, NCA ECC Compliance 96.5%, BCM Readiness 91.6%).
-- **Interactive 5×5 Matrix & Heatmap**: Integrated ISO 31000 matrix with cell filtering.
-- **OKR Execution Trajectory Chart**: Monthly target vs. actual strategy execution trends.
-
-### 4.2 Strategic Performance & OKRs (`StrategyPage.tsx` & `PerformancePage.tsx`)
-- **Cascade Tree**: Multi-level strategic themes, objective nodes, initiatives, and key result metrics.
-- **Capital Expenditure Tracking**: SAR 385.0M allocated budget tracking with progress indexing.
-
-### 4.3 ISO 31000 Enterprise Risk Register (`EnterpriseRiskPage.tsx`)
-- **Dual Representation Heatmap**: 
-  - *Matrix View*: Sleek ISO 31000 Likelihood × Impact grid with subtle color tones and count tags.
-  - *Severity Breakdown View*: Executive exposure progress bar and severity cards (Critical, High, Moderate, Low).
-- **Inherent vs. Residual Scoring**: Pre-control vs. post-control evaluation.
-
-### 4.4 Cybersecurity Risk Oversight (`CyberRiskPage.tsx` & `CompliancePage.tsx`)
-- **NCA ECC Compliance**: Audit tracking across 108 of 112 mandatory controls.
-- **Threat Vector Monitoring**: Ransomware, Cloud Security, Vendor API Risks, and SOC Alert monitoring.
-
-### 4.5 Corporate Governance (`GovernancePage.tsx`)
-- **Board Committee Oversight**: Audit Committee, Strategy Committee, ERM Committee meeting schedules.
-- **Policy Lifecycle**: Governance policy renewal and compliance index.
-
-### 4.6 ISO 22301 Business Continuity (`BCMPage.tsx`)
-- **Business Impact Analysis (BIA)**: RTO (Recovery Time Objective) and RPO (Recovery Point Objective) tracking.
-- **Disaster Recovery Tabletop Exercises**: Quarterly tabletop testing validation.
-
-### 4.7 Cross-Domain Action Plan Governance (`ActionsPage.tsx`)
-- **Central Action Register**: Consolidated action plans sourced from ERM, Cyber, Strategy, Governance, Compliance, and BCM.
-- **Interactive Status Management**: Real-time progress updates (`Not Started`, `In Progress`, `Under Review`, `Completed`).
-
-### 4.8 Executive Reports & Artifact Generator (`ReportsPage.tsx`)
-- **Official Artifacts**: Instant preview and PDF/Excel generation for executive board reporting.
-
----
-
-## 5. Design System & Aesthetic Standards
-
-- **Theme Palette**: Executive Navy & Slate (`slate-950`, `blue-900`, `blue-800`, `slate-900`).
-- **Typography**: Clean modern typography with Google Inter fallback and tabular monospace fonts for metrics (`font-mono`).
-- **Glassmorphism Authentication**: Ambient gradients, blur overlays, and persona selector buttons on `/login`.
-- **Status Badges**: Standardized status pill indicators (`Completed`, `In Progress`, `On Track`, `Critical`).
-
----
-
-## 6. MERN Backend Integration Roadmap
-
-To transition this frontend prototype to a full production MERN backend:
-
-```mermaid
-sequenceDiagram
-    participant React as React Frontend
-    participant Express as Express API Server
-    participant Middleware as JWT & RBAC Middleware
-    participant Mongo as MongoDB Database
-
-    React->>Express: POST /api/v1/auth/login { email, password }
-    Express->>Mongo: Find User by Email
-    Mongo-->>Express: User Document + Password Hash
-    Express-->>React: JWT Token + Role Object
-    React->>Express: GET /api/v1/risks (Authorization: Bearer Token)
-    Express->>Middleware: Verify Token & Check Permissions
-    Middleware->>Mongo: Fetch Risk Collection
-    Mongo-->>React: JSON Risk Items Array
-```
-
-### Steps for MERN Backend Integration:
-1. **API Client Setup**: Replace `AppContext` state initialization with `axios` or `fetch` calls to `/api/v1/...`.
-2. **MongoDB Schemas**:
-   - `UserSchema` (email, passwordHash, role, department, permissions)
-   - `RiskSchema` (code, title, category, likelihood, impact, inherentScore, residualScore, status, owner)
-   - `ActionSchema` (code, title, source, priority, progress, status, owner, dueDate)
-   - `ObjectiveSchema` (code, title, theme, targetYear, progress, status)
-3. **Authentication**: Issue signed JWT tokens stored in `httpOnly` cookies or headers.
-4. **RBAC Middleware**: Add backend `authorize('Executive', 'Risk Manager')` middleware guards on Express API endpoints.
-
----
-
-## 7. Setup & Execution Guide
-
-### Prerequisite Dependencies
-- Node.js (v18+ recommended)
-- npm or yarn
-
-### Installation & Execution Commands
-
-```bash
-# 1. Install Dependencies
-npm install
-
-# 2. Run Local Development Server
-npm run dev
-
-# 3. Compile Production Bundle
-npm run build
+       ┌─────────────────────────────────────────────────────────┐
+       │             INSTITUTIONAL LEADERSHIP                    │
+       │       Executive Command Dashboard & OKRs                │
+       └────────────────────────────┬────────────────────────────┘
+                                    │
+    ┌───────────────────┬───────────┴───────────┬───────────────────┐
+    ▼                   ▼                       ▼                   ▼
+┌──────────────┐ ┌──────────────┐       ┌──────────────┐   ┌──────────────┐
+│ Strategic    │ │ Enterprise   │       │ Cyber &      │   │ Business     │
+│ Performance  │ │ Risk (ERM)   │       │ Compliance   │   │ Continuity   │
+│ & OKR Goals  │ │ Matrix       │       │ Oversight    │   │ Readiness    │
+└──────────────┘ └──────────────┘       └──────────────┘   └──────────────┘
+    └───────────────────┴───────────┬───────────┴───────────────────┘
+                                    ▼
+       ┌─────────────────────────────────────────────────────────┐
+       │           CENTRAL ACTION PLAN GOVERNANCE                │
+       │     Department Accountability & Milestone Tracking      │
+       └─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-*Documentation prepared for Enterprise Development Authority Technical Board.*
+## 2. Why Organizations Use This Suite
+
+| Core Challenge | How Enterprise Authority Solves It | Executive Benefit |
+| :--- | :--- | :--- |
+| **Fragmented Goals** | Links strategic objectives directly to department initiatives and measurable Key Performance Indicators (KPIs). | Real-time visibility into overall institutional strategy progress. |
+| **Unmonitored Risks** | Evaluates potential organizational threats using standardized 5×5 risk likelihood and impact scores. | Early warning indicators before risks turn into costly failures. |
+| **Compliance Gaps** | Tracks regulatory controls (such as NCA ECC standards) and policies in real time. | Constant audit readiness without last-minute panic. |
+| **Operational Disruptions** | Identifies critical business functions and recovery time objectives (RTO) during crises. | Guaranteed organizational resilience during emergencies. |
+| **Lack of Accountability** | Consolidates all departmental corrective action plans into a single tracking register. | Clear owner assignment, deadlines, and milestone progress. |
+
+---
+
+## 3. Tour of Core Modules (Explained in Plain English)
+
+### 3.1 Executive Command Dashboard
+The main control center for C-level leadership. At a glance, executives can view:
+- **Institutional Health Score**: Overall execution score (e.g., **88.4%**).
+- **Key Metric Indicators**: Total active risks, cybersecurity compliance index, business continuity readiness, and pending actions.
+- **5×5 Risk Matrix**: Visual grid mapping out Critical, High, Moderate, and Low organizational risks.
+- **Monthly Execution Trajectory**: Line charts comparing planned vs. actual strategy execution over time.
+
+### 3.2 Strategic Performance & OKR Goals
+Translates long-term enterprise vision into daily execution:
+- **Strategic Themes**: Core pillars (e.g., *Digital Transformation*, *Institutional Excellence*, *Economic Sustainability*).
+- **Objectives & Key Results (OKRs)**: Specific target metrics (e.g., "Achieve 95% e-service adoption by Q4").
+- **Budget Tracking**: Capital expenditure progress per strategic program.
+
+### 3.3 Enterprise Risk Management (ERM)
+Helps leaders identify, analyze, and minimize threats before they cause damage:
+- **5×5 Risk Matrix Grid**: Places every risk in a color-coded grid based on **Likelihood** (How likely is it to happen?) and **Consequence Impact** (How severe would it be?).
+- **Severity Breakdown**: Categorizes risks into Critical, High, Moderate, and Low severity tiers.
+- **Inherent vs. Residual Scores**: Shows the risk severity **before** vs. **after** internal controls are applied.
+
+### 3.4 Cybersecurity & Regulatory Compliance
+Monitors digital security and regulatory mandate compliance:
+- **NCA ECC Compliance Index**: Tracks implementation of National Cybersecurity Authority essential controls.
+- **Threat Exposure Monitoring**: Real-time alerts for ransomware threats, cloud security, vendor risks, and security operations center (SOC) incidents.
+
+### 3.5 Corporate Governance & Policy Management
+Ensures formal governance standards are maintained across committees:
+- **Board Committee Schedule**: Tracks Audit, Strategy, and ERM Committee meetings and agendas.
+- **Policy Health Index**: Manages institutional policy approvals, reviews, and expiration dates.
+
+### 3.6 Business Continuity Management (BCM)
+Prepares the organization to continue operating during unexpected disruptions or emergencies:
+- **Business Impact Analysis (BIA)**: Defines how long critical operations can be offline (Recovery Time Objective / RTO).
+- **Disaster Recovery Exercises**: Schedules and records periodic crisis tabletop drills.
+
+### 3.7 Centralized Action Plan Tracker
+The execution engine of the suite. Every risk mitigation step, audit finding, and strategic milestone generates an **Action Plan**:
+- **Owner & Department Assignment**: Identifies exactly who is responsible for each task.
+- **Status Workflows**: Tracks progress across *Not Started*, *In Progress*, *Under Review*, and *Completed*.
+
+### 3.8 Executive Board Reports
+Generates polished, official summary reports for board meetings, steering committees, and government audits with a single click.
+
+---
+
+## 4. User Roles & Permission Levels
+
+To maintain confidentiality and operational security, the system adjusts what users can see and do based on their **Role Persona**:
+
+| Persona Role | Who This Is For | What They Can Do |
+| :--- | :--- | :--- |
+| 👑 **Executive** | C-Level Leadership, Board Members, Managing Directors | Full access across all modules. Can create risks, approve action plans, and manage system users. |
+| 🛡️ **Risk Manager** | Chief Risk Officers, GRC Leads, Compliance Officers | Full access to Risk, Cyber, and Action registers. Can register risks, assess scores, and assign mitigation plans. |
+| 🏢 **Department Head** | General Managers, Sector Directors, Department Leaders | Access to Strategy, Performance, Actions, and Department Tasks. Can create and update action plans for their team. |
+| 🔍 **Auditor** | Internal Auditors, External Regulatory Inspectors | Read-only inspection access across Compliance, Governance, and Reports. Cannot edit data. |
+| 👁️ **Viewer** | General Enterprise Staff & Stakeholders | High-level summary view of Strategy and Performance scorecards. Cannot alter any records. |
+
+---
+
+## 5. Security & Ease of Use Features
+
+- **Instant Role Switcher**: Leadership can test how different roles view the platform directly from the top menu.
+- **Secure Sign-In Session**: Enforces user authentication before granting access to sensitive internal data.
+- **Executive Navy Aesthetic**: Styled with a professional blue color palette, intuitive typography, and accessible visual charts designed for executive presentations.
+
+---
+
+*Enterprise Authority Suite — Operational Governance & Strategic Execution Platform.*
