@@ -123,6 +123,8 @@ interface AppContextType {
   addStrategy: (payload: CreateStrategyPayload) => { themeId: string; goalId: string; objectiveId: string };
   deleteStrategyTheme: (themeId: string) => void;
   resetStrategies: () => void;
+  updateObjective: (id: string, updates: Partial<StrategicObjective>, note?: string) => void;
+  toggleMilestone: (initiativeId: string, milestoneId: string) => void;
   importStrategyData: (data: {
     themes?: StrategicTheme[];
     goals?: StrategicGoal[];
@@ -865,6 +867,50 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   };
 
+  const updateObjective = (id: string, updates: Partial<StrategicObjective>, note?: string) => {
+    setObjectives((prev) => {
+      const updated = prev.map((obj) => {
+        if (obj.id === id) {
+          return { ...obj, ...updates };
+        }
+        return obj;
+      });
+      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      return updated;
+    });
+
+    if (note) {
+      toast.success('Strategic Check-in Recorded', {
+        description: note,
+      });
+    } else {
+      toast.success('Strategic Objective Updated');
+    }
+  };
+
+  const toggleMilestone = (initiativeId: string, milestoneId: string) => {
+    setInitiatives((prev) => {
+      const updated = prev.map((init) => {
+        if (init.id === initiativeId) {
+          const updatedMilestones = (init.milestones || []).map((m) => {
+            if (m.id === milestoneId) {
+              const newStatus: 'Completed' | 'In Progress' = m.status === 'Completed' ? 'In Progress' : 'Completed';
+              return { ...m, status: newStatus };
+            }
+            return m;
+          });
+          const completedCount = updatedMilestones.filter((m) => m.status === 'Completed').length;
+          const progress = updatedMilestones.length > 0 ? Math.round((completedCount / updatedMilestones.length) * 100) : init.progress;
+          return { ...init, milestones: updatedMilestones, progress };
+        }
+        return init;
+      });
+      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success('Deliverable Milestone Status Updated');
+  };
+
   const importStrategyData = (data: {
     themes?: StrategicTheme[];
     goals?: StrategicGoal[];
@@ -1004,6 +1050,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addStrategy,
         deleteStrategyTheme,
         resetStrategies,
+        updateObjective,
+        toggleMilestone,
         importStrategyData,
         importKpiActuals,
         actions,

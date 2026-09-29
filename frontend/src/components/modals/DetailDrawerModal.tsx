@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { X, ShieldAlert, Target, ListTodo, Activity, CheckCircle, Clock, User, Calendar, AlertTriangle, Plus, FileText } from 'lucide-react';
 import { StatusBadge } from '../common/StatusBadge';
+import { StrategyDetailView } from './StrategyDetailView';
 
 export const DetailDrawerModal: React.FC = () => {
   const { activeModal, closeModal, updateRiskStatus, addRisk, addAction, currentUser, permissions } = useApp();
@@ -67,7 +68,7 @@ export const DetailDrawerModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in">
-      <div className="w-full max-w-2xl bg-white h-full shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-200">
+      <div className={`w-full ${type === 'objective' ? 'max-w-3xl lg:max-w-4xl' : 'max-w-2xl'} bg-white h-full shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-200`}>
         {/* Modal Drawer Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center space-x-3">
@@ -186,35 +187,7 @@ export const DetailDrawerModal: React.FC = () => {
 
           {/* TYPE: OBJECTIVE DETAILS */}
           {type === 'objective' && item && (
-            <div className="space-y-6">
-              <div>
-                <StatusBadge status={item.status} />
-                <h2 className="text-lg font-bold text-slate-900 leading-snug mt-2">{item.title}</h2>
-                <div className="text-xs text-blue-700 font-medium mt-1">{item.themeName}</div>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-mono">Target Year</span>
-                  <div className="text-lg font-bold text-slate-900">{item.targetYear}</div>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-mono">Progress Index</span>
-                  <div className="text-xl font-bold font-mono text-blue-700 mt-1">{item.progress}%</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <span className="text-slate-400 block text-[10px]">Owner</span>
-                  <span className="font-semibold text-slate-800">{item.owner}</span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <span className="text-slate-400 block text-[10px]">Department</span>
-                  <span className="font-semibold text-slate-800">{item.department}</span>
-                </div>
-              </div>
-            </div>
+            <StrategyDetailView item={item} onClose={closeModal} />
           )}
 
           {/* TYPE: CREATE RISK FORM */}
