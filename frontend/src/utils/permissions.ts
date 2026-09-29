@@ -5,6 +5,7 @@ export interface RolePermissions {
   canCreateRisk: boolean;
   canCreateAction: boolean;
   canCreateTask: boolean;
+  canCreateStrategy: boolean;
   canUploadDocument: boolean;
   canManageUsers: boolean;
   isReadOnly: boolean;
@@ -16,6 +17,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     allowedRoutes: [
       '/',
       '/strategy',
+      '/strategy/create',
       '/performance',
       '/enterprise-risk',
       '/cyber-risk',
@@ -31,6 +33,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: true,
     canCreateAction: true,
     canCreateTask: true,
+    canCreateStrategy: true,
     canUploadDocument: true,
     canManageUsers: true,
     isReadOnly: false,
@@ -40,6 +43,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     allowedRoutes: [
       '/',
       '/strategy',
+      '/strategy/create',
       '/performance',
       '/actions',
       '/tasks',
@@ -49,6 +53,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: true,
     canCreateTask: true,
+    canCreateStrategy: true,
     canUploadDocument: true,
     canManageUsers: false,
     isReadOnly: false,
@@ -68,6 +73,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: true,
     canCreateAction: true,
     canCreateTask: true,
+    canCreateStrategy: false,
     canUploadDocument: true,
     canManageUsers: false,
     isReadOnly: false,
@@ -85,6 +91,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: true,
     canCreateTask: false,
+    canCreateStrategy: false,
     canUploadDocument: true,
     canManageUsers: false,
     isReadOnly: false,
@@ -102,6 +109,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: true,
     canCreateTask: true,
+    canCreateStrategy: false,
     canUploadDocument: true,
     canManageUsers: false,
     isReadOnly: false,
@@ -111,6 +119,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     allowedRoutes: [
       '/',
       '/strategy',
+      '/strategy/create',
       '/performance',
       '/enterprise-risk',
       '/cyber-risk',
@@ -122,10 +131,11 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: false,
     canCreateTask: false,
+    canCreateStrategy: true,
     canUploadDocument: false,
     canManageUsers: false,
-    isReadOnly: true,
-    roleDescription: 'Executive command center view-only oversight across all organizational domains.',
+    isReadOnly: false,
+    roleDescription: 'Executive command center oversight with strategy formulation capability.',
   },
   Auditor: {
     allowedRoutes: [
@@ -140,6 +150,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: false,
     canCreateTask: false,
+    canCreateStrategy: false,
     canUploadDocument: false,
     canManageUsers: false,
     isReadOnly: true,
@@ -149,6 +160,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     allowedRoutes: [
       '/',
       '/strategy',
+      '/strategy/create',
       '/performance',
       '/documents',
       '/reports',
@@ -156,9 +168,10 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     canCreateRisk: false,
     canCreateAction: false,
     canCreateTask: false,
+    canCreateStrategy: true,
     canUploadDocument: false,
     canManageUsers: false,
-    isReadOnly: true,
-    roleDescription: 'Standard read-only stakeholder view for strategic reports and documents.',
+    isReadOnly: false,
+    roleDescription: 'Standard stakeholder view with strategy formulation simulation capability.',
   },
 };

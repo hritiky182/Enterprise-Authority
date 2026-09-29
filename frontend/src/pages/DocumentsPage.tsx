@@ -4,10 +4,12 @@ import { DataTable, Column } from '../components/common/DataTable';
 import { DocumentItem } from '../types';
 import { FileText, Download, Upload, Eye, FileSpreadsheet, FileCode, Tag } from 'lucide-react';
 import { toast } from 'sonner';
+import { UploadDocumentModal } from '../components/modals/UploadDocumentModal';
 
 export const DocumentsPage: React.FC = () => {
   const { documents, openModal } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const filteredDocs = documents.filter((d) => {
     if (selectedCategory !== 'all' && d.category.toLowerCase() !== selectedCategory.toLowerCase()) {
@@ -78,11 +80,11 @@ export const DocumentsPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => toast.info('Simulated Document Upload Dialog Opened')}
+          onClick={() => setIsUploadModalOpen(true)}
           className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold text-xs hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
         >
           <Upload className="w-4 h-4" />
-          Upload Document
+          Upload & Import Documents
         </button>
       </div>
 
@@ -106,9 +108,15 @@ export const DocumentsPage: React.FC = () => {
 
       <DataTable
         title="Document Repository Master File Index"
-        subtitle="Search and download official authority charters and evidence"
+        subtitle="Search and download official enterprise charters and compliance evidence"
         data={filteredDocs}
         columns={docColumns}
+      />
+
+      {/* Upload & Import Document Modal */}
+      <UploadDocumentModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
       />
     </div>
   );

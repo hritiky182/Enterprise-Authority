@@ -34,6 +34,7 @@ export interface StrategicTheme {
   description: string;
   color: string;
   weight: number;
+  isCustom?: boolean;
 }
 
 export interface StrategicGoal {
@@ -42,6 +43,7 @@ export interface StrategicGoal {
   themeId: string;
   title: string;
   description: string;
+  isCustom?: boolean;
 }
 
 export interface StrategicObjective {
@@ -57,6 +59,7 @@ export interface StrategicObjective {
   status: 'on-track' | 'at-risk' | 'behind' | 'achieved';
   targetYear: number;
   progress: number;
+  isCustom?: boolean;
 }
 
 export interface KPI {
@@ -72,6 +75,7 @@ export interface KPI {
   achievementPct: number;
   frequency: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual';
   status: 'on-track' | 'warning' | 'critical' | 'achieved';
+  isCustom?: boolean;
 }
 
 export interface Milestone {
@@ -99,6 +103,7 @@ export interface StrategicInitiative {
   risksCount: number;
   actionsCount: number;
   description: string;
+  isCustom?: boolean;
 }
 
 export interface RiskItem {

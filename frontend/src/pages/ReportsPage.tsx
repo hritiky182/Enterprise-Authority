@@ -33,7 +33,7 @@ export const ReportsPage: React.FC = () => {
           </div>
           <h1 className="text-xl font-bold text-slate-900">Executive Reports & Artifact Generator</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Generate, preview and export official PDF/Excel reports for Enterprise Development Authority leadership.
+            Generate, preview and export official PDF/Excel reports for enterprise leadership.
           </p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export const ReportsPage: React.FC = () => {
             </div>
             <div className="p-8 text-center space-y-2">
               <Sparkles className="w-8 h-8 text-blue-600 mx-auto" />
-              <div className="font-bold text-sm text-slate-900">Enterprise Development Authority Official Executive Report</div>
+              <div className="font-bold text-sm text-slate-900">Enterprise Official Executive Report</div>
               <p className="text-xs text-slate-500">Document generated with verified ISO 31000 & NCA ECC audit stamps.</p>
             </div>
             <div className="flex justify-end gap-2 p-4 bg-slate-50 border-t border-slate-100">

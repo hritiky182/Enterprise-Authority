@@ -86,7 +86,7 @@ export const CyberRiskPage: React.FC = () => {
         <StatCard title="Critical IT Assets" value={CYBER_ASSETS.filter((a) => a.criticality === 'Critical').length} subtext="GIS & SCADA Infrastructure" badgeText="Critical" badgeColor="rose" />
         <StatCard title="Open Vulnerabilities" value={VULNERABILITIES.filter((v) => v.status !== 'Patched').length} subtext="1 Critical CVE-2024-21626" badgeText="Action Required" badgeColor="amber" />
         <StatCard title="NCA ECC Control Score" value="96.5%" subtext="110 / 114 Controls Compliant" badgeText="Grade A" badgeColor="emerald" />
-        <StatCard title="Security Control Effectiveness" value="93.5%" subtext="Average across 4 Frameworks" badgeText="Sovereign" badgeColor="emerald" />
+        <StatCard title="Security Control Effectiveness" value="93.5%" subtext="Average across 4 Frameworks" badgeText="Enterprise" badgeColor="emerald" />
       </div>
 
       {activeTab === 'overview' && (
@@ -96,7 +96,7 @@ export const CyberRiskPage: React.FC = () => {
         </div>
       )}
 
-      {activeTab === 'assets' && <DataTable title="Critical IT Asset Inventory" subtitle="Sovereign cloud compute, SCADA nodes and databases" data={CYBER_ASSETS} columns={assetColumns} />}
+      {activeTab === 'assets' && <DataTable title="Critical IT Asset Inventory" subtitle="Enterprise cloud compute, SCADA nodes and databases" data={CYBER_ASSETS} columns={assetColumns} />}
       {activeTab === 'vulnerabilities' && <DataTable title="Vulnerability Management (CVE Register)" subtitle="Active exploit threats and patch timelines" data={VULNERABILITIES} columns={vulnColumns} />}
       {activeTab === 'controls' && <DataTable title="NCA ECC & ISO 27001 Security Controls" subtitle="Control effectiveness ratings and implementation status" data={SECURITY_CONTROLS} columns={controlColumns} />}
     </div>

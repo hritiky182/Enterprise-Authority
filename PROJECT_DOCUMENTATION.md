@@ -90,7 +90,7 @@ The execution engine of the suite. Every risk mitigation step, audit finding, an
 - **Status Workflows**: Tracks progress across *Not Started*, *In Progress*, *Under Review*, and *Completed*.
 
 ### 3.8 Executive Board Reports
-Generates polished, official summary reports for board meetings, steering committees, and government audits with a single click.
+Generates polished, official summary reports for board meetings, steering committees, and corporate and regulatory audits with a single click.
 
 ---
 

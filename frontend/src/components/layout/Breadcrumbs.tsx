@@ -5,6 +5,7 @@ import { ChevronRight, Home } from 'lucide-react';
 const routeLabels: Record<string, string> = {
   '': 'Executive Command Center',
   strategy: 'Strategic Management & Initiatives',
+  create: 'Create New Strategy',
   performance: 'Institutional & Dept Performance',
   'enterprise-risk': 'Enterprise Risk Management (ERM)',
   'cyber-risk': 'Cybersecurity & IT Governance',

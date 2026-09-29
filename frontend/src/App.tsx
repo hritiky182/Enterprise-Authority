@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { StrategyPage } from './pages/StrategyPage';
+import { CreateStrategyPage } from './pages/CreateStrategyPage';
 import { PerformancePage } from './pages/PerformancePage';
 import { EnterpriseRiskPage } from './pages/EnterpriseRiskPage';
 import { CyberRiskPage } from './pages/CyberRiskPage';
@@ -102,6 +103,7 @@ const AppLayout: React.FC = () => {
           <Routes>
             <Route path="/" element={<ProtectedRoute path="/" element={<DashboardPage />} />} />
             <Route path="/strategy" element={<ProtectedRoute path="/strategy" element={<StrategyPage />} />} />
+            <Route path="/strategy/create" element={<ProtectedRoute path="/strategy" element={<CreateStrategyPage />} />} />
             <Route path="/performance" element={<ProtectedRoute path="/performance" element={<PerformancePage />} />} />
             <Route path="/enterprise-risk" element={<ProtectedRoute path="/enterprise-risk" element={<EnterpriseRiskPage />} />} />
             <Route path="/cyber-risk" element={<ProtectedRoute path="/cyber-risk" element={<CyberRiskPage />} />} />

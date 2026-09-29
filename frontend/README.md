@@ -38,7 +38,7 @@ Clean
 
 Data-rich
 
-Government/enterprise-grade
+Enterprise-grade
 
 Responsive
 

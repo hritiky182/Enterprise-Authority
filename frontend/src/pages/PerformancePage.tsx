@@ -4,7 +4,7 @@ import { StatCard } from '../components/common/StatCard';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { KPI } from '../types';
-import { DEPARTMENTS, STRATEGIC_THEMES, PERFORMANCE_MONTHLY_TRENDS } from '../data/mockData';
+import { DEPARTMENTS, PERFORMANCE_MONTHLY_TRENDS } from '../data/mockData';
 import {
   ResponsiveContainer,
   BarChart,
@@ -17,15 +17,17 @@ import {
   LineChart,
   Line,
 } from 'recharts';
-import { BarChart3, Filter, Calendar, Building, Target, TrendingUp } from 'lucide-react';
+import { BarChart3, Filter, Calendar, Building, Target, TrendingUp, Upload } from 'lucide-react';
+import { ImportKpiModal } from '../components/modals/ImportKpiModal';
 
 export const PerformancePage: React.FC = () => {
-  const { kpis, objectives } = useApp();
+  const { kpis, objectives, themes } = useApp();
 
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedQuarter, setSelectedQuarter] = useState('Q3');
   const [selectedDept, setSelectedDept] = useState('all');
   const [selectedTheme, setSelectedTheme] = useState('all');
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const deptPerformanceData = [
     { department: 'Strategic Dev (SDO)', score: 94.2, target: 90 },
@@ -95,9 +97,18 @@ export const PerformancePage: React.FC = () => {
               Departmental & KPI Performance Analytics
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Filter performance data by fiscal year, quarter, authority department, and strategic theme.
+              Filter performance data by fiscal year, quarter, enterprise department, and strategic theme.
             </p>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsImportModalOpen(true)}
+            className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
+          >
+            <Upload className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <span>Import KPI Data</span>
+          </button>
         </div>
 
         {/* Global Filter Bar */}
@@ -155,8 +166,8 @@ export const PerformancePage: React.FC = () => {
               onChange={(e) => setSelectedTheme(e.target.value)}
               className="bg-transparent font-semibold text-slate-900 focus:outline-none"
             >
-              <option value="all">All Themes (4)</option>
-              {STRATEGIC_THEMES.map((t) => (
+              <option value="all">All Themes ({themes.length})</option>
+              {themes.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.code} - {t.title}
                 </option>
@@ -212,9 +223,15 @@ export const PerformancePage: React.FC = () => {
       {/* KPI Performance Table */}
       <DataTable
         title="Key Performance Indicator (KPI) Detailed Scorecard"
-        subtitle="Individual metric target achievements across all Enterprise Development Authority operational programs"
+        subtitle="Individual metric target achievements across all enterprise operational programs"
         data={filteredKpis}
         columns={kpiColumns}
+      />
+
+      {/* Import KPI Modal */}
+      <ImportKpiModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
       />
     </div>
   );

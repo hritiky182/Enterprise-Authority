@@ -3,6 +3,8 @@ import {
   User,
   Role,
   RiskItem,
+  StrategicTheme,
+  StrategicGoal,
   StrategicObjective,
   StrategicInitiative,
   KPI,
@@ -17,6 +19,8 @@ import {
   CURRENT_USER,
   MOCK_USERS,
   RISKS as initialRisks,
+  STRATEGIC_THEMES as initialThemes,
+  STRATEGIC_GOALS as initialGoals,
   STRATEGIC_OBJECTIVES as initialObjectives,
   STRATEGIC_INITIATIVES as initialInitiatives,
   KPIS as initialKpis,
@@ -30,8 +34,59 @@ import {
 import { ROLE_PERMISSIONS_MAP, RolePermissions } from '../utils/permissions';
 import { toast } from 'sonner';
 
+export interface CreateStrategyPayload {
+  theme: {
+    code?: string | undefined;
+    title: string;
+    description: string;
+    color?: string | undefined;
+    weight?: number | undefined;
+  };
+  goal: {
+    code?: string | undefined;
+    title: string;
+    description?: string | undefined;
+  };
+  objective: {
+    code?: string | undefined;
+    title: string;
+    owner: string;
+    department: string;
+    targetYear?: number | undefined;
+    progress?: number | undefined;
+    status?: 'on-track' | 'at-risk' | 'behind' | 'achieved' | undefined;
+  };
+  kpi?: {
+    code?: string | undefined;
+    name: string;
+    unit?: string | undefined;
+    target?: number | undefined;
+    actual?: number | undefined;
+    frequency?: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual' | undefined;
+    status?: 'on-track' | 'warning' | 'critical' | 'achieved' | undefined;
+  } | undefined;
+  initiative?: {
+    code?: string | undefined;
+    title: string;
+    description?: string | undefined;
+    owner?: string | undefined;
+    department?: string | undefined;
+    budgetSAR?: number | undefined;
+    spentSAR?: number | undefined;
+    progress?: number | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    status?: 'In Progress' | 'Planning' | 'At Risk' | 'Completed' | undefined;
+    milestones?: {
+      title: string;
+      dueDate: string;
+      status: 'Completed' | 'In Progress' | 'Pending';
+    }[] | undefined;
+  } | undefined;
+}
+
 interface ModalConfig {
-  type: 'risk' | 'objective' | 'initiative' | 'kpi' | 'compliance' | 'bcm' | 'action' | 'policy' | 'document' | 'create_action' | 'create_risk';
+  type: 'risk' | 'objective' | 'initiative' | 'kpi' | 'compliance' | 'bcm' | 'action' | 'policy' | 'document' | 'create_action' | 'create_risk' | 'import_strategy';
   item?: any;
 }
 
@@ -60,9 +115,21 @@ interface AppContextType {
   addRisk: (risk: Omit<RiskItem, 'id' | 'code' | 'inherentScore' | 'residualScore' | 'lastAssessedDate'>) => void;
   updateRiskStatus: (id: string, status: RiskItem['status'], treatment?: RiskItem['treatment']) => void;
   
+  themes: StrategicTheme[];
+  goals: StrategicGoal[];
   objectives: StrategicObjective[];
   initiatives: StrategicInitiative[];
   kpis: KPI[];
+  addStrategy: (payload: CreateStrategyPayload) => { themeId: string; goalId: string; objectiveId: string };
+  deleteStrategyTheme: (themeId: string) => void;
+  resetStrategies: () => void;
+  importStrategyData: (data: {
+    themes?: StrategicTheme[];
+    goals?: StrategicGoal[];
+    objectives?: StrategicObjective[];
+    initiatives?: StrategicInitiative[];
+    kpis?: KPI[];
+  }) => { themesCount: number; objectivesCount: number; kpisCount: number; initiativesCount: number };
   
   actions: ActionItem[];
   addAction: (action: Omit<ActionItem, 'id' | 'code'>) => void;
@@ -74,6 +141,13 @@ interface AppContextType {
 
   documents: DocumentItem[];
   addDocument: (doc: Omit<DocumentItem, 'id' | 'code'>) => void;
+  importDocuments: (docs: (Omit<DocumentItem, 'id' | 'code'> & Partial<DocumentItem>)[]) => number;
+
+  importRisks: (newRisks: Partial<RiskItem>[]) => number;
+  importKpiActuals: (updates: { code: string; actual: number; target?: number; status?: KPI['status'] }[]) => number;
+
+  users: User[];
+  importUsers: (newUsers: Partial<User>[]) => number;
 
   bcmProcesses: BCMProcess[];
   bcmPlans: BCMPlan[];
@@ -114,13 +188,104 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
 
   // Entities
-  const [risks, setRisks] = useState<RiskItem[]>(initialRisks);
-  const [objectives] = useState<StrategicObjective[]>(initialObjectives);
-  const [initiatives] = useState<StrategicInitiative[]>(initialInitiatives);
-  const [kpis] = useState<KPI[]>(initialKpis);
+  const [risks, setRisks] = useState<RiskItem[]>(() => {
+    const saved = sessionStorage.getItem('eda_risks');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialRisks;
+  });
+  
+  const [themes, setThemes] = useState<StrategicTheme[]>(() => {
+    const saved = sessionStorage.getItem('eda_themes');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialThemes;
+  });
+
+  const [goals, setGoals] = useState<StrategicGoal[]>(() => {
+    const saved = sessionStorage.getItem('eda_goals');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialGoals;
+  });
+
+  const [objectives, setObjectives] = useState<StrategicObjective[]>(() => {
+    const saved = sessionStorage.getItem('eda_objectives');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialObjectives;
+  });
+
+  const [initiatives, setInitiatives] = useState<StrategicInitiative[]>(() => {
+    const saved = sessionStorage.getItem('eda_initiatives');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialInitiatives;
+  });
+
+  const [kpis, setKpis] = useState<KPI[]>(() => {
+    const saved = sessionStorage.getItem('eda_kpis');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialKpis;
+  });
+
   const [actions, setActions] = useState<ActionItem[]>(initialActions);
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
-  const [documents, setDocuments] = useState<DocumentItem[]>(initialDocuments);
+  const [documents, setDocuments] = useState<DocumentItem[]>(() => {
+    const saved = sessionStorage.getItem('eda_documents');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return initialDocuments;
+  });
+
+  const [users, setUsers] = useState<User[]>(() => {
+    const saved = sessionStorage.getItem('eda_users');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return MOCK_USERS;
+  });
+
   const [bcmProcesses] = useState<BCMProcess[]>(initialBcmProcesses);
   const [bcmPlans] = useState<BCMPlan[]>(initialBcmPlans);
 
@@ -201,7 +366,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ],
     };
 
-    setRisks((prev) => [newRisk, ...prev]);
+    setRisks((prev) => {
+      const updated = [newRisk, ...prev];
+      sessionStorage.setItem('eda_risks', JSON.stringify(updated));
+      return updated;
+    });
     toast.success(`Risk ${code} Created Successfully`, {
       description: `${newRisk.title} added to Enterprise Register.`,
     });
@@ -215,8 +384,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       });
       return;
     }
-    setRisks((prev) =>
-      prev.map((r) => {
+    setRisks((prev) => {
+      const updated = prev.map((r) => {
         if (r.id === id) {
           return {
             ...r,
@@ -234,11 +403,115 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           };
         }
         return r;
-      })
-    );
+      });
+      sessionStorage.setItem('eda_risks', JSON.stringify(updated));
+      return updated;
+    });
     toast.success('Risk Register Updated', {
       description: `Risk status modified to ${status}.`,
     });
+  };
+
+  const importRisks = (newRisks: Partial<RiskItem>[]) => {
+    const validCategories: RiskItem['category'][] = ['Operational', 'Strategic', 'Financial', 'Compliance', 'Cyber', 'Reputational'];
+    const validStatuses: RiskItem['status'][] = ['Open', 'Mitigating', 'Accepted', 'Closed'];
+    const validTreatments: RiskItem['treatment'][] = ['Mitigate', 'Transfer', 'Avoid', 'Accept'];
+
+    const formattedRisks: RiskItem[] = newRisks.map((r, i) => {
+      const code = r.code || `RSK-2026-${Math.floor(100 + Math.random() * 900)}`;
+      const id = r.id || `rsk-imp-${Date.now()}-${i}`;
+      const likelihood = Number(r.likelihood) || 3;
+      const impact = Number(r.impact) || 3;
+      const inherentScore = likelihood * impact;
+      const residualLikelihood = Math.max(1, Math.round(likelihood * 0.7));
+      const residualImpact = Math.max(1, Math.round(impact * 0.7));
+      const residualScore = r.residualScore !== undefined ? Number(r.residualScore) : residualLikelihood * residualImpact;
+      
+      const category: RiskItem['category'] = validCategories.includes(r.category as any) ? (r.category as RiskItem['category']) : 'Operational';
+      const status: RiskItem['status'] = validStatuses.includes(r.status as any) ? (r.status as RiskItem['status']) : 'Open';
+      const treatment: RiskItem['treatment'] = validTreatments.includes(r.treatment as any) ? (r.treatment as RiskItem['treatment']) : 'Mitigate';
+
+      return {
+        id,
+        code,
+        title: r.title || 'Untitled Risk Item',
+        description: r.description || 'Imported risk item assessed under ISO 31000 framework.',
+        category,
+        department: r.department || currentUser.department,
+        owner: r.owner || currentUser.name,
+        likelihood,
+        impact,
+        inherentScore,
+        residualLikelihood,
+        residualImpact,
+        residualScore,
+        treatment,
+        status,
+        controlsCount: r.controlsCount ?? 2,
+        actionsCount: r.actionsCount ?? 1,
+        lastAssessedDate: r.lastAssessedDate || new Date().toISOString().slice(0, 10),
+        treatmentDetails: r.treatmentDetails || 'Mitigation controls applied as per enterprise risk policy.',
+        history: [
+          {
+            date: new Date().toISOString().slice(0, 10),
+            action: 'Risk imported from external register',
+            user: currentUser.name,
+          },
+        ],
+      };
+    });
+
+    setRisks((prev) => {
+      const updated = [...formattedRisks, ...prev];
+      sessionStorage.setItem('eda_risks', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(`Imported ${formattedRisks.length} Risks into Register`, {
+      description: 'Enterprise 5x5 heatmap and risk metrics have been updated.',
+    });
+    return formattedRisks.length;
+  };
+
+  const importKpiActuals = (updates: { code: string; actual: number; target?: number; status?: KPI['status'] }[]) => {
+    let updatedCount = 0;
+    setKpis((prev) => {
+      const updated = prev.map((kpi) => {
+        const match = updates.find((u) => u.code.toLowerCase().trim() === kpi.code.toLowerCase().trim());
+        if (match) {
+          updatedCount++;
+          const target = match.target !== undefined ? match.target : kpi.target;
+          const actual = match.actual;
+          const achievementPct = target > 0 ? Math.min(100, Math.round((actual / target) * 100)) : 0;
+          let status: KPI['status'] = kpi.status;
+          if (match.status) {
+            status = match.status;
+          } else if (achievementPct >= 95) {
+            status = 'achieved';
+          } else if (achievementPct >= 80) {
+            status = 'on-track';
+          } else if (achievementPct >= 65) {
+            status = 'warning';
+          } else {
+            status = 'critical';
+          }
+          return {
+            ...kpi,
+            actual,
+            target,
+            achievementPct,
+            status,
+          };
+        }
+        return kpi;
+      });
+      sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success(`Updated ${updatedCount} KPI Metric Measurements`, {
+      description: 'Performance scorecards and achievement rates recalculated.',
+    });
+    return updatedCount;
   };
 
   const addAction = (newActionData: Omit<ActionItem, 'id' | 'code'>) => {
@@ -325,11 +598,371 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       id,
       code,
     };
-    setDocuments((prev) => [newDoc, ...prev]);
+    setDocuments((prev) => {
+      const updated = [newDoc, ...prev];
+      sessionStorage.setItem('eda_documents', JSON.stringify(updated));
+      return updated;
+    });
     toast.success('Document Uploaded', {
       description: `${newDoc.title} added to Repository.`,
     });
     closeModal();
+  };
+
+  const importDocuments = (docs: (Omit<DocumentItem, 'id' | 'code'> & Partial<DocumentItem>)[]) => {
+    const formatted: DocumentItem[] = docs.map((doc, idx) => {
+      const rawType = (doc.fileType || 'pdf').toLowerCase();
+      const fileType: DocumentItem['fileType'] = rawType === 'docx' ? 'docx' : rawType === 'xlsx' ? 'xlsx' : 'pdf';
+      return {
+        id: doc.id || `doc-imp-${Date.now()}-${idx}`,
+        code: doc.code || `DOC-2026-${Math.floor(100 + Math.random() * 900)}`,
+        title: doc.title || 'Untitled Document',
+        category: doc.category || 'Compliance Evidence',
+        uploadedBy: doc.uploadedBy || currentUser.name,
+        uploadDate: doc.uploadDate || new Date().toISOString().slice(0, 10),
+        version: doc.version || 'v1.0',
+        fileSize: doc.fileSize || '2.4 MB',
+        fileType,
+        tags: doc.tags || ['Enterprise', 'Compliance'],
+      };
+    });
+
+    setDocuments((prev) => {
+      const updated = [...formatted, ...prev];
+      sessionStorage.setItem('eda_documents', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success(`Imported ${formatted.length} Documents into Repository`, {
+      description: 'Knowledge and evidence documents are now indexed.',
+    });
+    return formatted.length;
+  };
+
+  const importUsers = (newUsers: Partial<User>[]) => {
+    const formatted: User[] = newUsers.map((u, i) => ({
+      id: u.id || `usr-imp-${Date.now()}-${i}`,
+      name: u.name || 'New Enterprise User',
+      email: u.email || `user${i + 1}@enterprise.com`,
+      title: u.title || 'Corporate Officer',
+      department: u.department || 'Strategic Development Office',
+      role: u.role || 'Viewer',
+      avatar: u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256',
+    }));
+    setUsers((prev) => {
+      const updated = [...prev, ...formatted];
+      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(`Imported ${formatted.length} User Accounts into System`);
+    return formatted.length;
+  };
+
+  const addStrategy = (payload: CreateStrategyPayload) => {
+    const themeId = `st-${Date.now()}`;
+    const goalId = `sg-${Date.now()}`;
+    const objectiveId = `so-${Date.now()}`;
+    const nextThemeNum = themes.length + 1;
+
+    const themeCode = payload.theme.code?.trim() || `ST-${String(nextThemeNum).padStart(2, '0')}`;
+    const newTheme: StrategicTheme = {
+      id: themeId,
+      code: themeCode,
+      title: payload.theme.title,
+      description: payload.theme.description,
+      color: payload.theme.color || 'blue',
+      weight: Number(payload.theme.weight) || 20,
+      isCustom: true,
+    };
+
+    const goalCode = payload.goal.code?.trim() || `SG-${nextThemeNum}.1`;
+    const newGoal: StrategicGoal = {
+      id: goalId,
+      code: goalCode,
+      themeId,
+      title: payload.goal.title,
+      description: payload.goal.description || '',
+      isCustom: true,
+    };
+
+    const objCode = payload.objective.code?.trim() || `OBJ-${nextThemeNum}01`;
+    const newObjective: StrategicObjective = {
+      id: objectiveId,
+      code: objCode,
+      goalId,
+      themeId,
+      themeName: newTheme.title,
+      title: payload.objective.title,
+      owner: payload.objective.owner || currentUser.name,
+      department: payload.objective.department || currentUser.department,
+      kpiCount: payload.kpi && payload.kpi.name?.trim() ? 1 : 0,
+      status: payload.objective.status || 'on-track',
+      targetYear: Number(payload.objective.targetYear) || 2027,
+      progress: Number(payload.objective.progress) || 15,
+      isCustom: true,
+    };
+
+    let newKpi: KPI | null = null;
+    if (payload.kpi && payload.kpi.name?.trim()) {
+      const kpiCode = payload.kpi.code?.trim() || `KPI-${nextThemeNum}01`;
+      const targetVal = Number(payload.kpi.target) || 100;
+      const actualVal = Number(payload.kpi.actual) || 0;
+      const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
+
+      newKpi = {
+        id: `kpi-${Date.now()}`,
+        code: kpiCode,
+        objectiveId,
+        objectiveTitle: newObjective.title,
+        name: payload.kpi.name,
+        unit: payload.kpi.unit || '%',
+        owner: newObjective.owner,
+        target: targetVal,
+        actual: actualVal,
+        achievementPct: achievement,
+        frequency: payload.kpi.frequency || 'Quarterly',
+        status: payload.kpi.status || 'on-track',
+        isCustom: true,
+      };
+    }
+
+    let newInit: StrategicInitiative | null = null;
+    if (payload.initiative && payload.initiative.title?.trim()) {
+      const initCode = payload.initiative.code?.trim() || `INIT-${String(initiatives.length + 1).padStart(2, '0')}`;
+      newInit = {
+        id: `init-${Date.now()}`,
+        code: initCode,
+        objectiveId,
+        objectiveTitle: newObjective.title,
+        title: payload.initiative.title,
+        description: payload.initiative.description || '',
+        owner: payload.initiative.owner || newObjective.owner,
+        department: payload.initiative.department || newObjective.department,
+        budgetSAR: Number(payload.initiative.budgetSAR) || 5000000,
+        spentSAR: Number(payload.initiative.spentSAR) || 500000,
+        progress: Number(payload.initiative.progress) || 15,
+        startDate: payload.initiative.startDate || '2026-01-01',
+        endDate: payload.initiative.endDate || '2027-12-31',
+        status: payload.initiative.status || 'Planning',
+        milestones: payload.initiative.milestones?.map((m, idx) => ({
+          id: `m-${Date.now()}-${idx}`,
+          title: m.title,
+          dueDate: m.dueDate,
+          status: m.status,
+        })) || [
+          {
+            id: `m-${Date.now()}-1`,
+            title: 'Initial Architecture & Scope Approval',
+            dueDate: '2026-10-15',
+            status: 'Completed',
+          },
+          {
+            id: `m-${Date.now()}-2`,
+            title: 'Enterprise Pilot Execution',
+            dueDate: '2027-03-31',
+            status: 'In Progress',
+          },
+        ],
+        risksCount: 1,
+        actionsCount: 1,
+        isCustom: true,
+      };
+    }
+
+    // Persist & update states
+    setThemes((prev) => {
+      const updated = [...prev, newTheme];
+      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+      return updated;
+    });
+
+    setGoals((prev) => {
+      const updated = [...prev, newGoal];
+      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+      return updated;
+    });
+
+    setObjectives((prev) => {
+      const updated = [...prev, newObjective];
+      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      return updated;
+    });
+
+    if (newKpi) {
+      setKpis((prev) => {
+        const updated = [...prev, newKpi!];
+        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    if (newInit) {
+      setInitiatives((prev) => {
+        const updated = [...prev, newInit!];
+        sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    toast.success(`Strategy "${newTheme.title}" Created`, {
+      description: `Pillar ${newTheme.code} & Objective ${newObjective.code} are now live in the Strategy Architecture.`,
+    });
+
+    return { themeId, goalId, objectiveId };
+  };
+
+  const deleteStrategyTheme = (themeId: string) => {
+    setThemes((prev) => {
+      const updated = prev.filter((t) => t.id !== themeId);
+      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+      return updated;
+    });
+
+    const goalsToRemove = goals.filter((g) => g.themeId === themeId).map((g) => g.id);
+    setGoals((prev) => {
+      const updated = prev.filter((g) => g.themeId !== themeId);
+      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+      return updated;
+    });
+
+    const objsToRemove = objectives.filter((o) => o.themeId === themeId).map((o) => o.id);
+    setObjectives((prev) => {
+      const updated = prev.filter((o) => o.themeId !== themeId);
+      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      return updated;
+    });
+
+    setKpis((prev) => {
+      const updated = prev.filter((k) => !objsToRemove.includes(k.objectiveId));
+      sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+      return updated;
+    });
+
+    setInitiatives((prev) => {
+      const updated = prev.filter((i) => !objsToRemove.includes(i.objectiveId));
+      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.info('Strategy Theme Removed', {
+      description: 'The selected strategic theme and its nested objectives have been removed.',
+    });
+  };
+
+  const resetStrategies = () => {
+    setThemes(initialThemes);
+    setGoals(initialGoals);
+    setObjectives(initialObjectives);
+    setInitiatives(initialInitiatives);
+    setKpis(initialKpis);
+    sessionStorage.removeItem('eda_themes');
+    sessionStorage.removeItem('eda_goals');
+    sessionStorage.removeItem('eda_objectives');
+    sessionStorage.removeItem('eda_initiatives');
+    sessionStorage.removeItem('eda_kpis');
+    toast.success('Strategy Architecture Reset', {
+      description: 'Restored baseline enterprise strategic pillars and OKRs.',
+    });
+  };
+
+  const importStrategyData = (data: {
+    themes?: StrategicTheme[];
+    goals?: StrategicGoal[];
+    objectives?: StrategicObjective[];
+    initiatives?: StrategicInitiative[];
+    kpis?: KPI[];
+  }) => {
+    let themesCount = 0;
+    let goalsCount = 0;
+    let objectivesCount = 0;
+    let kpisCount = 0;
+    let initiativesCount = 0;
+
+    if (data.themes && data.themes.length > 0) {
+      const formattedThemes = data.themes.map((t, idx) => ({
+        ...t,
+        id: t.id || `st-imp-${Date.now()}-${idx}`,
+        code: t.code || `ST-IMP-${idx + 1}`,
+        isCustom: true,
+      }));
+      themesCount = formattedThemes.length;
+      setThemes((prev) => {
+        const existingIds = new Set(formattedThemes.map((t) => t.id));
+        const updated = [...prev.filter((t) => !existingIds.has(t.id)), ...formattedThemes];
+        sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    if (data.goals && data.goals.length > 0) {
+      const formattedGoals = data.goals.map((g, idx) => ({
+        ...g,
+        id: g.id || `sg-imp-${Date.now()}-${idx}`,
+        code: g.code || `SG-IMP-${idx + 1}`,
+        isCustom: true,
+      }));
+      goalsCount = formattedGoals.length;
+      setGoals((prev) => {
+        const existingIds = new Set(formattedGoals.map((g) => g.id));
+        const updated = [...prev.filter((g) => !existingIds.has(g.id)), ...formattedGoals];
+        sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    if (data.objectives && data.objectives.length > 0) {
+      const formattedObjectives = data.objectives.map((o, idx) => ({
+        ...o,
+        id: o.id || `so-imp-${Date.now()}-${idx}`,
+        code: o.code || `OBJ-IMP-${idx + 1}`,
+        isCustom: true,
+      }));
+      objectivesCount = formattedObjectives.length;
+      setObjectives((prev) => {
+        const existingIds = new Set(formattedObjectives.map((o) => o.id));
+        const updated = [...prev.filter((o) => !existingIds.has(o.id)), ...formattedObjectives];
+        sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    if (data.kpis && data.kpis.length > 0) {
+      const formattedKpis = data.kpis.map((k, idx) => ({
+        ...k,
+        id: k.id || `kpi-imp-${Date.now()}-${idx}`,
+        code: k.code || `KPI-IMP-${idx + 1}`,
+        isCustom: true,
+      }));
+      kpisCount = formattedKpis.length;
+      setKpis((prev) => {
+        const existingIds = new Set(formattedKpis.map((k) => k.id));
+        const updated = [...prev.filter((k) => !existingIds.has(k.id)), ...formattedKpis];
+        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    if (data.initiatives && data.initiatives.length > 0) {
+      const formattedInitiatives = data.initiatives.map((i, idx) => ({
+        ...i,
+        id: i.id || `init-imp-${Date.now()}-${idx}`,
+        code: i.code || `INIT-IMP-${idx + 1}`,
+        isCustom: true,
+      }));
+      initiativesCount = formattedInitiatives.length;
+      setInitiatives((prev) => {
+        const existingIds = new Set(formattedInitiatives.map((i) => i.id));
+        const updated = [...prev.filter((i) => !existingIds.has(i.id)), ...formattedInitiatives];
+        sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    toast.success('Strategy Data Imported Successfully', {
+      description: `Imported ${themesCount} pillars, ${objectivesCount} objectives, ${kpisCount} KPIs into Strategy Architecture.`,
+    });
+
+    return { themesCount, objectivesCount, kpisCount, initiativesCount };
   };
 
   const openModal = (type: ModalConfig['type'], item?: any) => {
@@ -362,9 +995,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         risks,
         addRisk,
         updateRiskStatus,
+        importRisks,
+        themes,
+        goals,
         objectives,
         initiatives,
         kpis,
+        addStrategy,
+        deleteStrategyTheme,
+        resetStrategies,
+        importStrategyData,
+        importKpiActuals,
         actions,
         addAction,
         updateActionStatus,
@@ -373,6 +1014,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateTaskColumn,
         documents,
         addDocument,
+        importDocuments,
+        users,
+        importUsers,
         bcmProcesses,
         bcmPlans,
         activeModal,

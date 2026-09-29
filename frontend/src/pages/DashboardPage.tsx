@@ -130,7 +130,7 @@ export const DashboardPage: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
               <Sparkles className="w-4 h-4" />
-              <span>ENTERPRISE DEVELOPMENT AUTHORITY EXECUTIVE COMMAND CENTER</span>
+              <span>ENTERPRISE EXECUTIVE COMMAND CENTER</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-sans">
               Strategic & Risk Governance Dashboard

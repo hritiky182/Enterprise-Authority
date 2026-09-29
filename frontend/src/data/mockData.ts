@@ -28,7 +28,7 @@ export const CURRENT_USER: User = {
   id: 'usr-101',
   name: 'Eng. Abdulaziz Al-Hassan',
   title: 'Director General of Governance & Risk',
-  email: 'a.hassan@eda.gov.sa',
+  email: 'a.hassan@enterprise.com',
   role: 'Administrator',
   department: 'Enterprise Risk & Resilience Directorate',
   avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
@@ -40,7 +40,7 @@ export const MOCK_USERS: User[] = [
     id: 'usr-102',
     name: 'Dr. Reem Al-Qahtani',
     title: 'Chief Strategy Officer',
-    email: 'r.qahtani@eda.gov.sa',
+    email: 'r.qahtani@enterprise.com',
     role: 'Strategy Manager',
     department: 'Strategic Development Office',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
@@ -49,7 +49,7 @@ export const MOCK_USERS: User[] = [
     id: 'usr-103',
     name: 'Eng. Sultan Al-Dossary',
     title: 'Chief Information Security Officer (CISO)',
-    email: 's.dossary@eda.gov.sa',
+    email: 's.dossary@enterprise.com',
     role: 'Risk Manager',
     department: 'Cybersecurity & IT Governance',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
@@ -58,7 +58,7 @@ export const MOCK_USERS: User[] = [
     id: 'usr-104',
     name: 'Haya Al-Mulhim',
     title: 'Head of Compliance & Regulatory Audit',
-    email: 'h.mulhim@eda.gov.sa',
+    email: 'h.mulhim@enterprise.com',
     role: 'Compliance Manager',
     department: 'Internal Audit & Legal Affairs',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
@@ -67,7 +67,7 @@ export const MOCK_USERS: User[] = [
     id: 'usr-105',
     name: 'Abdullah Al-Ghamdi',
     title: 'Business Continuity Lead',
-    email: 'a.ghamdi@eda.gov.sa',
+    email: 'a.ghamdi@enterprise.com',
     role: 'BCM Manager',
     department: 'Enterprise Risk & Resilience Directorate',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
@@ -75,8 +75,8 @@ export const MOCK_USERS: User[] = [
   {
     id: 'usr-106',
     name: 'H.E. Eng. Waleed Al-Otaibi',
-    title: 'President of Enterprise Development Authority',
-    email: 'president@eda.gov.sa',
+    title: 'President & Executive Chairman',
+    email: 'president@enterprise.com',
     role: 'Executive',
     department: 'Executive Leadership',
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
@@ -120,8 +120,8 @@ export const STRATEGIC_THEMES: StrategicTheme[] = [
   {
     id: 'st-4',
     code: 'ST-04',
-    title: 'Institutional Governance & Digital Sovereignty',
-    description: 'Exceed Vision 2030 digital government mandates, zero-trust cyber safety, and ERM resilience.',
+    title: 'Institutional Governance & Digital Excellence',
+    description: 'Exceed enterprise digital benchmarks, zero-trust cyber safety, and ERM resilience.',
     color: 'indigo',
     weight: 20,
   },
@@ -182,7 +182,7 @@ export const STRATEGIC_OBJECTIVES: StrategicObjective[] = [
     code: 'SO-04',
     goalId: 'sg-301',
     themeId: 'st-4',
-    themeName: 'Institutional Governance & Digital Sovereignty',
+    themeName: 'Institutional Governance & Digital Excellence',
     title: 'Sustain 100% NCA ECC Cybersecurity Controls & Zero Trust',
     owner: 'Eng. Sultan Al-Dossary',
     department: 'Cybersecurity & IT Governance',
@@ -196,7 +196,7 @@ export const STRATEGIC_OBJECTIVES: StrategicObjective[] = [
     code: 'SO-05',
     goalId: 'sg-301',
     themeId: 'st-4',
-    themeName: 'Institutional Governance & Digital Sovereignty',
+    themeName: 'Institutional Governance & Digital Excellence',
     title: 'Institutionalize BCM Preparedness & Emergency Operations',
     owner: 'Abdullah Al-Ghamdi',
     department: 'Enterprise Risk & Resilience Directorate',
@@ -341,7 +341,7 @@ export const STRATEGIC_INITIATIVES: StrategicInitiative[] = [
     startDate: '2024-03-01',
     endDate: '2025-04-30',
     status: 'In Progress',
-    description: 'Sovereign Cloud Disaster Recovery site with automated failover and 24/7 Managed SOC integration.',
+    description: 'Enterprise Cloud Disaster Recovery site with automated failover and 24/7 Managed SOC integration.',
     milestones: [
       { id: 'm7', title: 'NCA ECC Audit Readiness', dueDate: '2024-08-30', status: 'Completed' },
       { id: 'm8', title: 'Active-Active DR Synchronization', dueDate: '2024-12-15', status: 'Completed' },
@@ -506,7 +506,7 @@ export const CYBER_ASSETS: CyberAsset[] = [
   { id: 'ast-1', code: 'AST-DB-01', name: 'Enterprise Regional Geo-Spatial GIS Database', category: 'Database', criticality: 'Critical', owner: 'Eng. Sultan Al-Dossary', ipAddress: '10.120.4.15', status: 'Active' },
   { id: 'ast-2', code: 'AST-WEB-02', name: 'Enterprise Citizen & Visitor Services Portal', category: 'Web Application', criticality: 'High', owner: 'Eng. Fahad Al-Subaie', ipAddress: '10.120.10.88', status: 'Active' },
   { id: 'ast-3', code: 'AST-ICS-03', name: 'Smart Water Telemetry SCADA Node', category: 'ICS/IoT', criticality: 'Critical', owner: 'Dr. Reem Al-Qahtani', ipAddress: '10.120.45.102', status: 'Active' },
-  { id: 'ast-4', code: 'AST-INF-04', name: 'EDA Sovereign Cloud Core Compute Cluster', category: 'Infrastructure', criticality: 'Critical', owner: 'Eng. Sultan Al-Dossary', ipAddress: '10.120.1.10', status: 'Active' },
+  { id: 'ast-4', code: 'AST-INF-04', name: 'Enterprise Cloud Core Compute Cluster', category: 'Infrastructure', criticality: 'Critical', owner: 'Eng. Sultan Al-Dossary', ipAddress: '10.120.1.10', status: 'Active' },
 ];
 
 export const VULNERABILITIES: Vulnerability[] = [
@@ -514,7 +514,7 @@ export const VULNERABILITIES: Vulnerability[] = [
     id: 'vuln-1',
     code: 'VULN-2024-88',
     cveId: 'CVE-2024-21626',
-    assetName: 'EDA Sovereign Cloud Core Compute Cluster',
+    assetName: 'Enterprise Cloud Core Compute Cluster',
     assetId: 'ast-4',
     severity: 'Critical',
     cvssScore: 9.8,
@@ -556,7 +556,7 @@ export const SECURITY_CONTROLS: SecurityControl[] = [
 ];
 
 export const GOVERNANCE_POLICIES: GovernancePolicy[] = [
-  { id: 'pol-1', code: 'POL-EDA-01', title: 'Enterprise Development Authority Strategic Governance Charter', category: 'Strategic', owner: 'Dr. Reem Al-Qahtani', department: 'Strategic Development Office', version: 'v3.0', effectiveDate: '2024-01-01', reviewDate: '2026-12-31', status: 'Approved' },
+  { id: 'pol-1', code: 'POL-ENT-01', title: 'Enterprise Strategic Governance Charter', category: 'Strategic', owner: 'Dr. Reem Al-Qahtani', department: 'Strategic Development Office', version: 'v3.0', effectiveDate: '2024-01-01', reviewDate: '2026-12-31', status: 'Approved' },
   { id: 'pol-2', code: 'POL-CYB-02', title: 'Enterprise Information Security & Data Classification Policy', category: 'IT & Security', owner: 'Eng. Sultan Al-Dossary', department: 'Cybersecurity & IT Governance', version: 'v2.1', effectiveDate: '2024-06-15', reviewDate: '2026-06-14', status: 'Approved' },
   { id: 'pol-3', code: 'POL-BCM-03', title: 'Business Continuity & Emergency Operations Framework', category: 'Operational', owner: 'Abdullah Al-Ghamdi', department: 'Enterprise Risk & Resilience Directorate', version: 'v1.4', effectiveDate: '2025-01-10', reviewDate: '2027-01-10', status: 'Approved' },
   { id: 'pol-4', code: 'POL-FIN-04', title: 'Strategic Capital Expenditure & Procurement Guidelines', category: 'Financial', owner: 'Haya Al-Mulhim', department: 'Internal Audit & Legal Affairs', version: 'v2.0', effectiveDate: '2024-03-01', reviewDate: '2026-03-01', status: 'Under Review' },
@@ -565,7 +565,7 @@ export const GOVERNANCE_POLICIES: GovernancePolicy[] = [
 export const GOVERNANCE_COMMITTEES: GovernanceCommittee[] = [
   { id: 'com-1', code: 'COM-EXEC', name: 'Executive Leadership Steering Committee', chair: 'H.E. Eng. Waleed Al-Otaibi', secretary: 'Dr. Reem Al-Qahtani', membersCount: 7, frequency: 'Monthly', lastMeetingDate: '2026-08-05', nextMeetingDate: '2026-09-05' },
   { id: 'com-2', code: 'COM-RISK', name: 'Enterprise Risk & Audit Committee', chair: 'Eng. Abdulaziz Al-Hassan', secretary: 'Haya Al-Mulhim', membersCount: 5, frequency: 'Quarterly', lastMeetingDate: '2026-07-20', nextMeetingDate: '2026-10-20' },
-  { id: 'com-3', code: 'COM-CYBER', name: 'Information Security & Digital Sovereignty Council', chair: 'Eng. Sultan Al-Dossary', secretary: 'Abdullah Al-Ghamdi', membersCount: 6, frequency: 'Bi-Monthly', lastMeetingDate: '2026-08-12', nextMeetingDate: '2026-10-12' },
+  { id: 'com-3', code: 'COM-CYBER', name: 'Information Security & Digital Technology Council', chair: 'Eng. Sultan Al-Dossary', secretary: 'Abdullah Al-Ghamdi', membersCount: 6, frequency: 'Bi-Monthly', lastMeetingDate: '2026-08-12', nextMeetingDate: '2026-10-12' },
 ];
 
 export const COMPLIANCE_FRAMEWORKS: ComplianceFramework[] = [
@@ -597,7 +597,7 @@ export const BCM_PROCESSES: BCMProcess[] = [
     mtdHours: 1,
     rtoHours: 2,
     rpoHours: 0.25,
-    dependencies: ['Sovereign Cloud Telecom', 'GPS Geo-Location Grid', 'Civil Defense SCADA'],
+    dependencies: ['Enterprise Cloud Telecom', 'GPS Geo-Location Grid', 'Emergency Operations SCADA'],
     recoveryPriority: 1,
     readinessPct: 98,
     status: 'Ready',
@@ -740,14 +740,14 @@ export const ACTION_ITEMS: ActionItem[] = [
 ];
 
 export const TASK_ITEMS: TaskItem[] = [
-  { id: 'tsk-1', code: 'TSK-01', title: 'Verify immutable backup retention policy in Sovereign Cloud region', actionId: 'act-1', assignee: 'Eng. Sultan Al-Dossary', dueDate: '2026-08-28', priority: 'Critical', boardColumn: 'in_progress', tags: ['Backup', 'Cyber'], department: 'Cybersecurity & IT Governance' },
+  { id: 'tsk-1', code: 'TSK-01', title: 'Verify immutable backup retention policy in Enterprise Cloud region', actionId: 'act-1', assignee: 'Eng. Sultan Al-Dossary', dueDate: '2026-08-28', priority: 'Critical', boardColumn: 'in_progress', tags: ['Backup', 'Cyber'], department: 'Cybersecurity & IT Governance' },
   { id: 'tsk-2', code: 'TSK-02', title: 'Run simulation drill for 5G failover switchover', actionId: 'act-2', assignee: 'Abdullah Al-Ghamdi', dueDate: '2026-09-10', priority: 'High', boardColumn: 'todo', tags: ['BCM', 'Telemetry'], department: 'Enterprise Risk & Resilience Directorate' },
   { id: 'tsk-3', code: 'TSK-03', title: 'Review contractor security clearance documents', actionId: 'act-5', assignee: 'Haya Al-Mulhim', dueDate: '2026-08-20', priority: 'Low', boardColumn: 'completed', tags: ['Governance'], department: 'Internal Audit & Legal Affairs' },
   { id: 'tsk-4', code: 'TSK-04', title: 'Resolve fiber optic splice bottleneck in Junction 14', actionId: 'act-1', assignee: 'Eng. Tariq Al-Mansoor', dueDate: '2026-08-25', priority: 'High', boardColumn: 'blocked', tags: ['Infrastructure'], department: 'Municipal Infrastructure & Urban Planning' },
 ];
 
 export const DOCUMENT_ITEMS: DocumentItem[] = [
-  { id: 'doc-1', code: 'DOC-EDA-2026-01', title: 'Sovereign Master Plan 2030 Strategic Governance Framework', category: 'Strategy Document', fileType: 'pdf', fileSize: '14.2 MB', uploadedBy: 'Dr. Reem Al-Qahtani', uploadDate: '2026-01-10', version: 'v3.0', tags: ['Strategy', 'Vision 2030', 'EDA'] },
+  { id: 'doc-1', code: 'DOC-ENT-2026-01', title: 'Enterprise Master Plan Strategic Governance Framework', category: 'Strategy Document', fileType: 'pdf', fileSize: '14.2 MB', uploadedBy: 'Dr. Reem Al-Qahtani', uploadDate: '2026-01-10', version: 'v3.0', tags: ['Strategy', 'Enterprise Architecture', 'Corporate'] },
   { id: 'doc-2', code: 'DOC-RSK-2026-04', title: 'Q3 Enterprise Risk Register & Heatmap Report', category: 'Risk Document', fileType: 'xlsx', fileSize: '4.8 MB', uploadedBy: 'Eng. Abdulaziz Al-Hassan', uploadDate: '2026-08-01', version: 'v2.4', tags: ['ERM', 'Risk Matrix', 'Q3'] },
   { id: 'doc-3', code: 'DOC-CYB-2026-12', title: 'NCA ECC Audit Evidence & Cyber Control Matrix', category: 'Compliance Evidence', fileType: 'pdf', fileSize: '18.5 MB', uploadedBy: 'Eng. Sultan Al-Dossary', uploadDate: '2026-07-25', version: 'v1.8', tags: ['NCA', 'Cybersecurity', 'Audit'] },
   { id: 'doc-4', code: 'DOC-BCM-2026-08', title: 'Business Impact Analysis (BIA) Consolidated Executive Report', category: 'BCM Plan', fileType: 'docx', fileSize: '6.2 MB', uploadedBy: 'Abdullah Al-Ghamdi', uploadDate: '2026-06-30', version: 'v2.1', tags: ['BIA', 'BCM', 'RTO'] },

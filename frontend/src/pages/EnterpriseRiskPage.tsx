@@ -5,12 +5,14 @@ import { Heatmap5x5 } from '../components/common/Heatmap5x5';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { RiskItem } from '../types';
-import { ShieldAlert, Plus, AlertTriangle, CheckCircle2, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import { ShieldAlert, Plus, AlertTriangle, CheckCircle2, RefreshCw, FileSpreadsheet, Upload } from 'lucide-react';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
+import { ImportRiskModal } from '../components/modals/ImportRiskModal';
 
 export const EnterpriseRiskPage: React.FC = () => {
   const { risks, openModal, permissions } = useApp();
   const [selectedCell, setSelectedCell] = useState<{ likelihood: number; impact: number } | null>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
@@ -126,15 +128,26 @@ export const EnterpriseRiskPage: React.FC = () => {
           </p>
         </div>
 
-        {permissions.canCreateRisk && (
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
-            onClick={() => openModal('create_risk')}
-            className="px-4 py-2 bg-rose-600 text-white rounded-xl font-semibold text-xs hover:bg-rose-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            type="button"
+            onClick={() => setIsImportModalOpen(true)}
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            Register New Risk
+            <Upload className="w-3.5 h-3.5 text-rose-600" />
+            <span>Import Risk Register</span>
           </button>
-        )}
+
+          {permissions.canCreateRisk && (
+            <button
+              onClick={() => openModal('create_risk')}
+              className="px-4 py-2 bg-rose-600 text-white rounded-xl font-semibold text-xs hover:bg-rose-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              Register New Risk
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Top 4 Metrics */}
@@ -243,6 +256,12 @@ export const EnterpriseRiskPage: React.FC = () => {
             ],
           },
         ]}
+      />
+
+      {/* Import Risk Modal */}
+      <ImportRiskModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
       />
     </div>
   );

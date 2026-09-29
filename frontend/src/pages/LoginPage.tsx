@@ -10,7 +10,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState<Role>('Executive');
-  const [email, setEmail] = useState('executive@eda.gov.sa');
+  const [email, setEmail] = useState('executive@enterprise.com');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -69,7 +69,7 @@ export const LoginPage: React.FC = () => {
           </div>
           <span className="text-slate-800">|</span>
           <span className="px-2.5 py-1 rounded-full bg-blue-950/80 border border-blue-800/40 text-blue-300 font-semibold">
-            V3.4 SOVEREIGN
+            V3.4 ENTERPRISE
           </span>
         </div>
       </header>
@@ -151,7 +151,7 @@ export const LoginPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-mono"
-                  placeholder="name@eda.gov.sa"
+                  placeholder="name@enterprise.com"
                 />
               </div>
             </div>
@@ -219,7 +219,7 @@ export const LoginPage: React.FC = () => {
 
       {/* Footer */}
       <footer className="relative z-10 max-w-7xl w-full mx-auto px-6 py-4 text-center text-xs font-mono text-slate-500 border-t border-slate-900/80">
-        Enterprise Development Authority GRC & Strategy Suite • Confidential Sovereign Demonstration
+        Enterprise Strategy & Governance Suite • Interactive Enterprise Demonstration
       </footer>
     </div>
   );

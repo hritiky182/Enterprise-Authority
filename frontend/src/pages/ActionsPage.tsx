@@ -104,7 +104,7 @@ export const ActionsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Action Plans" value={actions.length} subtext="Across 6 Sovereign Domains" badgeText="Central" badgeColor="blue" />
+        <StatCard title="Total Action Plans" value={actions.length} subtext="Across 6 Enterprise Domains" badgeText="Central" badgeColor="blue" />
         <StatCard title="Critical Priority" value={criticalCount} subtext="Immediate Oversight" badgeText="Critical" badgeColor="rose" />
         <StatCard title="In Progress" value={inProgressCount} subtext="Active Operational Execution" badgeText="Active" badgeColor="amber" />
         <StatCard title="Completed" value={completedCount} subtext="Verified & Closed" badgeText="Completed" badgeColor="blue" />

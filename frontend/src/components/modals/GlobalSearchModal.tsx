@@ -179,7 +179,7 @@ export const GlobalSearchModal: React.FC = () => {
         {/* Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-500 flex items-center justify-between font-mono">
           <span>Press ESC or click outside to dismiss</span>
-          <span>Enterprise Development Authority Search</span>
+          <span>Enterprise Global Search</span>
         </div>
       </div>
     </div>
