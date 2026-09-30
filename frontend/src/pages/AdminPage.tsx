@@ -4,6 +4,7 @@ import { DEPARTMENTS } from '../data/mockData';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { User, Role } from '../types';
+import { OperationalStructureView } from '../components/organization/OperationalStructureView';
 import {
   Settings,
   Users,
@@ -22,14 +23,15 @@ import {
   AlertCircle,
   Clock,
   ArrowRight,
+  Network,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SAMPLE_USER_CSV = `FullName,Email,JobTitle,Department,Role
-Eng. Zaid Al-Ghamdi,zaid.ghamdi@enterprise.com,Lead Cloud Architect,IT Infrastructure & Cyber Defense,Compliance Manager
-Dr. Laila Al-Mansoor,laila.mansoor@enterprise.com,Senior ERM Consultant,Risk & Resilience Department,Risk Manager
-Majed Al-Mutairi,majed.mutairi@enterprise.com,Strategic Performance Lead,Strategic Development Office,Strategy Manager
-Noura Al-Hassan,noura.hassan@enterprise.com,Chief Internal Auditor,Internal Audit & Legal,Auditor`;
+Eng. Zaid Al-Ghamdi,zaid.ghamdi@ahda.gov.sa,Lead Cloud Architect,Cybersecurity,Compliance Manager
+Dr. Laila Al-Mansoor,laila.mansoor@ahda.gov.sa,Senior ERM Consultant,Governance, Risk & Compliance,Risk Manager
+Majed Al-Mutairi,majed.mutairi@ahda.gov.sa,Strategic Performance Lead,Strategy Development,Strategy Manager
+Noura Al-Hassan,noura.hassan@ahda.gov.sa,Chief Internal Auditor,Internal Audit,Auditor`;
 
 export const AdminPage: React.FC = () => {
   const { currentUser, switchUserRole, users, importUsers } = useApp();
@@ -299,24 +301,7 @@ export const AdminPage: React.FC = () => {
         </div>
       )}
 
-      {activeTab === 'departments' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {DEPARTMENTS.map((dept) => (
-            <div key={dept.id} className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  {dept.code}
-                </span>
-                <span className="font-mono text-xs text-slate-500">{dept.employeeCount} Cadres</span>
-              </div>
-              <h3 className="font-bold text-sm text-slate-900">{dept.name}</h3>
-              <div className="text-xs text-slate-500 pt-2 border-t border-slate-100 font-mono">
-                Director: <span className="font-semibold text-slate-800">{dept.head}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {activeTab === 'departments' && <OperationalStructureView />}
 
       {/* Dedicated Enterprise Data Import Hub */}
       {activeTab === 'data_import' && (

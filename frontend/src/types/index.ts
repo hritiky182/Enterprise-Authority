@@ -18,12 +18,27 @@ export interface User {
   avatar: string;
 }
 
+export interface Sector {
+  id: string;
+  code: string;
+  name: string;
+  nameAr?: string;
+  head: string;
+  description: string;
+  departmentIds: string[];
+  color: string;
+}
+
 export interface Department {
   id: string;
   code: string;
   name: string;
+  nameAr?: string;
   head: string;
   employeeCount: number;
+  sectorId?: string;
+  sectorName?: string;
+  category?: 'Board & CEO' | 'Advisory & Oversight' | 'Operational Sector';
 }
 
 export interface StrategicTheme {
@@ -42,6 +57,7 @@ export interface StrategicGoal {
   code: string;
   themeId: string;
   title: string;
+  titleAr?: string;
   description: string;
   isCustom?: boolean;
 }
@@ -53,6 +69,7 @@ export interface StrategicObjective {
   themeId: string;
   themeName: string;
   title: string;
+  titleAr?: string;
   owner: string;
   department: string;
   kpiCount: number;
@@ -68,6 +85,7 @@ export interface KPI {
   objectiveId: string;
   objectiveTitle: string;
   name: string;
+  nameAr?: string;
   unit: string;
   owner: string;
   target: number;
@@ -76,6 +94,16 @@ export interface KPI {
   frequency: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual';
   status: 'on-track' | 'warning' | 'critical' | 'achieved';
   isCustom?: boolean;
+  // Al-Ahsa Client Cascading Strategy Attributes
+  pillarCode?: string;
+  pillarTitle?: string;
+  formula?: string;
+  baseline?: string | number;
+  target2026?: string | number;
+  target2027?: string | number;
+  strategicInitiative?: string;
+  keyMilestone?: string;
+  keyProject?: string;
 }
 
 export interface Milestone {
@@ -103,6 +131,7 @@ export interface StrategicInitiative {
   risksCount: number;
   actionsCount: number;
   description: string;
+  keyProjects?: string[];
   isCustom?: boolean;
 }
 
