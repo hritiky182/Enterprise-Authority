@@ -1,12 +1,18 @@
 export type Role =
   | 'Administrator'
+  | 'Authority Board & CEO'
+  | 'Sector Director General'
+  | 'Department Manager'
+  | 'GRC & Enterprise Risk'
+  | 'Cybersecurity Officer'
+  | 'Internal Audit'
+  | 'Viewer'
   | 'Strategy Manager'
   | 'Risk Manager'
   | 'Compliance Manager'
   | 'BCM Manager'
   | 'Executive'
-  | 'Auditor'
-  | 'Viewer';
+  | 'Auditor';
 
 export interface User {
   id: string;

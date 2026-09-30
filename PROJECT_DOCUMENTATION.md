@@ -114,17 +114,20 @@ Generates polished, official summary reports for board meetings, steering commit
 
 ---
 
-## 4. User Roles & Permission Levels
+## 4. User Roles & Permission Levels (Authority Governance Tiers)
 
-To maintain confidentiality and operational security, the system adjusts what users can see and do based on their **Role Persona**:
+To maintain confidentiality and operational security, the system adjusts what users can see and do based on their **Role Persona**, mapped directly to the Authority's operational tiers:
 
-| Persona Role | Who This Is For | What They Can Do |
+| Persona Role | Organizational Position (From Chart) | Key Permissions & Scope |
 | :--- | :--- | :--- |
-| 👑 **Executive** | C-Level Leadership, Board Members, Managing Directors | Full access across all modules. Can create risks, approve action plans, and manage system users. |
-| 🛡️ **Risk Manager** | Chief Risk Officers, GRC Leads, Compliance Officers | Full access to Risk, Cyber, and Action registers. Can register risks, assess scores, and assign mitigation plans. |
-| 🏢 **Department Head** | General Managers, Sector Directors, Department Leaders | Access to Strategy, Performance, Actions, and Department Tasks. Can create and update action plans for their team. |
-| 🔍 **Auditor** | Internal Auditors, External Regulatory Inspectors | Read-only inspection access across Compliance, Governance, and Reports. Cannot edit data. |
-| 👁️ **Viewer** | General Enterprise Staff & Stakeholders | High-level summary view of Strategy and Performance scorecards. Cannot alter any records. |
+| 👑 **Authority Board & CEO** | Authority Board, Board Secretariat, CEO Office | Strategic command center oversight, executive OKRs, risk appetite governance, and board reporting. |
+| 📊 **Sector Director General** | 5 Operational Sectors (Spatial & Urban, PPM, Strategy, etc.) | Strategy Cascading Matrix, sector OKRs, 2026/2027 KPIs, and strategic initiative tracking. |
+| 📋 **Department Manager** | 20 Sector Functional Departments | Operational task assignments, action plan mitigation updates, and departmental BCM continuity. |
+| 🛡️ **GRC & Enterprise Risk** | Governance, Risk & Compliance Unit | Enterprise risk registers (ISO 31000), 5×5 heatmaps, governance committees, and compliance policies. |
+| 🔒 **Cybersecurity Officer** | Cybersecurity Unit | NCA ECC framework compliance, cyber asset posture, threat exposure, and IT security controls. |
+| 🔍 **Internal Audit** | Internal Audit Unit | Independent read-only audit inspection across all sectors, compliance evidence, risk logs, and policy trails. |
+| ⚙️ **Administrator** | Support Services Sector (Information Technology) | Full system administration, security controls, user RBAC provisioning, and data management. |
+| 👁️ **Viewer** | Regional Programs & Community Stakeholders | Read-only view of public strategy progress, scorecards, and high-level indicator trends. |
 
 ---
 

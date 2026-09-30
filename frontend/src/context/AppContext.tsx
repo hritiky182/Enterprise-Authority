@@ -182,7 +182,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const savedUser = sessionStorage.getItem('eda_user');
     if (savedUser) {
       try {
-        return JSON.parse(savedUser);
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.role && (parsed.role === 'Authority Board & CEO' || ROLE_PERMISSIONS_MAP[parsed.role as Role])) {
+          return parsed;
+        }
       } catch (e) {
         return CURRENT_USER;
       }
@@ -302,7 +305,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_users');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((u: any) => u.role === 'Authority Board & CEO' || u.id === 'usr-106')) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
