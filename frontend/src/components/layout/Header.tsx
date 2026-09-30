@@ -36,13 +36,13 @@ export const Header: React.FC = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const rolesList: Role[] = [
-    'Authority Board & CEO',
-    'Sector Director General',
-    'Department Manager',
-    'GRC & Enterprise Risk',
-    'Cybersecurity Officer',
-    'Internal Audit',
     'Administrator',
+    'Strategy Manager',
+    'Risk Manager',
+    'Compliance Manager',
+    'BCM Manager',
+    'Executive',
+    'Auditor',
     'Viewer',
   ];
 

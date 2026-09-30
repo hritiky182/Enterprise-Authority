@@ -4,8 +4,6 @@ import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StrategicObjective, StrategicInitiative, KPI } from '../types';
-import { ClientStrategyMatrix } from '../components/strategy/ClientStrategyMatrix';
-import { OperationalStructureView } from '../components/organization/OperationalStructureView';
 import {
   Target,
   Layers,
@@ -20,13 +18,11 @@ import {
   TrendingUp,
   BarChart3,
   RotateCcw,
-  FileSpreadsheet,
-  Network,
 } from 'lucide-react';
 
 export const StrategyPage: React.FC = () => {
   const { themes, goals, objectives, initiatives, kpis, openModal, deleteStrategyTheme, resetStrategies } = useApp();
-  const [activeTab, setActiveTab] = useState<'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('matrix');
+  const [activeTab, setActiveTab] = useState<'hierarchy' | 'objectives' | 'initiatives' | 'kpis'>('hierarchy');
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
   const totalSpent = initiatives.reduce((sum, i) => sum + (i.spentSAR || 0), 0);
@@ -76,7 +72,6 @@ export const StrategyPage: React.FC = () => {
       cell: (o) => (
         <div>
           <div className="font-semibold text-slate-900">{o.title}</div>
-          {o.titleAr && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.titleAr}</div>}
           <div className="text-[10px] text-slate-400">{o.themeName}</div>
         </div>
       ),
@@ -127,7 +122,7 @@ export const StrategyPage: React.FC = () => {
       header: 'KPI Code',
       accessorKey: 'code',
       sortable: true,
-      width: '110px',
+      width: '120px',
       cell: (k) => (
         <div className="flex items-center space-x-1.5">
           <span className="font-mono font-bold text-slate-900">{k.code}</span>
@@ -146,25 +141,11 @@ export const StrategyPage: React.FC = () => {
       cell: (k) => (
         <div>
           <div className="font-semibold text-slate-900">{k.name}</div>
-          {k.formula && (
-            <div className="text-[10px] font-mono text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded mt-0.5 max-w-sm truncate border border-slate-200/60">
-              fx: {k.formula}
-            </div>
-          )}
           <div className="text-[10px] text-slate-400 truncate max-w-sm">{k.objectiveTitle}</div>
         </div>
       ),
     },
-    {
-      header: 'Targets (26/27)',
-      sortable: false,
-      cell: (k) => (
-        <div className="text-[11px] font-mono">
-          <span className="text-blue-700 font-bold">{k.target2026 || `${k.target} ${k.unit}`}</span>
-          {k.target2027 && <span className="text-indigo-600 ml-1">/ {k.target2027}</span>}
-        </div>
-      ),
-    },
+    { header: 'Target', accessorKey: 'target', cell: (k) => <span className="font-mono">{k.target} {k.unit}</span> },
     { header: 'Actual', accessorKey: 'actual', cell: (k) => <span className="font-mono font-bold">{k.actual} {k.unit}</span> },
     {
       header: 'Achievement %',
@@ -183,36 +164,24 @@ export const StrategyPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12 animate-in fade-in">
       {/* Title & Tabs */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
             <Target className="w-4 h-4" />
-            <span>AL AHSA DEVELOPMENT AUTHORITY • STRATEGY & GOVERNANCE</span>
+            <span>ENTERPRISE STRATEGY MANAGEMENT</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
-            Strategy Architecture & Cascading Matrix
+            Strategy Architecture & Initiative Execution
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Vision: A Leader in Sustainable Development in Al-Ahsa — Cascaded Objectives, KPIs & Projects
+            Hierarchy: Strategic Pillars → Goals → Objectives (OKRs) → KPIs → Tactical Initiatives
           </p>
         </div>
 
         {/* Right Section: Tabs & New Strategy Button */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Tab Buttons */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl overflow-x-auto">
-            <button
-              onClick={() => setActiveTab('matrix')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
-                activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Al-Ahsa Matrix</span>
-              <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${activeTab === 'matrix' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-700'}`}>
-                CLIENT
-              </span>
-            </button>
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
             <button
               onClick={() => setActiveTab('hierarchy')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
@@ -235,7 +204,7 @@ export const StrategyPage: React.FC = () => {
                 activeTab === 'kpis' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              KPIs ({kpis.length})
+              KPI Indicators ({kpis.length})
             </button>
             <button
               onClick={() => setActiveTab('initiatives')}
@@ -244,15 +213,6 @@ export const StrategyPage: React.FC = () => {
               }`}
             >
               Initiatives ({initiatives.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('structure')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center space-x-1 ${
-                activeTab === 'structure' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Network className="w-3.5 h-3.5" />
-              <span>Org Structure</span>
             </button>
           </div>
 
@@ -306,9 +266,6 @@ export const StrategyPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* TAB 0: CLIENT AL-AHSA STRATEGY MATRIX */}
-      {activeTab === 'matrix' && <ClientStrategyMatrix />}
 
       {/* TAB 1: STRATEGY HIERARCHY TREE */}
       {activeTab === 'hierarchy' && (
@@ -563,9 +520,6 @@ export const StrategyPage: React.FC = () => {
           ))}
         </div>
       )}
-
-      {/* TAB 5: AUTHORITY OPERATIONAL STRUCTURE VIEW */}
-      {activeTab === 'structure' && <OperationalStructureView />}
     </div>
   );
 };

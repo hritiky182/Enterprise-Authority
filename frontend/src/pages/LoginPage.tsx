@@ -9,8 +9,8 @@ export const LoginPage: React.FC = () => {
   const { login } = useApp();
   const navigate = useNavigate();
 
-  const [selectedRole, setSelectedRole] = useState<Role>('Authority Board & CEO');
-  const [email, setEmail] = useState('a.hassan@ahda.gov.sa');
+  const [selectedRole, setSelectedRole] = useState<Role>('Executive');
+  const [email, setEmail] = useState('executive@enterprise.com');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -97,7 +97,7 @@ export const LoginPage: React.FC = () => {
               Select Role Persona to Test RBAC Permissions:
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {MOCK_USERS.filter((user, index, self) => index === self.findIndex((t) => t.role === user.role)).map((u) => {
+              {MOCK_USERS.map((u) => {
                 const isSelected = selectedRole === u.role;
                 return (
                   <button
@@ -119,7 +119,7 @@ export const LoginPage: React.FC = () => {
                       )}
                     </div>
                     <div className="text-[11px] font-bold text-white truncate">{u.role}</div>
-                    <div className="text-[9px] text-slate-400 truncate">{u.name}</div>
+                    <div className="text-[9px] text-slate-400 truncate">{u.department}</div>
                   </button>
                 );
               })}
