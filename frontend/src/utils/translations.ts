@@ -385,6 +385,106 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Completed',
     ar: 'مكتمل',
   },
+  'Strategy Execution Model': {
+    en: 'Strategy Execution Model',
+    ar: 'نموذج التنفيذ الاستراتيجي',
+  },
+  'Strategy Model - What must be achieved': {
+    en: 'Strategy Model - What must be achieved',
+    ar: 'نموذج الاستراتيجية - ما يجب تحقيقه',
+  },
+  'Integrated Understanding - How both connect': {
+    en: 'Integrated Understanding - How both connect',
+    ar: 'الفهم المتكامل - كيف يترابط التنظيم مع الاستراتيجية',
+  },
+  'Strategic Objective': {
+    en: 'Strategic Objective',
+    ar: 'الهدف الاستراتيجي',
+  },
+  'KPI / Target': {
+    en: 'KPI / Target',
+    ar: 'مؤشرات الأداء / المستهدفات',
+  },
+  'Initiative': {
+    en: 'Initiative',
+    ar: 'المبادرة الاستراتيجية',
+  },
+  'Milestone': {
+    en: 'Milestone',
+    ar: 'المعلم الرئيسي',
+  },
+  'Project': {
+    en: 'Project',
+    ar: 'المشروع التنفيذي',
+  },
+  'Board / CEO': {
+    en: 'Board / CEO',
+    ar: 'مجلس الإدارة / الرئيس التنفيذي',
+  },
+  'Sectors and Departments': {
+    en: 'Sectors and Departments',
+    ar: 'القطاعات والإدارات',
+  },
+  'Strategic Pillars and Objectives': {
+    en: 'Strategic Pillars and Objectives',
+    ar: 'الركائز والأهداف الاستراتيجية',
+  },
+  'KPIs and Targets': {
+    en: 'KPIs and Targets',
+    ar: 'مؤشرات الأداء والمستهدفات',
+  },
+  'Initiatives and Milestones': {
+    en: 'Initiatives and Milestones',
+    ar: 'المبادرات والمعالم الرئيسية',
+  },
+  'Projects and Programs': {
+    en: 'Projects and Programs',
+    ar: 'المشاريع والبرامج التنفيذية',
+  },
+  'Monitoring, Dashboards and Reporting': {
+    en: 'Monitoring, Dashboards and Reporting',
+    ar: 'المتابعة ولوحات المؤشرات والتقارير',
+  },
+  'Organization Structure = Who': {
+    en: 'Organization Structure = Who',
+    ar: 'الهيكل التنظيمي = المسؤولية (من)',
+  },
+  'Strategy Framework = What': {
+    en: 'Strategy Framework = What',
+    ar: 'الإطار الاستراتيجي = الأهداف (ماذا)',
+  },
+  'KPIs / Initiatives / Projects = How': {
+    en: 'KPIs / Initiatives / Projects = How',
+    ar: 'المؤشرات / المبادرات / المشاريع = التنفيذ (كيف)',
+  },
+  'Leadership and Governance': {
+    en: 'Leadership and Governance',
+    ar: 'القيادة والحوكمة',
+  },
+  'Execution Ownership': {
+    en: 'Execution Ownership',
+    ar: 'ملكية التنفيذ',
+  },
+  'What to achieve': {
+    en: 'What to achieve',
+    ar: 'ما يجب تحقيقه',
+  },
+  'How success is measured': {
+    en: 'How success is measured',
+    ar: 'كيف نقيس النجاح',
+  },
+  'What drives delivery': {
+    en: 'What drives delivery',
+    ar: 'ما يقود الإنجاز',
+  },
+  'Implementation in action': {
+    en: 'Implementation in action',
+    ar: 'التطبيق العملي والمشاريع',
+  },
+  'Track progress and inform decisions': {
+    en: 'Track progress and inform decisions',
+    ar: 'متابعة التقدم ودعم القرار',
+  },
 };
 
 /**

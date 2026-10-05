@@ -5,6 +5,7 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StrategicObjective, StrategicInitiative, KPI } from '../types';
 import { ClientStrategyMatrix } from '../components/strategy/ClientStrategyMatrix';
+import { StrategyExecutionModel } from '../components/strategy/StrategyExecutionModel';
 import { OperationalStructureView } from '../components/organization/OperationalStructureView';
 import {
   Target,
@@ -26,7 +27,7 @@ import {
 
 export const StrategyPage: React.FC = () => {
   const { themes, goals, objectives, initiatives, kpis, openModal, deleteStrategyTheme, resetStrategies, lang, t } = useApp();
-  const [activeTab, setActiveTab] = useState<'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('matrix');
+  const [activeTab, setActiveTab] = useState<'model' | 'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('model');
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
   const totalSpent = initiatives.reduce((sum, i) => sum + (i.spentSAR || 0), 0);
@@ -203,6 +204,18 @@ export const StrategyPage: React.FC = () => {
           {/* Tab Buttons */}
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl overflow-x-auto">
             <button
+              onClick={() => setActiveTab('model')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'model' ? 'bg-emerald-700 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Target className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? 'نموذج الاستراتيجية (1-6)' : 'Strategy Model (1-6)'}</span>
+              <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${activeTab === 'model' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
+                {lang === 'ar' ? 'معتمد' : 'AHDA'}
+              </span>
+            </button>
+            <button
               onClick={() => setActiveTab('matrix')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
@@ -307,6 +320,9 @@ export const StrategyPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* TAB: STRATEGY EXECUTION MODEL (6-STAGE CASCADING & INTEGRATED UNDERSTANDING) */}
+      {activeTab === 'model' && <StrategyExecutionModel />}
 
       {/* TAB 0: CLIENT AL-AHSA STRATEGY MATRIX */}
       {activeTab === 'matrix' && <ClientStrategyMatrix />}
