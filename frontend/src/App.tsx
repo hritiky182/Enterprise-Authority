@@ -79,12 +79,14 @@ const ProtectedRoute: React.FC<{ path: string; element: React.ReactNode }> = ({ 
 };
 
 const AppLayout: React.FC = () => {
-  const { sidebarCollapsed, isAuthenticated } = useApp();
+  const { sidebarCollapsed, isAuthenticated, lang } = useApp();
   const location = useLocation();
 
   if (!isAuthenticated || location.pathname === '/login') {
     return <LoginPage />;
   }
+
+  const isRtl = lang === 'ar';
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex font-sans antialiased selection:bg-blue-600 selection:text-white">
@@ -93,8 +95,11 @@ const AppLayout: React.FC = () => {
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'
-          }`}
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+          isRtl
+            ? sidebarCollapsed ? 'mr-16 ml-0' : 'mr-64 ml-0'
+            : sidebarCollapsed ? 'ml-16 mr-0' : 'ml-64 mr-0'
+        }`}
       >
         <Header />
 

@@ -319,7 +319,7 @@ const PRESETS = [
 export const CreateStrategyPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { themes, goals, objectives, initiatives, addStrategy, currentUser } = useApp();
+  const { themes, goals, objectives, initiatives, addStrategy, currentUser, lang } = useApp();
 
   // Mode toggles: 'existing' vs 'new'
   const [pillarMode, setPillarMode] = useState<'existing' | 'new'>('existing');
@@ -788,7 +788,7 @@ export const CreateStrategyPage: React.FC = () => {
                   >
                     {themes.map((t) => (
                       <option key={t.id} value={t.id}>
-                        {t.code} — {t.title} ({t.weight}% weight)
+                        {t.code} — {lang === 'ar' ? (t.titleAr || t.title) : t.title} ({t.weight}% weight)
                       </option>
                     ))}
                   </select>

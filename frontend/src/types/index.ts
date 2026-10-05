@@ -92,6 +92,7 @@ export interface KPI {
   code: string;
   objectiveId: string;
   objectiveTitle: string;
+  objectiveTitleAr?: string | undefined;
   name: string;
   nameAr?: string | undefined;
   unit: string;
@@ -105,6 +106,7 @@ export interface KPI {
   // Al-Ahsa Client Cascading Strategy Attributes
   pillarCode?: string | undefined;
   pillarTitle?: string | undefined;
+  pillarTitleAr?: string | undefined;
   sectorId?: string | undefined;
   sectorName?: string | undefined;
   formula?: string | undefined;

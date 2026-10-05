@@ -147,6 +147,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  :root[dir="rtl"], [lang="ar"] {
+    --font-sans: 'Cairo', Inter, ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Cairo', Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
   /* Institutional data density: figures always align */
   table,
   .tabular {

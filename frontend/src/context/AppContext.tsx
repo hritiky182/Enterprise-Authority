@@ -36,6 +36,7 @@ import {
 } from '../data/mockData';
 import { ROLE_PERMISSIONS_MAP, RolePermissions } from '../utils/permissions';
 import { toast } from 'sonner';
+import { t as translate, Language } from '../utils/translations';
 
 export interface CreateStrategyPayload {
   selectedThemeId?: string | undefined;
@@ -119,7 +120,10 @@ interface AppContextType {
   permissions: RolePermissions;
 
   lang: 'en' | 'ar';
+  dir: 'ltr' | 'rtl';
   toggleLanguage: () => void;
+  setLanguage: (lang: 'en' | 'ar') => void;
+  t: (key: string, fallback?: string) => string;
   sidebarCollapsed: boolean;
   setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   isSearchOpen: boolean;
@@ -211,7 +215,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return CURRENT_USER;
   });
 
-  const [lang, setLang] = useState<'en' | 'ar'>('en');
+  const [lang, setLang] = useState<'en' | 'ar'>(() => {
+    const saved = localStorage.getItem('eda_lang');
+    return saved === 'ar' || saved === 'en' ? saved : 'en';
+  });
+
+  React.useEffect(() => {
+    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
+    document.documentElement.lang = lang;
+    localStorage.setItem('eda_lang', lang);
+  }, [lang]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -374,10 +388,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   };
 
+  const setLanguage = (newLang: 'en' | 'ar') => {
+    setLang(newLang);
+    if (newLang === 'ar') {
+      toast.success('تم تحويل لغة النظام إلى العربية', {
+        description: 'تم تفعيل الاتجاه من اليمين إلى اليسار والخط العربي',
+      });
+    } else {
+      toast.info('Language switched to English', {
+        description: 'Left-to-right layout and English typography enabled',
+      });
+    }
+  };
+
   const toggleLanguage = () => {
     const nextLang = lang === 'en' ? 'ar' : 'en';
-    setLang(nextLang);
-    toast.info(`Language toggled to ${nextLang === 'ar' ? 'Arabic Ready' : 'English'}`);
+    setLanguage(nextLang);
+  };
+
+  const tHelper = (key: string, fallback?: string) => {
+    return translate(key, lang, fallback);
   };
 
   const markNotificationRead = (id: string) => {
@@ -1209,7 +1239,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         switchUserRole,
         permissions,
         lang,
+        dir: lang === 'ar' ? 'rtl' : 'ltr',
         toggleLanguage,
+        setLanguage,
+        t: tHelper,
         sidebarCollapsed,
         setSidebarCollapsed,
         isSearchOpen,

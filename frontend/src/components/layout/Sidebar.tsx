@@ -32,7 +32,7 @@ interface NavGroup {
 }
 
 export const Sidebar: React.FC = () => {
-  const { sidebarCollapsed, risks, actions, permissions, currentUser } = useApp();
+  const { sidebarCollapsed, risks, actions, permissions, currentUser, lang, t } = useApp();
 
   const criticalRisksCount = risks.filter(
     (r) => r.inherentScore >= 16 || r.likelihood * r.impact >= 16
@@ -96,23 +96,25 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed top-0 left-0 bottom-0 z-40 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col border-r border-slate-800 shadow-xl ${
+      className={`fixed top-0 bottom-0 z-40 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl ${
+        lang === 'ar' ? 'right-0 border-l border-slate-800' : 'left-0 border-r border-slate-800'
+      } ${
         sidebarCollapsed ? 'w-16' : 'w-64'
       }`}
     >
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 bg-slate-950/60">
-        <div className="flex items-center space-x-3 overflow-hidden">
+        <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
             <Building2 className="w-5 h-5" />
           </div>
           {!sidebarCollapsed && (
             <div className="truncate">
               <h1 className="text-xs font-bold text-white tracking-wide uppercase leading-tight font-sans">
-                Enterprise Authority
+                {t('enterprise_authority')}
               </h1>
               <span className="text-[10px] text-blue-400 font-mono tracking-wider block uppercase">
-                GRC & Strategy Suite
+                {t('grc_strategy_suite')}
               </span>
             </div>
           )}
@@ -121,11 +123,13 @@ export const Sidebar: React.FC = () => {
 
       {/* Active Role Persona Indicator */}
       {!sidebarCollapsed && (
-        <div className="mx-3 mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center space-x-2.5">
+        <div className="mx-3 mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center gap-2.5">
           <UserCheck className="w-4 h-4 text-blue-400 shrink-0" />
           <div className="truncate">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Active Role Persona</div>
-            <div className="text-xs font-bold text-white truncate">{currentUser.role}</div>
+            <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              {t('active_role_persona')}
+            </div>
+            <div className="text-xs font-bold text-white truncate">{t(currentUser.role)}</div>
           </div>
         </div>
       )}
@@ -136,7 +140,7 @@ export const Sidebar: React.FC = () => {
           <div key={idx}>
             {!sidebarCollapsed && (
               <div className="px-3 mb-2 text-[10px] font-bold text-slate-400 tracking-wider font-mono">
-                {group.title}
+                {t(group.title)}
               </div>
             )}
             <div className="space-y-1">
@@ -147,15 +151,17 @@ export const Sidebar: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
                       isActive
-                        ? 'bg-blue-900/80 text-white border-l-2 border-blue-400 shadow-xs'
+                        ? lang === 'ar'
+                          ? 'bg-blue-900/80 text-white border-r-2 border-blue-400 shadow-xs'
+                          : 'bg-blue-900/80 text-white border-l-2 border-blue-400 shadow-xs'
                         : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
                     } ${sidebarCollapsed ? 'justify-center px-0' : ''}`
                   }
-                  title={sidebarCollapsed ? item.name : undefined}
+                  title={sidebarCollapsed ? t(item.name) : undefined}
                 >
-                  <div className="flex items-center space-x-3 min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
                     <span className="shrink-0">{item.icon}</span>
-                    {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
+                    {!sidebarCollapsed && <span className="truncate">{t(item.name)}</span>}
                   </div>
                   {!sidebarCollapsed && item.badge && (
                     <span

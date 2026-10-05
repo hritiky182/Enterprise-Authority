@@ -21,7 +21,7 @@ import { BarChart3, Filter, Calendar, Building, Target, TrendingUp, Upload } fro
 import { ImportKpiModal } from '../components/modals/ImportKpiModal';
 
 export const PerformancePage: React.FC = () => {
-  const { kpis, objectives, themes } = useApp();
+  const { kpis, objectives, themes, lang, t } = useApp();
 
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedQuarter, setSelectedQuarter] = useState('Q3');
@@ -169,7 +169,7 @@ export const PerformancePage: React.FC = () => {
               <option value="all">All Themes ({themes.length})</option>
               {themes.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.code} - {t.title}
+                  {t.code} - {lang === 'ar' ? (t.titleAr || t.title) : t.title}
                 </option>
               ))}
             </select>

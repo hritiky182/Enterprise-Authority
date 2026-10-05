@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 export const StrategyPage: React.FC = () => {
-  const { themes, goals, objectives, initiatives, kpis, openModal, deleteStrategyTheme, resetStrategies } = useApp();
+  const { themes, goals, objectives, initiatives, kpis, openModal, deleteStrategyTheme, resetStrategies, lang, t } = useApp();
   const [activeTab, setActiveTab] = useState<'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('matrix');
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
@@ -70,13 +70,14 @@ export const StrategyPage: React.FC = () => {
       ),
     },
     {
-      header: 'Strategic Objective',
+      header: t('Strategic Objectives'),
       accessorKey: 'title',
       sortable: true,
       cell: (o) => (
         <div>
-          <div className="font-semibold text-slate-900">{o.title}</div>
-          {o.titleAr && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.titleAr}</div>}
+          <div className="font-semibold text-slate-900">{lang === 'ar' ? (o.titleAr || o.title) : o.title}</div>
+          {lang === 'ar' && o.title && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.title}</div>}
+          {lang !== 'ar' && o.titleAr && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.titleAr}</div>}
           <div className="text-[10px] text-slate-400">{o.themeName}</div>
         </div>
       ),
@@ -203,66 +204,66 @@ export const StrategyPage: React.FC = () => {
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl overflow-x-auto">
             <button
               onClick={() => setActiveTab('matrix')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Al-Ahsa Matrix</span>
+              <span>{lang === 'ar' ? 'مصفوفة الاستراتيجية' : 'Al-Ahsa Matrix'}</span>
               <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${activeTab === 'matrix' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-700'}`}>
-                CLIENT
+                {lang === 'ar' ? 'معتمد' : 'CLIENT'}
               </span>
             </button>
             <button
               onClick={() => setActiveTab('hierarchy')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'hierarchy' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'hierarchy' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Hierarchy Tree ({themes.length})
+              {lang === 'ar' ? 'شجرة الركائز' : 'Hierarchy Tree'} ({themes.length})
             </button>
             <button
               onClick={() => setActiveTab('objectives')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'objectives' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'objectives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Objectives ({objectives.length})
+              {lang === 'ar' ? 'الأهداف' : 'Objectives'} ({objectives.length})
             </button>
             <button
               onClick={() => setActiveTab('kpis')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'kpis' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'kpis' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              KPIs ({kpis.length})
+              {lang === 'ar' ? 'المؤشرات' : 'KPIs'} ({kpis.length})
             </button>
             <button
               onClick={() => setActiveTab('initiatives')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'initiatives' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'initiatives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Initiatives ({initiatives.length})
+              {lang === 'ar' ? 'المبادرات' : 'Initiatives'} ({initiatives.length})
             </button>
             <button
               onClick={() => setActiveTab('structure')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center space-x-1 ${
-                activeTab === 'structure' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
+                activeTab === 'structure' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Network className="w-3.5 h-3.5" />
-              <span>Org Structure</span>
+              <span>{lang === 'ar' ? 'الهيكل التنظيمي' : 'Org Structure'}</span>
             </button>
           </div>
 
           {/* Action Button: Create Strategy */}
           <Link
             to="/strategy/create"
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
           >
             <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Create Strategy</span>
+            <span>{t('Create Strategy')}</span>
           </Link>
         </div>
       </div>
@@ -270,39 +271,39 @@ export const StrategyPage: React.FC = () => {
       {/* Metrics & Strategy Architecture Overview */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">Strategic Pillars</div>
+          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">{t('Strategic Pillars')}</div>
           <div className="text-xl font-bold font-mono text-slate-900 mt-1">{themes.length}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Core organizational themes</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{lang === 'ar' ? 'الركائز الاستراتيجية' : 'Core organizational themes'}</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">Alignment Goals</div>
+          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">{t('Alignment Goals')}</div>
           <div className="text-xl font-bold font-mono text-blue-700 mt-1">{goals.length}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">High-level milestones</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{lang === 'ar' ? 'الأهداف الاستراتيجية' : 'High-level milestones'}</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">Target Objectives</div>
+          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">{t('Target Objectives')}</div>
           <div className="text-xl font-bold font-mono text-emerald-700 mt-1">{objectives.length}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Active OKRs in flight</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{lang === 'ar' ? 'الأهداف التفصيلية المعتمدة' : 'Active OKRs in flight'}</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">Tracked KPIs</div>
+          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">{t('Tracked KPIs')}</div>
           <div className="text-xl font-bold font-mono text-indigo-700 mt-1">{kpis.length}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Telemetry indicators</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{lang === 'ar' ? 'مؤشرات الأداء المعتمدة' : 'Telemetry indicators'}</div>
         </div>
 
         <div className="col-span-2 sm:col-span-4 lg:col-span-1 bg-gradient-to-br from-slate-900 to-blue-950 p-4 rounded-xl text-white shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-blue-300 uppercase font-semibold">Allocated Budget</span>
+            <span className="text-[10px] font-mono text-blue-300 uppercase font-semibold">{t('Allocated Budget')}</span>
             <DollarSign className="w-3.5 h-3.5 text-blue-400" />
           </div>
           <div className="text-lg font-bold font-mono text-white mt-1">
-            SAR {(totalBudget / 1000000).toFixed(1)}M
+            {lang === 'ar' ? `${(totalBudget / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(totalBudget / 1000000).toFixed(1)}M`}
           </div>
           <div className="text-[10px] text-slate-400 font-mono">
-            Spent: SAR {(totalSpent / 1000000).toFixed(1)}M
+            {lang === 'ar' ? `المصروف: ${(totalSpent / 1000000).toFixed(1)} مليون ر.س` : `Spent: SAR ${(totalSpent / 1000000).toFixed(1)}M`}
           </div>
         </div>
       </div>
@@ -330,7 +331,7 @@ export const StrategyPage: React.FC = () => {
                       <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded shadow-2xs ${colorClass}`}>
                         {theme.code}
                       </span>
-                      <h2 className="text-base font-bold text-slate-900">{theme.title}</h2>
+                      <h2 className="text-base font-bold text-slate-900">{lang === 'ar' ? (theme.titleAr || theme.title) : theme.title}</h2>
                       {theme.isCustom && (
                         <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1 shadow-2xs">
                           <Sparkles className="w-3 h-3 text-amber-500" />
