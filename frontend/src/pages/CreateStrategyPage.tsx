@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { DEPARTMENTS, AUTHORITY_SECTORS } from '../data/mockData';
 import {
@@ -25,6 +25,11 @@ import {
   Compass,
   FolderGit2,
   Milestone,
+  Check,
+  CheckSquare,
+  ChevronRight,
+  GitBranch,
+  ListTree,
 } from 'lucide-react';
 import { StatusBadge } from '../components/common/StatusBadge';
 
@@ -40,343 +45,521 @@ const COLOR_OPTIONS = [
 
 const PRESETS = [
   {
-    name: '🌴 Al-Ahsa 2.1.1: Event Visitors Growth',
-    badge: 'Client Matrix Benchmark',
+    name: '🌴 2.1.1 Event Visitor Indicator',
+    badge: 'Initiative 6',
+    themeId: 'st-people',
     themeCode: '02',
     themeTitle: '02 People and Society',
-    themeDescription: 'Enhance community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
-    color: 'emerald',
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
+    color: 'blue',
     weight: 35,
+    goalId: 'sg-people-1',
     goalCode: 'SG-2.1',
     goalTitle: 'Community Participation & Development Strategy Awareness',
     goalDescription: 'Foster active civic participation, digital dialogue, and widespread community alignment with the Al-Ahsa Development Strategy.',
+    objId: 'so-2-1',
     objCode: '2.1',
     objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
-    sectorId: 'sec-strategy',
+    sectorId: 'sec-ssd',
     sectorName: 'Strategy & Sector Development Sector',
-    department: 'Strategy Development',
+    department: 'Tourism Destination Management Office',
     targetYear: 2027,
-    progress: 78,
+    progress: 84,
     objStatus: 'on-track' as const,
     kpiCode: '2.1.1',
-    kpiName: 'Percentage Increase in the Number of Event Visitors',
+    kpiName: 'Event Visitor Indicator',
+    kpiNameAr: 'مؤشر زوار الفعاليات',
     kpiFormula: '(Total Actual Event Visitors - Total Targeted Visitors) * 100%',
     kpiBaseline: '-',
     kpiTarget2026: '75%',
-    kpiTarget2027: '85%',
+    kpiTarget2027: '80%',
     kpiTarget: 75,
-    kpiActual: 72,
+    kpiActual: 74,
     kpiUnit: '%',
     kpiFrequency: 'Annual' as const,
     kpiStatus: 'on-track' as const,
-    keyProject: 'Al-Ahsa Strategy Awareness Project',
-    keyMilestone: 'Develop the General Framework for Community Awareness of the Al-Ahsa Strategy',
-    initCode: 'INIT-AHA-01',
-    initTitle: 'Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority',
+    initId: 'init-aha-1',
+    initCode: 'INIT-6',
+    initTitle: 'Initiative 6: Raise awareness of the Al-Ahsa Strategy and increase digital engagement',
     initDescription: 'Comprehensive public awareness campaign, multimedia storytelling of the Al-Ahsa Development Strategy, and active digital engagement channels.',
     budgetSAR: 8500000,
     spentSAR: 5200000,
-    milestoneTitle: 'Develop the General Framework for Community Awareness of the Al-Ahsa Strategy',
+    keyMilestone: 'Develop community awareness framework',
+    keyProject: 'Al-Ahsa Strategy Awareness Project',
+    milestoneTitle: 'Develop community awareness framework',
     milestoneDate: '2026-06-30',
   },
   {
-    name: '📱 Al-Ahsa 2.1.2: Digital Engagement Index',
-    badge: 'Social Analytics',
+    name: '📱 2.1.2 Digital Engagement Index',
+    badge: 'Initiative 7',
+    themeId: 'st-people',
     themeCode: '02',
     themeTitle: '02 People and Society',
-    themeDescription: 'Foster digital dialogue and community engagement across all official Al Ahsa Authority social media and service portals.',
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
     color: 'blue',
-    weight: 30,
+    weight: 35,
+    goalId: 'sg-people-1',
     goalCode: 'SG-2.1',
-    goalTitle: 'Digital Dialogue & Stakeholder Interactivity',
-    goalDescription: 'Expand omnichannel digital reach and community feedback mechanisms.',
+    goalTitle: 'Community Participation & Development Strategy Awareness',
+    goalDescription: 'Foster active civic participation, digital dialogue, and widespread community alignment with the Al-Ahsa Development Strategy.',
+    objId: 'so-2-1',
     objCode: '2.1',
     objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
-    sectorId: 'sec-strategy',
+    sectorId: 'sec-ssd',
     sectorName: 'Strategy & Sector Development Sector',
-    department: 'Marketing & Public Relations',
+    department: 'Strategy Development',
     targetYear: 2027,
-    progress: 65,
+    progress: 84,
     objStatus: 'on-track' as const,
     kpiCode: '2.1.2',
-    kpiName: 'Digital Engagement Index with the Authority',
+    kpiName: 'Digital Engagement Index',
+    kpiNameAr: 'مؤشر التفاعل الرقمي مع الهيئة',
     kpiFormula: "Average Results of Engagement Analysis Reports for the Authority's Social Media Platforms",
     kpiBaseline: '2.00%',
     kpiTarget2026: '3.50%',
     kpiTarget2027: '4.00%',
     kpiTarget: 3.5,
-    kpiActual: 2.8,
+    kpiActual: 3.2,
     kpiUnit: '%',
     kpiFrequency: 'Quarterly' as const,
     kpiStatus: 'on-track' as const,
-    keyProject: 'Digital Engagement with the Authority Project',
-    keyMilestone: "Develop the Authority's Digital Content Strategy",
-    initCode: 'INIT-AHA-01',
-    initTitle: 'Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority',
-    initDescription: 'Digital outreach campaigns, social analytics integration, and community feedback surveys.',
-    budgetSAR: 4200000,
-    spentSAR: 2100000,
-    milestoneTitle: "Develop the Authority's Digital Content Strategy",
-    milestoneDate: '2026-09-30',
+    initId: 'init-aha-2',
+    initCode: 'INIT-7',
+    initTitle: 'Initiative 7: Increase community participation in development planning',
+    initDescription: 'Unified civic engagement digital portal enabling citizens to vote on regional ideas, participate in municipal surveys, and empower local community economy.',
+    budgetSAR: 12000000,
+    spentSAR: 7800000,
+    keyMilestone: 'Unified digital community engagement platform (reporting, surveys, voting, dashboard)',
+    keyProject: 'Digital Platforms and Technical Integration for Community Engagement',
+    milestoneTitle: 'Unified digital community engagement platform (reporting, surveys, voting, dashboard)',
+    milestoneDate: '2026-12-15',
   },
   {
-    name: '🗳️ Al-Ahsa 2.1.3: Strategy Awareness Rate',
-    badge: 'Civic Surveys',
+    name: '🗳️ 2.1.3 Awareness of Al-Ahsa Strategy',
+    badge: 'Initiative 6',
+    themeId: 'st-people',
     themeCode: '02',
     themeTitle: '02 People and Society',
-    themeDescription: 'Measure and grow population-wide comprehension of the Al-Ahsa vision and strategic developmental milestones.',
-    color: 'teal',
-    weight: 25,
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
+    color: 'blue',
+    weight: 35,
+    goalId: 'sg-people-1',
     goalCode: 'SG-2.1',
-    goalTitle: 'Public Understanding of Regional Vision',
-    goalDescription: 'Implement continuous public surveys and community dashboard reporting.',
+    goalTitle: 'Community Participation & Development Strategy Awareness',
+    goalDescription: 'Foster active civic participation, digital dialogue, and widespread community alignment with the Al-Ahsa Development Strategy.',
+    objId: 'so-2-1',
     objCode: '2.1',
     objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
     sectorId: 'sec-ppm',
     sectorName: 'Programs & Projects Management Sector',
     department: 'Regional Programs & Projects',
     targetYear: 2027,
-    progress: 40,
+    progress: 84,
     objStatus: 'on-track' as const,
     kpiCode: '2.1.3',
-    kpiName: 'Awareness Rate of the Development Strategy in Al-Ahsa',
+    kpiName: 'Awareness of Al-Ahsa Development Strategy',
+    kpiNameAr: 'مؤشر الوعي باستراتيجية تطوير الأحساء',
     kpiFormula: 'Average Survey Results',
     kpiBaseline: '-',
     kpiTarget2026: '-',
     kpiTarget2027: '40%',
     kpiTarget: 40,
-    kpiActual: 28,
+    kpiActual: 36,
     kpiUnit: '%',
     kpiFrequency: 'Annual' as const,
     kpiStatus: 'on-track' as const,
-    keyProject: 'Digital Platform and Technical Integration for Community Engagement',
-    keyMilestone: 'Build the Unified Digital Platform for Community Engagement Reporting - Surveys - Voting - Dashboards',
-    initCode: 'INIT-AHA-02',
-    initTitle: '7. Enhance Community Participation and Involvement in Preparing Development Plans',
-    initDescription: 'Unified civic engagement digital portal with voting, public consultations, and regional dashboards.',
-    budgetSAR: 12000000,
-    spentSAR: 4800000,
-    milestoneTitle: 'Build the Unified Digital Platform for Community Engagement',
-    milestoneDate: '2026-12-31',
+    initId: 'init-aha-1',
+    initCode: 'INIT-6',
+    initTitle: 'Initiative 6: Raise awareness of the Al-Ahsa Strategy and increase digital engagement',
+    initDescription: 'Comprehensive public awareness campaign, multimedia storytelling of the Al-Ahsa Development Strategy, and active digital engagement channels.',
+    budgetSAR: 8500000,
+    spentSAR: 5200000,
+    keyMilestone: 'Develop community awareness framework',
+    keyProject: 'Al-Ahsa Strategy Awareness Project',
+    milestoneTitle: 'Develop community awareness framework',
+    milestoneDate: '2026-06-30',
   },
   {
-    name: '🌴 Al-Ahsa 2.2.2: Oasis Palm Trees Preservation',
-    badge: 'Heritage & Ecology',
+    name: '🎪 2.1.4 Number of Festival / Show Days',
+    badge: 'Initiative 7',
+    themeId: 'st-people',
     themeCode: '02',
     themeTitle: '02 People and Society',
-    themeDescription: 'Sustain and protect the UNESCO-listed Al-Ahsa agricultural heritage, palm oasis density, and municipal services.',
-    color: 'emerald',
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
+    color: 'blue',
     weight: 35,
+    goalId: 'sg-people-1',
+    goalCode: 'SG-2.1',
+    goalTitle: 'Community Participation & Development Strategy Awareness',
+    goalDescription: 'Foster active civic participation, digital dialogue, and widespread community alignment with the Al-Ahsa Development Strategy.',
+    objId: 'so-2-1',
+    objCode: '2.1',
+    objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+    sectorId: 'sec-ssd',
+    sectorName: 'Strategy & Sector Development Sector',
+    department: 'Tourism Destination Management Office',
+    targetYear: 2027,
+    progress: 84,
+    objStatus: 'on-track' as const,
+    kpiCode: '2.1.4',
+    kpiName: 'Number of Festival / Show Days',
+    kpiNameAr: 'عدد أيام إقامة المهرجانات والفعاليات',
+    kpiFormula: 'Total Number of Days Festivals and Shows Are Held',
+    kpiBaseline: '70',
+    kpiTarget2026: '73',
+    kpiTarget2027: '75',
+    kpiTarget: 73,
+    kpiActual: 71,
+    kpiUnit: 'Days',
+    kpiFrequency: 'Annual' as const,
+    kpiStatus: 'on-track' as const,
+    initId: 'init-aha-2',
+    initCode: 'INIT-7',
+    initTitle: 'Initiative 7: Increase community participation in development planning',
+    initDescription: 'Unified civic engagement digital portal enabling citizens to vote on regional ideas, participate in municipal surveys, and empower local community economy.',
+    budgetSAR: 12000000,
+    spentSAR: 7800000,
+    keyMilestone: 'Support Local Initiatives and the Community Economy',
+    keyProject: 'Community Empowerment, Events and Impact Project',
+    milestoneTitle: 'Support Local Initiatives and the Community Economy',
+    milestoneDate: '2027-03-31',
+  },
+  {
+    name: "🏡 2.2.1 Residents' Satisfaction Index",
+    badge: 'Initiative 8',
+    themeId: 'st-people',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
+    color: 'blue',
+    weight: 35,
+    goalId: 'sg-people-2',
     goalCode: 'SG-2.2',
-    goalTitle: 'Oasis Ecological Heritage & Quality of Life',
-    goalDescription: 'Sustain oasis palm tree population and expand urban environmental services across Al-Ahsa.',
+    goalTitle: 'Quality of Life & Community Services Elevation',
+    goalDescription: 'Support regional partner entities to enhance municipal service delivery, residents satisfaction, and environmental oasis preservation.',
+    objId: 'so-2-2',
     objCode: '2.2',
     objTitle: '2.2 Support Entities in Improving Quality of Life and Enhancing Services Provided to the Community',
     sectorId: 'sec-sud',
     sectorName: 'Spatial & Urban Development Sector',
-    department: 'Urban & Rural Planning',
+    department: 'Urban Observatory',
     targetYear: 2027,
-    progress: 90,
+    progress: 79,
     objStatus: 'on-track' as const,
+    kpiCode: '2.2.1',
+    kpiName: "Residents' Satisfaction Index",
+    kpiNameAr: 'مؤشر رضا السكان',
+    kpiFormula: 'Customer Satisfaction Index (CSI) from Urban Observatory Surveys',
+    kpiBaseline: '-',
+    kpiTarget2026: '-',
+    kpiTarget2027: '50%',
+    kpiTarget: 50,
+    kpiActual: 46,
+    kpiUnit: '%',
+    kpiFrequency: 'Annual' as const,
+    kpiStatus: 'on-track' as const,
+    initId: 'init-aha-3',
+    initCode: 'INIT-8',
+    initTitle: 'Initiative 8: Enhance and Improve Quality of Life in Al-Ahsa',
+    initDescription: 'Al-Ahsa Quality of Life framework alignment with the national Vision 2030 Quality of Life Program, inter-agency integration, and UNESCO oasis date palm preservation.',
+    budgetSAR: 16500000,
+    spentSAR: 11400000,
+    keyMilestone: 'Quality of Life Indicators Framework and Monitoring Dashboard',
+    keyProject: 'Quality of Life Improvement Project',
+    milestoneTitle: 'Quality of Life Indicators Framework and Monitoring Dashboard',
+    milestoneDate: '2026-08-31',
+  },
+  {
+    name: '🌴 2.2.2 Number of Palm Trees in Oasis',
+    badge: 'Initiative 8',
+    themeId: 'st-people',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
+    color: 'emerald',
+    weight: 35,
+    goalId: 'sg-people-2',
+    goalCode: 'SG-2.2',
+    goalTitle: 'Quality of Life & Community Services Elevation',
+    goalDescription: 'Support regional partner entities to enhance municipal service delivery, residents satisfaction, and environmental oasis preservation.',
+    objId: 'so-2-2',
+    objCode: '2.2',
+    objTitle: '2.2 Support Entities in Improving Quality of Life and Enhancing Services Provided to the Community',
+    sectorId: 'sec-sud',
+    sectorName: 'Spatial & Urban Development Sector',
+    department: 'Urban Observatory',
+    targetYear: 2027,
+    progress: 79,
+    objStatus: 'achieved' as const,
     kpiCode: '2.2.2',
     kpiName: 'Number of Palm Trees within the Oasis',
+    kpiNameAr: 'عدد أشجار النخيل داخل الواحة',
     kpiFormula: 'Total Number of Palm Trees (in Millions)',
-    kpiBaseline: '2.5',
-    kpiTarget2026: '2.5',
-    kpiTarget2027: '2.5',
+    kpiBaseline: '2.5M',
+    kpiTarget2026: '2.5M',
+    kpiTarget2027: '2.5M',
     kpiTarget: 2.5,
     kpiActual: 2.5,
     kpiUnit: 'M Trees',
     kpiFrequency: 'Annual' as const,
     kpiStatus: 'achieved' as const,
+    initId: 'init-aha-3',
+    initCode: 'INIT-8',
+    initTitle: 'Initiative 8: Enhance and Improve Quality of Life in Al-Ahsa',
+    initDescription: 'Al-Ahsa Quality of Life framework alignment with the national Vision 2030 Quality of Life Program, inter-agency integration, and UNESCO oasis date palm preservation.',
+    budgetSAR: 16500000,
+    spentSAR: 11400000,
+    keyMilestone: 'Quality of Life Indicators Framework and Monitoring Dashboard',
     keyProject: 'Quality of Life Improvement Project',
-    keyMilestone: 'Develop a Quality of Life Indicators Framework for Al-Ahsa, Aligned with the Quality of Life Program',
-    initCode: 'INIT-AHA-03',
-    initTitle: '8. Enhance and Improve Quality of Life in Al-Ahsa',
-    initDescription: 'Ecosystem protection, municipal park expansions, and agricultural irrigation support for the historic oasis.',
-    budgetSAR: 22000000,
-    spentSAR: 14500000,
-    milestoneTitle: 'Quality of Life Indicators Framework Delivery',
-    milestoneDate: '2026-11-30',
-  },
-  {
-    name: '🎪 Al-Ahsa 2.1.4: Festivals & Shows Count',
-    badge: 'Events & Culture',
-    themeCode: '02',
-    themeTitle: '02 People and Society',
-    themeDescription: 'Promote cultural vitality, civic gatherings, and tourism experiences across Al-Ahsa regional venues.',
-    color: 'amber',
-    weight: 25,
-    goalCode: 'SG-2.1',
-    goalTitle: 'Cultural Vibrancy & Event Staging',
-    goalDescription: 'Organize high-impact cultural festivals and community events in the oasis.',
-    objCode: '2.1',
-    objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
-    sectorId: 'sec-strategy',
-    sectorName: 'Strategy & Sector Development Sector',
-    department: 'Tourism Destination Management Office',
-    targetYear: 2027,
-    progress: 82,
-    objStatus: 'on-track' as const,
-    kpiCode: '2.1.4',
-    kpiName: 'Number of Days Festivals and Shows Are Held',
-    kpiFormula: 'Total Number of Days Festivals and Shows Are Held',
-    kpiBaseline: '70',
-    kpiTarget2026: '73',
-    kpiTarget2027: '75',
-    kpiTarget: 75,
-    kpiActual: 72,
-    kpiUnit: 'Days',
-    kpiFrequency: 'Annual' as const,
-    kpiStatus: 'on-track' as const,
-    keyProject: 'Community Empowerment, Events and Impact Project',
-    keyMilestone: 'Support Local Initiatives and the Community Economy',
-    initCode: 'INIT-AHA-02',
-    initTitle: '7. Enhance Community Participation and Involvement in Preparing Development Plans',
-    initDescription: 'Staging festivals, cultural showcases, and heritage activation across historic districts.',
-    budgetSAR: 9500000,
-    spentSAR: 6200000,
-    milestoneTitle: 'Annual Festivals & Cultural Calendar Launch',
-    milestoneDate: '2026-10-15',
-  },
-  {
-    name: '🤖 AI & Autonomous Digital Core',
-    badge: 'Smart Governance',
-    themeCode: 'ST-05',
-    themeTitle: 'Artificial Intelligence & Intelligent Digital Core',
-    themeDescription: 'Modernize enterprise IT backbone with agentic AI workflows, automated telemetry, and cognitive operations.',
-    color: 'indigo',
-    weight: 25,
-    goalCode: 'SG-5.1',
-    goalTitle: 'Accelerate Enterprise Automation and Cloud-Native Resilience',
-    goalDescription: 'Transition critical enterprise pipelines to autonomous event-driven processing and cloud automation.',
-    objCode: 'OBJ-501',
-    objTitle: 'Deploy Enterprise Generative AI Workflows across 12 Business Units',
-    sectorId: 'sec-ss',
-    sectorName: 'Support Services Sector',
-    department: 'Information Technology',
-    targetYear: 2027,
-    progress: 20,
-    objStatus: 'on-track' as const,
-    kpiCode: 'KPI-501',
-    kpiName: 'Autonomous Workflow Adoption Rate',
-    kpiFormula: '(Automated Workflows / Total Workflows) * 100%',
-    kpiBaseline: '15%',
-    kpiTarget2026: '60%',
-    kpiTarget2027: '95%',
-    kpiTarget: 95,
-    kpiActual: 38,
-    kpiUnit: '%',
-    kpiFrequency: 'Quarterly' as const,
-    kpiStatus: 'on-track' as const,
-    keyProject: 'AI Core Infrastructure Project',
-    keyMilestone: 'Deploy Multi-Agent Telemetry Across 12 Units',
-    initCode: 'INIT-05',
-    initTitle: 'Enterprise Cognitive Platform & Agentic Automation Rollout',
-    initDescription: 'Deploy scalable multi-agent microservices and LLM-assisted knowledge management infrastructure.',
-    budgetSAR: 18500000,
-    spentSAR: 3200000,
-    milestoneTitle: 'Cognitive Architecture Blueprint & Vendor Sign-off',
-    milestoneDate: '2026-11-30',
+    milestoneTitle: 'Quality of Life Indicators Framework and Monitoring Dashboard',
+    milestoneDate: '2026-08-31',
   },
 ];
 
 export const CreateStrategyPage: React.FC = () => {
   const navigate = useNavigate();
-  const { themes, addStrategy, currentUser } = useApp();
+  const [searchParams] = useSearchParams();
+  const { themes, goals, objectives, initiatives, addStrategy, currentUser } = useApp();
 
-  const nextThemeNum = themes.length + 1;
-  const defaultThemeCode = `02`;
-  const defaultGoalCode = `SG-${nextThemeNum}.1`;
-  const defaultObjCode = `2.1`;
-  const defaultKpiCode = `2.1.1`;
-  const defaultInitCode = `INIT-AHA-01`;
+  // Mode toggles: 'existing' vs 'new'
+  const [pillarMode, setPillarMode] = useState<'existing' | 'new'>('existing');
+  const [goalMode, setGoalMode] = useState<'existing' | 'new'>('existing');
+  const [objectiveMode, setObjectiveMode] = useState<'existing' | 'new'>('existing');
+  const [initiativeMode, setInitiativeMode] = useState<'existing' | 'new'>('existing');
+
+  // Selected Entity IDs
+  const defaultTheme = themes.find((t) => t.code === '02' || t.id === 'st-people') || themes[0];
+  const [selectedThemeId, setSelectedThemeId] = useState<string>(defaultTheme?.id || '');
+
+  // Filtered goals for the selected pillar
+  const availableGoals = goals.filter((g) => g.themeId === selectedThemeId);
+  const [selectedGoalId, setSelectedGoalId] = useState<string>(availableGoals[0]?.id || '');
+
+  // Filtered objectives for the selected goal or pillar
+  const availableObjectives = objectives.filter(
+    (o) => o.themeId === selectedThemeId || (selectedGoalId && o.goalId === selectedGoalId)
+  );
+  const [selectedObjectiveId, setSelectedObjectiveId] = useState<string>(availableObjectives[0]?.id || '');
+
+  // Filtered initiatives for the selected objective
+  const availableInitiatives = initiatives.filter(
+    (i) => i.objectiveId === selectedObjectiveId
+  );
+  const displayInitiatives = availableInitiatives.length > 0 ? availableInitiatives : initiatives;
+  const [selectedInitiativeId, setSelectedInitiativeId] = useState<string>(displayInitiatives[0]?.id || '');
+
+  // Custom project/milestone mode within existing initiative
+  const [projectPickerMode, setProjectPickerMode] = useState<'select' | 'custom'>('select');
+  const [milestonePickerMode, setMilestonePickerMode] = useState<'select' | 'custom'>('select');
 
   // Form states - Core Theme & Goal
-  const [themeCode, setThemeCode] = useState(defaultThemeCode);
-  const [themeTitle, setThemeTitle] = useState('02 People and Society');
+  const [themeCode, setThemeCode] = useState(defaultTheme?.code || '02');
+  const [themeTitle, setThemeTitle] = useState(defaultTheme?.title || '02 People and Society');
   const [themeDescription, setThemeDescription] = useState(
-    'Enhance community participation, civic awareness of the development strategy, and improve quality of life and oasis services.'
+    defaultTheme?.description ||
+      'Empower community participation, civic awareness of the development strategy, and improve quality of life and oasis services.'
   );
-  const [themeColor, setThemeColor] = useState('emerald');
-  const [themeWeight, setThemeWeight] = useState(35);
+  const [themeColor, setThemeColor] = useState(defaultTheme?.color || 'blue');
+  const [themeWeight, setThemeWeight] = useState(defaultTheme?.weight || 35);
 
-  const [goalCode, setGoalCode] = useState('SG-2.1');
-  const [goalTitle, setGoalTitle] = useState('Community Participation & Development Strategy Awareness');
-  const [goalDescription, setGoalDescription] = useState('Foster active civic participation and widespread community alignment.');
+  const [goalCode, setGoalCode] = useState(availableGoals[0]?.code || 'SG-2.1');
+  const [goalTitle, setGoalTitle] = useState(availableGoals[0]?.title || 'Community Participation & Development Strategy Awareness');
+  const [goalDescription, setGoalDescription] = useState(availableGoals[0]?.description || 'Foster active civic participation and widespread community alignment.');
 
   // Objective & Sector Cascading
-  const [objCode, setObjCode] = useState('2.1');
-  const [objTitle, setObjTitle] = useState('2.1 Enhance Community Participation and Awareness of the Development Strategy');
-  const [objOwner, setObjOwner] = useState(currentUser.name);
-  const [sectorId, setSectorId] = useState('sec-strategy');
-  const [sectorName, setSectorName] = useState('Strategy & Sector Development Sector');
-  const [objDept, setObjDept] = useState('Strategy Development');
-  const [targetYear, setTargetYear] = useState(2027);
-  const [objProgress, setObjProgress] = useState(75);
-  const [objStatus, setObjStatus] = useState<'on-track' | 'at-risk' | 'behind' | 'achieved'>('on-track');
+  const [objCode, setObjCode] = useState(availableObjectives[0]?.code || '2.1');
+  const [objTitle, setObjTitle] = useState(
+    availableObjectives[0]?.title || '2.1 Enhance Community Participation and Awareness of the Development Strategy'
+  );
+  const [objOwner, setObjOwner] = useState(availableObjectives[0]?.owner || currentUser.name);
+  const [sectorId, setSectorId] = useState(availableObjectives[0]?.sectorId || 'sec-ssd');
+  const [sectorName, setSectorName] = useState(availableObjectives[0]?.sectorName || 'Strategy & Sector Development Sector');
+  const [objDept, setObjDept] = useState(availableObjectives[0]?.department || 'Strategy Development');
+  const [targetYear, setTargetYear] = useState(availableObjectives[0]?.targetYear || 2027);
+  const [objProgress, setObjProgress] = useState(availableObjectives[0]?.progress || 84);
+  const [objStatus, setObjStatus] = useState<'on-track' | 'at-risk' | 'behind' | 'achieved'>(
+    availableObjectives[0]?.status || 'on-track'
+  );
 
   // KPI & Matrix Mathematical Specification
   const [kpiCode, setKpiCode] = useState('2.1.1');
-  const [kpiName, setKpiName] = useState('Percentage Increase in the Number of Event Visitors');
+  const [kpiName, setKpiName] = useState('Event Visitor Indicator');
+  const [kpiNameAr, setKpiNameAr] = useState('مؤشر زوار الفعاليات');
   const [kpiFormula, setKpiFormula] = useState('(Total Actual Event Visitors - Total Targeted Visitors) * 100%');
   const [kpiBaseline, setKpiBaseline] = useState<string | number>('-');
   const [kpiTarget2026, setKpiTarget2026] = useState<string | number>('75%');
-  const [kpiTarget2027, setKpiTarget2027] = useState<string | number>('85%');
+  const [kpiTarget2027, setKpiTarget2027] = useState<string | number>('80%');
   const [kpiTarget, setKpiTarget] = useState(75);
-  const [kpiActual, setKpiActual] = useState(72);
+  const [kpiActual, setKpiActual] = useState(74);
   const [kpiUnit, setKpiUnit] = useState('%');
   const [kpiFrequency, setKpiFrequency] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Annual');
   const [kpiStatus, setKpiStatus] = useState<'on-track' | 'warning' | 'critical' | 'achieved'>('on-track');
   const [keyProject, setKeyProject] = useState('Al-Ahsa Strategy Awareness Project');
-  const [keyMilestone, setKeyMilestone] = useState('Develop the General Framework for Community Awareness of the Al-Ahsa Strategy');
+  const [keyMilestone, setKeyMilestone] = useState('Develop community awareness framework');
   const [pillarCode, setPillarCode] = useState('02');
 
   // Initiative & Budget
-  const [initCode, setInitCode] = useState(defaultInitCode);
-  const [initTitle, setInitTitle] = useState('Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority');
-  const [initDescription, setInitDescription] = useState('Comprehensive public awareness campaign and active digital engagement channels.');
-  const [budgetSAR, setBudgetSAR] = useState(8500000);
-  const [spentSAR, setSpentSAR] = useState(5200000);
-  const [startDate, setStartDate] = useState('2026-01-01');
-  const [endDate, setEndDate] = useState('2027-12-31');
-  const [milestoneTitle, setMilestoneTitle] = useState('Develop the General Framework for Community Awareness of the Al-Ahsa Strategy');
+  const [initCode, setInitCode] = useState(displayInitiatives[0]?.code || 'INIT-6');
+  const [initTitle, setInitTitle] = useState(
+    displayInitiatives[0]?.title || 'Initiative 6: Raise awareness of the Al-Ahsa Strategy and increase digital engagement'
+  );
+  const [initDescription, setInitDescription] = useState(
+    displayInitiatives[0]?.description ||
+      'Comprehensive public awareness campaign, multimedia storytelling of the Al-Ahsa Development Strategy, and active digital engagement channels.'
+  );
+  const [budgetSAR, setBudgetSAR] = useState(displayInitiatives[0]?.budgetSAR || 8500000);
+  const [spentSAR, setSpentSAR] = useState(displayInitiatives[0]?.spentSAR || 5200000);
+  const [startDate, setStartDate] = useState('2025-01-01');
+  const [endDate, setEndDate] = useState('2026-12-31');
+  const [milestoneTitle, setMilestoneTitle] = useState('Develop community awareness framework');
   const [milestoneDueDate, setMilestoneDueDate] = useState('2026-06-30');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Sync when Pillar changes in existing mode
+  const handlePillarChange = (themeId: string) => {
+    setSelectedThemeId(themeId);
+    const chosenTheme = themes.find((t) => t.id === themeId);
+    if (chosenTheme) {
+      setThemeCode(chosenTheme.code);
+      setThemeTitle(chosenTheme.title);
+      setThemeDescription(chosenTheme.description);
+      setThemeColor(chosenTheme.color);
+      setThemeWeight(chosenTheme.weight);
+      setPillarCode(chosenTheme.code);
+
+      // Auto update nested goals
+      const goalsForTheme = goals.filter((g) => g.themeId === themeId);
+      const firstGoal = goalsForTheme[0];
+      if (firstGoal) {
+        setSelectedGoalId(firstGoal.id);
+        setGoalCode(firstGoal.code);
+        setGoalTitle(firstGoal.title);
+        setGoalDescription(firstGoal.description || '');
+      }
+
+      // Auto update nested objectives
+      const objsForTheme = objectives.filter((o) => o.themeId === themeId);
+      const firstObj = objsForTheme[0];
+      if (firstObj) {
+        handleObjectiveChange(firstObj.id);
+      }
+    }
+  };
+
+  // Sync when Goal changes in existing mode
+  const handleGoalChange = (gId: string) => {
+    setSelectedGoalId(gId);
+    const chosenGoal = goals.find((g) => g.id === gId);
+    if (chosenGoal) {
+      setGoalCode(chosenGoal.code);
+      setGoalTitle(chosenGoal.title);
+      setGoalDescription(chosenGoal.description || '');
+
+      // Filter objectives under this goal
+      const objsForGoal = objectives.filter((o) => o.goalId === gId);
+      const firstObj = objsForGoal[0];
+      if (firstObj) {
+        handleObjectiveChange(firstObj.id);
+      }
+    }
+  };
+
+  // Sync when Objective changes in existing mode
+  const handleObjectiveChange = (oId: string) => {
+    setSelectedObjectiveId(oId);
+    const chosenObj = objectives.find((o) => o.id === oId);
+    if (chosenObj) {
+      setObjCode(chosenObj.code);
+      setObjTitle(chosenObj.title);
+      setObjOwner(chosenObj.owner);
+      setObjDept(chosenObj.department);
+      if (chosenObj.sectorId) setSectorId(chosenObj.sectorId);
+      if (chosenObj.sectorName) setSectorName(chosenObj.sectorName);
+      if (chosenObj.targetYear) setTargetYear(chosenObj.targetYear);
+      if (chosenObj.progress !== undefined) setObjProgress(chosenObj.progress);
+      if (chosenObj.status) setObjStatus(chosenObj.status);
+
+      // Update available initiatives for this objective
+      const initsForObj = initiatives.filter((i) => i.objectiveId === oId);
+      const firstInit = initsForObj[0];
+      if (firstInit) {
+        handleInitiativeChange(firstInit.id);
+      }
+    }
+  };
+
+  // Sync when Initiative changes in existing mode
+  const handleInitiativeChange = (iId: string) => {
+    setSelectedInitiativeId(iId);
+    const chosenInit = initiatives.find((i) => i.id === iId);
+    if (chosenInit) {
+      setInitCode(chosenInit.code);
+      setInitTitle(chosenInit.title);
+      setInitDescription(chosenInit.description || '');
+      setBudgetSAR(chosenInit.budgetSAR || 5000000);
+      setSpentSAR(chosenInit.spentSAR || 1000000);
+      if (chosenInit.startDate) setStartDate(chosenInit.startDate);
+      if (chosenInit.endDate) setEndDate(chosenInit.endDate);
+
+      // Populate default project and milestone from this initiative
+      if (chosenInit.keyProjects && chosenInit.keyProjects.length > 0 && chosenInit.keyProjects[0]) {
+        setKeyProject(chosenInit.keyProjects[0]);
+      }
+      if (chosenInit.milestones && chosenInit.milestones.length > 0 && chosenInit.milestones[0]) {
+        setKeyMilestone(chosenInit.milestones[0].title);
+        setMilestoneTitle(chosenInit.milestones[0].title);
+        setMilestoneDueDate(chosenInit.milestones[0].dueDate);
+      }
+    }
+  };
+
+  const selectedInitiativeObj = initiatives.find((i) => i.id === selectedInitiativeId);
+
   const applyPreset = (preset: typeof PRESETS[0]) => {
-    setThemeCode(preset.themeCode || defaultThemeCode);
+    // Set modes
+    setPillarMode('existing');
+    setGoalMode('existing');
+    setObjectiveMode('existing');
+    setInitiativeMode('existing');
+
+    if (preset.themeId) setSelectedThemeId(preset.themeId);
+    if (preset.goalId) setSelectedGoalId(preset.goalId);
+    if (preset.objId) setSelectedObjectiveId(preset.objId);
+    if (preset.initId) setSelectedInitiativeId(preset.initId);
+
+    setThemeCode(preset.themeCode || '02');
     setThemeTitle(preset.themeTitle);
     setThemeDescription(preset.themeDescription);
     setThemeColor(preset.color);
     setThemeWeight(preset.weight);
-    setGoalCode(preset.goalCode || defaultGoalCode);
+    setGoalCode(preset.goalCode);
     setGoalTitle(preset.goalTitle);
     setGoalDescription(preset.goalDescription);
-    setObjCode(preset.objCode || defaultObjCode);
+    setObjCode(preset.objCode);
     setObjTitle(preset.objTitle);
-    setSectorId(preset.sectorId || 'sec-strategy');
-    setSectorName(preset.sectorName || 'Strategy & Sector Development Sector');
+    setSectorId(preset.sectorId);
+    setSectorName(preset.sectorName);
     setObjDept(preset.department);
     setTargetYear(preset.targetYear);
     setObjProgress(preset.progress);
     setObjStatus(preset.objStatus);
-    setKpiCode(preset.kpiCode || defaultKpiCode);
+    setKpiCode(preset.kpiCode);
     setKpiName(preset.kpiName);
-    setKpiFormula(preset.kpiFormula || '');
-    setKpiBaseline(preset.kpiBaseline !== undefined ? preset.kpiBaseline : '-');
-    setKpiTarget2026(preset.kpiTarget2026 !== undefined ? preset.kpiTarget2026 : `${preset.kpiTarget}${preset.kpiUnit}`);
-    setKpiTarget2027(preset.kpiTarget2027 !== undefined ? preset.kpiTarget2027 : `${preset.kpiTarget}${preset.kpiUnit}`);
-    setKeyProject(preset.keyProject || '');
-    setKeyMilestone(preset.keyMilestone || '');
+    setKpiNameAr(preset.kpiNameAr || '');
+    setKpiFormula(preset.kpiFormula);
+    setKpiBaseline(preset.kpiBaseline);
+    setKpiTarget2026(preset.kpiTarget2026);
+    setKpiTarget2027(preset.kpiTarget2027);
+    setKeyProject(preset.keyProject);
+    setKeyMilestone(preset.keyMilestone);
     setPillarCode(preset.themeCode || '02');
     setKpiTarget(preset.kpiTarget);
     setKpiActual(preset.kpiActual);
     setKpiUnit(preset.kpiUnit);
     setKpiFrequency(preset.kpiFrequency);
     setKpiStatus(preset.kpiStatus);
-    setInitCode(preset.initCode || defaultInitCode);
+    setInitCode(preset.initCode);
     setInitTitle(preset.initTitle);
     setInitDescription(preset.initDescription);
     setBudgetSAR(preset.budgetSAR);
@@ -395,20 +578,24 @@ export const CreateStrategyPage: React.FC = () => {
 
     try {
       addStrategy({
+        selectedThemeId: pillarMode === 'existing' ? selectedThemeId : undefined,
+        selectedGoalId: goalMode === 'existing' ? selectedGoalId : undefined,
+        selectedObjectiveId: objectiveMode === 'existing' ? selectedObjectiveId : undefined,
+        selectedInitiativeId: initiativeMode === 'existing' ? selectedInitiativeId : undefined,
         theme: {
-          code: themeCode.trim() || defaultThemeCode,
+          code: themeCode.trim() || '02',
           title: themeTitle.trim(),
           description: themeDescription.trim(),
           color: themeColor,
           weight: Number(themeWeight),
         },
         goal: {
-          code: goalCode.trim() || defaultGoalCode,
+          code: goalCode.trim() || 'SG-2.1',
           title: goalTitle.trim(),
           description: goalDescription.trim(),
         },
         objective: {
-          code: objCode.trim() || defaultObjCode,
+          code: objCode.trim() || '2.1',
           title: objTitle.trim(),
           owner: objOwner.trim() || currentUser.name,
           department: objDept,
@@ -420,7 +607,7 @@ export const CreateStrategyPage: React.FC = () => {
         },
         kpi: kpiName.trim()
           ? {
-              code: kpiCode.trim() || defaultKpiCode,
+              code: kpiCode.trim() || '2.1.1',
               name: kpiName.trim(),
               unit: kpiUnit.trim() || '%',
               target: Number(kpiTarget),
@@ -440,7 +627,7 @@ export const CreateStrategyPage: React.FC = () => {
           : undefined,
         initiative: initTitle.trim()
           ? {
-              code: initCode.trim() || defaultInitCode,
+              code: initCode.trim() || 'INIT-6',
               title: initTitle.trim(),
               description: initDescription.trim(),
               owner: objOwner,
@@ -450,7 +637,7 @@ export const CreateStrategyPage: React.FC = () => {
               progress: Number(objProgress),
               startDate,
               endDate,
-              status: 'Planning',
+              status: 'In Progress',
               milestones: [
                 {
                   title: milestoneTitle.trim() || 'Core Deliverable Approval',
@@ -458,6 +645,7 @@ export const CreateStrategyPage: React.FC = () => {
                   status: 'In Progress',
                 },
               ],
+              keyProjects: keyProject.trim() ? [keyProject.trim()] : undefined,
             }
           : undefined,
       });
@@ -486,13 +674,13 @@ export const CreateStrategyPage: React.FC = () => {
               <span>Strategy Architecture</span>
             </Link>
             <span className="text-slate-300">/</span>
-            <span className="font-bold uppercase">Dynamic Strategy Formulation</span>
+            <span className="font-bold uppercase">AHDA Cascading Formulation</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Create New Strategic Pillar & Objectives
+            Strategic Performance & Initiative Formulation
           </h1>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-            Configure an institutional strategy pillar, nested alignment goal, actionable target objective, measurable KPI indicator, and tactical initiative.
+            Execute the 1-to-many cascading model: Link new or existing Strategic Pillars, Objectives, Multi-Year KPIs (2026/2027), and Strategic Initiatives with deliverables and projects.
           </p>
         </div>
 
@@ -510,21 +698,21 @@ export const CreateStrategyPage: React.FC = () => {
             className="inline-flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
           >
             <Plus className="w-4 h-4" />
-            <span>{isSubmitting ? 'Creating Strategy...' : 'Save & Deploy Strategy'}</span>
+            <span>{isSubmitting ? 'Deploying Strategy...' : 'Save & Cascade Strategy'}</span>
           </button>
         </div>
       </div>
 
-      {/* Preset Strategy Templates Banner */}
+      {/* Preset Strategy Templates Banner (from AHDA Diagram) */}
       <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-slate-50 p-4 rounded-2xl border border-blue-100 shadow-2xs">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2 text-xs font-bold text-blue-900">
             <Sparkles className="w-4 h-4 text-blue-600" />
-            <span>Instant Demo Presets: Auto-Populate Strategic Templates</span>
+            <span>AHDA Strategic Model Benchmarks (Click to load diagram preset)</span>
           </div>
-          <span className="text-[11px] font-mono text-blue-600">Click to instantly populate full hierarchy</span>
+          <span className="text-[11px] font-mono text-blue-600">6 Verified KPIs & Initiatives</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-1">
           {PRESETS.map((p, idx) => (
             <button
               key={idx}
@@ -532,17 +720,19 @@ export const CreateStrategyPage: React.FC = () => {
               onClick={() => applyPreset(p)}
               className="p-2.5 bg-white/90 hover:bg-white border border-blue-200/70 hover:border-blue-400 rounded-xl text-left text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
             >
-              <div className="font-semibold text-slate-800 group-hover:text-blue-700 transition-colors flex items-center justify-between">
-                <span>{p.name}</span>
-                <Sparkles className="w-3 h-3 text-slate-400 group-hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center justify-between font-semibold text-slate-800 group-hover:text-blue-700 transition-colors">
+                <span className="truncate">{p.name}</span>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 shrink-0 ml-1">
+                  {p.badge}
+                </span>
               </div>
-              <div className="text-[10px] text-slate-500 mt-1 line-clamp-1">{p.goalTitle}</div>
+              <div className="text-[10px] text-slate-500 mt-1 line-clamp-1">{p.keyProject}</div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Main Grid: Form (2 Cols on left) + Live Preview (1 Col on right) */}
+      {/* Main Grid: Form (7 cols) + Live Preview (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Form Area */}
         <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6">
@@ -558,96 +748,155 @@ export const CreateStrategyPage: React.FC = () => {
                   <p className="text-[11px] text-slate-500">Core organizational vision pillar & executive priority</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                Level 1: Pillar
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Pillar Code <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={themeCode}
-                  onChange={(e) => {
-                    setThemeCode(e.target.value);
-                    setPillarCode(e.target.value);
+              
+              {/* Segmented Mode Selector */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setPillarMode('existing')}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    pillarMode === 'existing' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Select Existing Pillar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPillarMode('new');
+                    setSelectedThemeId('');
                   }}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. 02"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Pillar Title <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={themeTitle}
-                  onChange={(e) => setThemeTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Artificial Intelligence & Cognitive Transformation"
-                />
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    pillarMode === 'new' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  + Create New Pillar
+                </button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Executive Pillar Description & Strategic Scope <span className="text-rose-500">*</span>
-              </label>
-              <textarea
-                required
-                rows={2}
-                value={themeDescription}
-                onChange={(e) => setThemeDescription(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                placeholder="Describe the long-term impact and organizational intent..."
-              />
-            </div>
+            {pillarMode === 'existing' ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Choose Strategic Pillar from Register
+                  </label>
+                  <select
+                    value={selectedThemeId}
+                    onChange={(e) => handlePillarChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  >
+                    {themes.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.code} — {t.title} ({t.weight}% weight)
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Theme Accent Color
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {COLOR_OPTIONS.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => setThemeColor(c.id)}
-                      className={`w-7 h-7 rounded-lg ${c.bg} transition-all cursor-pointer flex items-center justify-center text-white ${
-                        themeColor === c.id ? 'ring-2 ring-offset-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100'
-                      }`}
-                      title={c.name}
-                    >
-                      {themeColor === c.id && <CheckCircle2 className="w-3.5 h-3.5" />}
-                    </button>
-                  ))}
+                {/* Selected Pillar Summary Badge */}
+                <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-200/60 flex items-start justify-between gap-3 text-xs">
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white text-[11px]">
+                        {themeCode}
+                      </span>
+                      <span className="font-bold text-slate-900">{themeTitle}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 mt-1">{themeDescription}</p>
+                  </div>
+                  <span className="text-[10px] font-mono font-semibold text-blue-800 bg-white px-2 py-0.5 rounded border border-blue-200 shrink-0">
+                    Weight: {themeWeight}%
+                  </span>
                 </div>
               </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Pillar Code <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={themeCode}
+                      onChange={(e) => {
+                        setThemeCode(e.target.value);
+                        setPillarCode(e.target.value);
+                      }}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                      placeholder="e.g. 05"
+                    />
+                  </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-700">Strategic Weight: {themeWeight}%</label>
-                  <span className="text-[10px] text-slate-400 font-mono">Relative Priority</span>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Pillar Title <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={themeTitle}
+                      onChange={(e) => setThemeTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                      placeholder="e.g. Environmental Sustainability & Smart Oasis"
+                    />
+                  </div>
                 </div>
-                <input
-                  type="range"
-                  min="5"
-                  max="50"
-                  step="5"
-                  value={themeWeight}
-                  onChange={(e) => setThemeWeight(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer mt-1"
-                />
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Executive Pillar Description & Strategic Scope <span className="text-rose-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={2}
+                    value={themeDescription}
+                    onChange={(e) => setThemeDescription(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    placeholder="Describe the long-term impact and institutional mandate..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Theme Accent Color</label>
+                    <div className="flex flex-wrap gap-2">
+                      {COLOR_OPTIONS.map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => setThemeColor(c.id)}
+                          className={`w-7 h-7 rounded-lg ${c.bg} transition-all cursor-pointer flex items-center justify-center text-white ${
+                            themeColor === c.id ? 'ring-2 ring-offset-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100'
+                          }`}
+                          title={c.name}
+                        >
+                          {themeColor === c.id && <CheckCircle2 className="w-3.5 h-3.5" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold text-slate-700">Strategic Weight: {themeWeight}%</label>
+                      <span className="text-[10px] text-slate-400 font-mono">Relative Priority</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="5"
+                      max="50"
+                      step="5"
+                      value={themeWeight}
+                      onChange={(e) => setThemeWeight(Number(e.target.value))}
+                      className="w-full accent-blue-600 cursor-pointer mt-1"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Card 2: Strategic Goal */}
@@ -662,49 +911,107 @@ export const CreateStrategyPage: React.FC = () => {
                   <p className="text-[11px] text-slate-500">Milestone objective nested under the strategic pillar</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-                Level 2: Goal
-              </span>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Goal Code</label>
-                <input
-                  type="text"
-                  required
-                  value={goalCode}
-                  onChange={(e) => setGoalCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. SG-5.1"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Goal Title <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={goalTitle}
-                  onChange={(e) => setGoalTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Modernize Enterprise Telemetry and Incident Routing"
-                />
+              {/* Segmented Mode Selector */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setGoalMode('existing')}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    goalMode === 'existing' ? 'bg-white text-teal-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Select Existing Goal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGoalMode('new');
+                    setSelectedGoalId('');
+                  }}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    goalMode === 'new' ? 'bg-white text-teal-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  + Create New Goal
+                </button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Goal Alignment Summary</label>
-              <input
-                type="text"
-                value={goalDescription}
-                onChange={(e) => setGoalDescription(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                placeholder="Brief description of desired institutional outcome..."
-              />
-            </div>
+            {goalMode === 'existing' ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Choose Existing Goal Under Pillar {themeCode}
+                  </label>
+                  <select
+                    value={selectedGoalId}
+                    onChange={(e) => handleGoalChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-600 cursor-pointer"
+                  >
+                    {availableGoals.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.code} — {g.title}
+                      </option>
+                    ))}
+                    {availableGoals.length === 0 && (
+                      <option value="">No existing goals under this pillar</option>
+                    )}
+                  </select>
+                </div>
+
+                <div className="p-3 bg-teal-50/50 rounded-xl border border-teal-200/60 text-xs">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-teal-600 text-white text-[11px]">
+                      {goalCode}
+                    </span>
+                    <span className="font-bold text-slate-900">{goalTitle}</span>
+                  </div>
+                  {goalDescription && <p className="text-[11px] text-slate-600 mt-1">{goalDescription}</p>}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Goal Code</label>
+                    <input
+                      type="text"
+                      required
+                      value={goalCode}
+                      onChange={(e) => setGoalCode(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-600"
+                      placeholder="e.g. SG-2.3"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Goal Title <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={goalTitle}
+                      onChange={(e) => setGoalTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-600"
+                      placeholder="e.g. Strategic Destination Empowerment"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Goal Alignment Summary</label>
+                  <input
+                    type="text"
+                    value={goalDescription}
+                    onChange={(e) => setGoalDescription(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-600"
+                    placeholder="Brief description of desired institutional outcome..."
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Card 3: Strategic Objective (Execution Target) */}
@@ -719,139 +1026,201 @@ export const CreateStrategyPage: React.FC = () => {
                   <p className="text-[11px] text-slate-500">Actionable department target with progress tracking</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
-                Level 3: Objective
-              </span>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Objective Code</label>
-                <input
-                  type="text"
-                  required
-                  value={objCode}
-                  onChange={(e) => setObjCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. OBJ-501"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Objective Title <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={objTitle}
-                  onChange={(e) => setObjTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Deploy Enterprise Generative AI Workflows"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Operational Sector (Client Governance Tier)
-                </label>
-                <select
-                  value={sectorId}
-                  onChange={(e) => {
-                    const selId = e.target.value;
-                    setSectorId(selId);
-                    const foundSec = AUTHORITY_SECTORS.find((s) => s.id === selId);
-                    if (foundSec) {
-                      setSectorName(foundSec.name);
-                    }
+              {/* Segmented Mode Selector */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setObjectiveMode('existing')}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    objectiveMode === 'existing' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Select Existing Objective
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setObjectiveMode('new');
+                    setSelectedObjectiveId('');
                   }}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    objectiveMode === 'new' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
                 >
-                  {AUTHORITY_SECTORS.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Assigned Directorate</label>
-                <select
-                  value={objDept}
-                  onChange={(e) => setObjDept(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-                >
-                  {DEPARTMENTS.map((d) => (
-                    <option key={d.id} value={d.name}>
-                      {d.name} ({d.code})
-                    </option>
-                  ))}
-                  <option value="Enterprise Digital Transformation">Enterprise Digital Transformation</option>
-                  <option value="Corporate Operations & Logistics">Corporate Operations & Logistics</option>
-                </select>
+                  + Create New Objective
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Owner / Lead Officer</label>
-                <input
-                  type="text"
-                  required
-                  value={objOwner}
-                  onChange={(e) => setObjOwner(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                />
-              </div>
+            {objectiveMode === 'existing' ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Choose Strategic Objective (e.g. 2.1 or 2.2)
+                  </label>
+                  <select
+                    value={selectedObjectiveId}
+                    onChange={(e) => handleObjectiveChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
+                  >
+                    {availableObjectives.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.code} — {o.title}
+                      </option>
+                    ))}
+                    {availableObjectives.length === 0 && (
+                      <option value="">No existing objectives found</option>
+                    )}
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Target Year</label>
-                <select
-                  value={targetYear}
-                  onChange={(e) => setTargetYear(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-                >
-                  <option value={2026}>2026</option>
-                  <option value={2027}>2027</option>
-                  <option value={2028}>2028</option>
-                  <option value={2029}>2029</option>
-                  <option value={2030}>2030</option>
-                </select>
-              </div>
+                <div className="p-3.5 bg-indigo-50/50 rounded-xl border border-indigo-200/60 text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[11px]">
+                        {objCode}
+                      </span>
+                      <span className="font-bold text-slate-900">{objTitle}</span>
+                    </div>
+                    <StatusBadge status={objStatus} />
+                  </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
-                <select
-                  value={objStatus}
-                  onChange={(e: any) => setObjStatus(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-                >
-                  <option value="on-track">On Track</option>
-                  <option value="at-risk">At Risk</option>
-                  <option value="behind">Behind</option>
-                  <option value="achieved">Achieved</option>
-                </select>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-indigo-100 text-[11px] font-mono text-slate-600">
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Lead Officer</span>
+                      <span className="font-semibold text-slate-800 truncate block">{objOwner}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Department</span>
+                      <span className="font-semibold text-slate-800 truncate block">{objDept}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Target Year</span>
+                      <span className="font-semibold text-slate-800">FY {targetYear}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Current Progress</span>
+                      <span className="font-bold text-indigo-700">{objProgress}%</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Objective Code</label>
+                    <input
+                      type="text"
+                      required
+                      value={objCode}
+                      onChange={(e) => setObjCode(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                      placeholder="e.g. 2.3"
+                    />
+                  </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-700">Initial Progress</label>
-                <span className="text-xs font-mono font-bold text-blue-700">{objProgress}%</span>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Objective Title <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={objTitle}
+                      onChange={(e) => setObjTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                      placeholder="e.g. Expand Regional Cultural and Heritage Visitor Capacities"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Operational Sector (AHDA 5 Sectors)
+                    </label>
+                    <select
+                      value={sectorId}
+                      onChange={(e) => {
+                        const selId = e.target.value;
+                        setSectorId(selId);
+                        const foundSec = AUTHORITY_SECTORS.find((s) => s.id === selId);
+                        if (foundSec) {
+                          setSectorName(foundSec.name);
+                        }
+                      }}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
+                    >
+                      {AUTHORITY_SECTORS.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name} ({s.code})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Assigned Directorate</label>
+                    <select
+                      value={objDept}
+                      onChange={(e) => setObjDept(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
+                    >
+                      {DEPARTMENTS.map((d) => (
+                        <option key={d.id} value={d.name}>
+                          {d.name} ({d.code})
+                        </option>
+                      ))}
+                      <option value="Tourism Destination Management Office">Tourism Destination Management Office</option>
+                      <option value="Urban Observatory">Urban Observatory</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Owner / Lead Officer</label>
+                    <input
+                      type="text"
+                      required
+                      value={objOwner}
+                      onChange={(e) => setObjOwner(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Target Horizon</label>
+                    <select
+                      value={targetYear}
+                      onChange={(e) => setTargetYear(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
+                    >
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2030}>2030</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Initial Status</label>
+                    <select
+                      value={objStatus}
+                      onChange={(e: any) => setObjStatus(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
+                    >
+                      <option value="on-track">On Track</option>
+                      <option value="at-risk">At Risk</option>
+                      <option value="behind">Behind</option>
+                      <option value="achieved">Achieved</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                step="5"
-                value={objProgress}
-                onChange={(e) => setObjProgress(Number(e.target.value))}
-                className="w-full accent-blue-600 cursor-pointer mt-1"
-              />
-            </div>
+            )}
           </div>
 
           {/* Card 4: Key Performance Indicator (KPI & Cascading Matrix Specification) */}
@@ -862,12 +1231,12 @@ export const CreateStrategyPage: React.FC = () => {
                   4
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Key Performance Indicator (KPI)</h3>
-                  <p className="text-[11px] text-slate-500">Measurable metric with formula & multi-year cascading targets</p>
+                  <h3 className="text-sm font-bold text-slate-900">Key Performance Indicator (KPI & Target)</h3>
+                  <p className="text-[11px] text-slate-500">Measurable indicator with formula & multi-year targets (2026–2027)</p>
                 </div>
               </div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                Level 4: Metric & Formula
+                Level 4: Cascaded Metric
               </span>
             </div>
 
@@ -878,20 +1247,50 @@ export const CreateStrategyPage: React.FC = () => {
                   type="text"
                   value={kpiCode}
                   onChange={(e) => setKpiCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
                   placeholder="e.g. 2.1.1"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Indicator Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Indicator Name (English)</label>
                 <input
                   type="text"
                   value={kpiName}
                   onChange={(e) => setKpiName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Percentage Increase in the Number of Event Visitors"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  placeholder="e.g. Event Visitor Indicator"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Indicator Name in Arabic (الاسم بالعربية)
+                </label>
+                <input
+                  type="text"
+                  value={kpiNameAr}
+                  onChange={(e) => setKpiNameAr(e.target.value)}
+                  dir="rtl"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-sans text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600 text-right"
+                  placeholder="مثال: مؤشر زوار الفعاليات"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Measurement Frequency</label>
+                <select
+                  value={kpiFrequency}
+                  onChange={(e: any) => setKpiFrequency(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600 cursor-pointer"
+                >
+                  <option value="Annual">Annual</option>
+                  <option value="Bi-Annual">Bi-Annual</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="Monthly">Monthly</option>
+                </select>
               </div>
             </div>
 
@@ -902,13 +1301,13 @@ export const CreateStrategyPage: React.FC = () => {
                   <Calculator className="w-3.5 h-3.5 text-blue-600" />
                   <span>Mathematical Calculation Formula</span>
                 </label>
-                <span className="text-[10px] font-mono text-slate-400">Exact formula from strategy matrix</span>
+                <span className="text-[10px] font-mono text-slate-400">Official execution formula</span>
               </div>
               <input
                 type="text"
                 value={kpiFormula}
                 onChange={(e) => setKpiFormula(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 placeholder="e.g. (Total Actual Event Visitors - Total Targeted Visitors) * 100%"
               />
               {kpiFormula && (
@@ -929,28 +1328,28 @@ export const CreateStrategyPage: React.FC = () => {
                     type="text"
                     value={kpiBaseline}
                     onChange={(e) => setKpiBaseline(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                     placeholder="e.g. 2.00% or 70 or -"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-blue-700 mb-1">2026 Target</label>
+                  <label className="block text-[11px] font-semibold text-blue-700 mb-1">Target 2026</label>
                   <input
                     type="text"
                     value={kpiTarget2026}
                     onChange={(e) => setKpiTarget2026(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-xs font-mono font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    className="w-full px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-xs font-mono font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                     placeholder="e.g. 75%"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-emerald-700 mb-1">2027 Target</label>
+                  <label className="block text-[11px] font-semibold text-emerald-700 mb-1">Target 2027</label>
                   <input
                     type="text"
                     value={kpiTarget2027}
                     onChange={(e) => setKpiTarget2027(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-mono font-bold text-emerald-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    placeholder="e.g. 85%"
+                    className="w-full px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-mono font-bold text-emerald-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    placeholder="e.g. 80%"
                   />
                 </div>
               </div>
@@ -965,7 +1364,7 @@ export const CreateStrategyPage: React.FC = () => {
                   step="any"
                   value={kpiTarget}
                   onChange={(e) => setKpiTarget(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 />
               </div>
 
@@ -976,7 +1375,7 @@ export const CreateStrategyPage: React.FC = () => {
                   step="any"
                   value={kpiActual}
                   onChange={(e) => setKpiActual(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 />
               </div>
 
@@ -986,54 +1385,122 @@ export const CreateStrategyPage: React.FC = () => {
                   type="text"
                   value={kpiUnit}
                   onChange={(e) => setKpiUnit(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="%, M Trees, Days, SAR"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  placeholder="%, Days, M Trees, SAR"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Frequency</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
                 <select
-                  value={kpiFrequency}
-                  onChange={(e: any) => setKpiFrequency(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  value={kpiStatus}
+                  onChange={(e: any) => setKpiStatus(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600 cursor-pointer"
                 >
-                  <option value="Monthly">Monthly</option>
-                  <option value="Quarterly">Quarterly</option>
-                  <option value="Bi-Annual">Bi-Annual</option>
-                  <option value="Annual">Annual</option>
+                  <option value="on-track">On Track</option>
+                  <option value="warning">Warning</option>
+                  <option value="critical">Critical</option>
+                  <option value="achieved">Achieved</option>
                 </select>
               </div>
             </div>
 
             {/* Key Project & Milestone Linkage */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
-                  <FolderGit2 className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Key Project Name</span>
-                </label>
-                <input
-                  type="text"
-                  value={keyProject}
-                  onChange={(e) => setKeyProject(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Al-Ahsa Strategy Awareness Project"
-                />
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <ListTree className="w-4 h-4 text-emerald-600" />
+                  <span>Linkage to Deliverables & Projects</span>
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">From Initiative in Step 5</span>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
-                  <Milestone className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Key Project Milestone</span>
-                </label>
-                <input
-                  type="text"
-                  value={keyMilestone}
-                  onChange={(e) => setKeyMilestone(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Develop the General Framework for Community Awareness..."
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                      <FolderGit2 className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Key Project Name</span>
+                    </label>
+                    {selectedInitiativeObj?.keyProjects && selectedInitiativeObj.keyProjects.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setProjectPickerMode(projectPickerMode === 'select' ? 'custom' : 'select')}
+                        className="text-[10px] text-blue-600 hover:underline font-mono"
+                      >
+                        {projectPickerMode === 'select' ? '+ Custom Project' : 'Select from Initiative'}
+                      </button>
+                    )}
+                  </div>
+
+                  {projectPickerMode === 'select' && selectedInitiativeObj?.keyProjects && selectedInitiativeObj.keyProjects.length > 0 ? (
+                    <select
+                      value={keyProject}
+                      onChange={(e) => setKeyProject(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600 cursor-pointer"
+                    >
+                      {selectedInitiativeObj.keyProjects.map((p, idx) => (
+                        <option key={idx} value={p}>
+                          {p}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={keyProject}
+                      onChange={(e) => setKeyProject(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                      placeholder="e.g. Al-Ahsa Strategy Awareness Project"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                      <Milestone className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Key Project Milestone</span>
+                    </label>
+                    {selectedInitiativeObj?.milestones && selectedInitiativeObj.milestones.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setMilestonePickerMode(milestonePickerMode === 'select' ? 'custom' : 'select')}
+                        className="text-[10px] text-blue-600 hover:underline font-mono"
+                      >
+                        {milestonePickerMode === 'select' ? '+ Custom Milestone' : 'Select from Initiative'}
+                      </button>
+                    )}
+                  </div>
+
+                  {milestonePickerMode === 'select' && selectedInitiativeObj?.milestones && selectedInitiativeObj.milestones.length > 0 ? (
+                    <select
+                      value={keyMilestone}
+                      onChange={(e) => {
+                        setKeyMilestone(e.target.value);
+                        setMilestoneTitle(e.target.value);
+                      }}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600 cursor-pointer"
+                    >
+                      {selectedInitiativeObj.milestones.map((m) => (
+                        <option key={m.id} value={m.title}>
+                          {m.title} ({m.dueDate})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={keyMilestone}
+                      onChange={(e) => {
+                        setKeyMilestone(e.target.value);
+                        setMilestoneTitle(e.target.value);
+                      }}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                      placeholder="e.g. Develop community awareness framework"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1046,88 +1513,187 @@ export const CreateStrategyPage: React.FC = () => {
                   5
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Strategic Initiative & Budget</h3>
+                  <h3 className="text-sm font-bold text-slate-900">Strategic Initiative & Execution Program</h3>
                   <p className="text-[11px] text-slate-500">Funded implementation project delivering this objective</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                Level 5: Initiative
-              </span>
+
+              {/* Segmented Mode Selector */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setInitiativeMode('existing')}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    initiativeMode === 'existing' ? 'bg-white text-amber-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Select Existing Initiative
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInitiativeMode('new');
+                    setSelectedInitiativeId('');
+                  }}
+                  className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+                    initiativeMode === 'new' ? 'bg-white text-amber-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  + Create New Initiative
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Initiative Code</label>
-                <input
-                  type="text"
-                  value={initCode}
-                  onChange={(e) => setInitCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                />
-              </div>
+            {initiativeMode === 'existing' ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Select Strategic Initiative (e.g. Initiative 6, 7, 8)
+                  </label>
+                  <select
+                    value={selectedInitiativeId}
+                    onChange={(e) => handleInitiativeChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600 cursor-pointer"
+                  >
+                    {displayInitiatives.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.code} — {i.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Initiative Title</label>
-                <input
-                  type="text"
-                  value={initTitle}
-                  onChange={(e) => setInitTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Enterprise Cognitive Platform Rollout"
-                />
-              </div>
-            </div>
+                {selectedInitiativeObj && (
+                  <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-200/60 text-xs space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-amber-600 text-white text-[11px]">
+                            {selectedInitiativeObj.code}
+                          </span>
+                          <span className="font-bold text-slate-900">{selectedInitiativeObj.title}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 mt-1">{selectedInitiativeObj.description}</p>
+                      </div>
+                      <StatusBadge status={selectedInitiativeObj.status} />
+                    </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Budget Allocation (SAR)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">SAR</span>
-                  <input
-                    type="number"
-                    value={budgetSAR}
-                    onChange={(e) => setBudgetSAR(Number(e.target.value))}
-                    className="w-full pl-12 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-amber-200/60 font-mono text-[11px]">
+                      <div>
+                        <span className="text-slate-400 block text-[9px]">Budget</span>
+                        <span className="font-bold text-slate-900">
+                          SAR {(selectedInitiativeObj.budgetSAR / 1000000).toFixed(1)}M
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[9px]">Spent</span>
+                        <span className="font-bold text-amber-800">
+                          SAR {(selectedInitiativeObj.spentSAR / 1000000).toFixed(1)}M
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[9px]">Owner</span>
+                        <span className="font-semibold text-slate-800 truncate block">{selectedInitiativeObj.owner}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[9px]">Milestones</span>
+                        <span className="font-semibold text-slate-800">
+                          {selectedInitiativeObj.milestones?.length || 0} Gates
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Initiative Code</label>
+                    <input
+                      type="text"
+                      value={initCode}
+                      onChange={(e) => setInitCode(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      placeholder="e.g. INIT-09"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Initiative Title</label>
+                    <input
+                      type="text"
+                      value={initTitle}
+                      onChange={(e) => setInitTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      placeholder="e.g. Initiative 9: Cultural Heritage & Oasis Activation"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Initiative Scope</label>
+                  <textarea
+                    rows={2}
+                    value={initDescription}
+                    onChange={(e) => setInitDescription(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                    placeholder="Describe implementation roadmap..."
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Spent Capital (SAR)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">SAR</span>
-                  <input
-                    type="number"
-                    value={spentSAR}
-                    onChange={(e) => setSpentSAR(Number(e.target.value))}
-                    className="w-full pl-12 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Budget Allocation (SAR)</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">SAR</span>
+                      <input
+                        type="number"
+                        value={budgetSAR}
+                        onChange={(e) => setBudgetSAR(Number(e.target.value))}
+                        className="w-full pl-12 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Spent Capital (SAR)</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">SAR</span>
+                      <input
+                        type="number"
+                        value={spentSAR}
+                        onChange={(e) => setSpentSAR(Number(e.target.value))}
+                        className="w-full pl-12 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Key Deliverable Milestone</label>
+                    <input
+                      type="text"
+                      value={milestoneTitle}
+                      onChange={(e) => setMilestoneTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      placeholder="e.g. Masterplan Stage 1 Approval"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Milestone Target Date</label>
+                    <input
+                      type="date"
+                      value={milestoneDueDate}
+                      onChange={(e) => setMilestoneDueDate(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-600"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Key Deliverable Milestone</label>
-                <input
-                  type="text"
-                  value={milestoneTitle}
-                  onChange={(e) => setMilestoneTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Core Security & Architecture Review"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Milestone Target Date</label>
-                <input
-                  type="date"
-                  value={milestoneDueDate}
-                  onChange={(e) => setMilestoneDueDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Form Actions */}
@@ -1144,63 +1710,72 @@ export const CreateStrategyPage: React.FC = () => {
               className="inline-flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
             >
               <Plus className="w-4 h-4" />
-              <span>{isSubmitting ? 'Creating Strategy...' : 'Create & Deploy Strategy'}</span>
+              <span>{isSubmitting ? 'Deploying Strategy...' : 'Save & Cascade Strategy'}</span>
             </button>
           </div>
         </form>
 
-        {/* Live Interactive Preview (Right Column) */}
+        {/* Live Interactive Preview (Right Column - 5 cols) */}
         <div className="lg:col-span-5 sticky top-24 space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <Target className="w-4 h-4 text-blue-600" />
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Live Hierarchy Tree Preview
+                  AHDA Strategy Execution Tree
                 </h3>
               </div>
               <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1 font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Real-Time
+                Cascading
               </span>
             </div>
 
-            {/* Simulated Strategic Theme Box */}
-            <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
+            {/* Strategic Theme Box */}
+            <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
               <div className="flex items-start justify-between border-b border-slate-200/70 pb-3">
                 <div>
                   <div className="flex items-center space-x-2">
                     <span className="font-mono text-xs font-bold text-white bg-slate-900 px-2 py-0.5 rounded">
-                      {themeCode || 'ST-XX'}
+                      {themeCode || '02'}
                     </span>
                     <h4 className="text-sm font-bold text-slate-900">
-                      {themeTitle || 'Untitled Strategic Pillar'}
+                      {themeTitle || '02 People and Society'}
                     </h4>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                    {themeDescription || 'Pillar description will appear here...'}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded border ${
+                      pillarMode === 'existing' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    }`}>
+                      {pillarMode === 'existing' ? 'EXISTING PILLAR' : 'NEW PILLAR'}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-500">Weight: {themeWeight}%</span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-mono font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-lg border border-slate-200 shrink-0">
-                  Weight: {themeWeight}%
-                </span>
               </div>
 
               {/* Nested Goal */}
               <div className="pl-3 border-l-2 border-slate-300 space-y-3">
                 <div className="flex items-center space-x-2 text-xs font-bold text-slate-800">
-                  <span className="font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                    {goalCode || 'SG-X.1'}
+                  <span className="font-mono text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
+                    {goalCode || 'SG-2.1'}
                   </span>
-                  <span>{goalTitle || 'Primary Strategic Goal'}</span>
+                  <span className="truncate">{goalTitle || 'Primary Strategic Goal'}</span>
                 </div>
 
                 {/* Nested Objective Card */}
                 <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-xs text-slate-900">
-                      {objCode || 'OBJ-X01'}
-                    </span>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-mono font-bold text-xs text-slate-900">
+                        {objCode || '2.1'}
+                      </span>
+                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
+                        objectiveMode === 'existing' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      }`}>
+                        {objectiveMode === 'existing' ? 'EXISTING OBJECTIVE' : 'NEW OBJECTIVE'}
+                      </span>
+                    </div>
                     <StatusBadge status={objStatus} />
                   </div>
                   <h5 className="font-semibold text-xs text-slate-900">
@@ -1209,23 +1784,16 @@ export const CreateStrategyPage: React.FC = () => {
 
                   <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100 font-mono">
                     <span className="truncate max-w-[140px]">Lead: {objOwner || currentUser.name}</span>
-                    <span className="font-bold text-emerald-700">{objProgress}% Progress</span>
+                    <span className="font-bold text-indigo-700">{objProgress}% Progress</span>
                   </div>
 
                   <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-emerald-600 h-full transition-all" style={{ width: `${objProgress}%` }} />
+                    <div className="bg-indigo-600 h-full transition-all" style={{ width: `${objProgress}%` }} />
                   </div>
 
-                  <div className="flex flex-col gap-0.5 text-[10px] text-slate-500 font-mono pt-0.5">
-                    <div className="flex items-center justify-between">
-                      <span>Target Year: {targetYear}</span>
-                      <span>Dept: {objDept}</span>
-                    </div>
-                    {sectorName && (
-                      <div className="text-slate-400 truncate">
-                        Sector: {sectorName}
-                      </div>
-                    )}
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                    <span>Target: FY {targetYear}</span>
+                    <span className="truncate max-w-[120px]">{objDept}</span>
                   </div>
                 </div>
               </div>
@@ -1258,17 +1826,17 @@ export const CreateStrategyPage: React.FC = () => {
                       <span className="font-bold text-slate-700">{kpiBaseline || '-'}</span>
                     </div>
                     <div>
-                      <span className="text-blue-500 block text-[9px]">2026 Target</span>
+                      <span className="text-blue-500 block text-[9px]">Target 2026</span>
                       <span className="font-bold text-blue-700">{kpiTarget2026 || '-'}</span>
                     </div>
                     <div>
-                      <span className="text-emerald-600 block text-[9px]">2027 Target</span>
+                      <span className="text-emerald-600 block text-[9px]">Target 2027</span>
                       <span className="font-bold text-emerald-700">{kpiTarget2027 || '-'}</span>
                     </div>
                   </div>
 
                   {keyProject && (
-                    <div className="text-[10px] text-slate-600 flex items-center gap-1.5 pt-0.5">
+                    <div className="text-[10px] text-slate-600 flex items-center gap-1.5 pt-0.5 font-sans">
                       <FolderGit2 className="w-3 h-3 text-indigo-500 shrink-0" />
                       <span className="font-semibold truncate">Project: {keyProject}</span>
                     </div>
@@ -1280,13 +1848,18 @@ export const CreateStrategyPage: React.FC = () => {
               {initTitle && (
                 <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-800 truncate">{initTitle}</span>
+                    <div className="flex items-center space-x-1.5">
+                      <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                        {initCode}
+                      </span>
+                      <span className="font-semibold text-slate-800 truncate max-w-[200px]">{initTitle}</span>
+                    </div>
                     <span className="font-mono text-[10px] font-bold text-slate-700">
                       SAR {(budgetSAR / 1000000).toFixed(1)}M
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                    <span>Milestone: {milestoneTitle}</span>
+                    <span className="truncate max-w-[180px]">Milestone: {milestoneTitle}</span>
                     <span>{milestoneDueDate}</span>
                   </div>
                 </div>
@@ -1301,7 +1874,7 @@ export const CreateStrategyPage: React.FC = () => {
               className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center space-x-2 cursor-pointer transition-all"
             >
               <Plus className="w-4 h-4" />
-              <span>Deploy Strategy into Hierarchy</span>
+              <span>Deploy into Strategy Matrix</span>
             </button>
           </div>
         </div>

@@ -93,7 +93,7 @@ export interface KPI {
   objectiveId: string;
   objectiveTitle: string;
   name: string;
-  nameAr?: string;
+  nameAr?: string | undefined;
   unit: string;
   owner: string;
   target: number;
@@ -101,7 +101,7 @@ export interface KPI {
   achievementPct: number;
   frequency: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual';
   status: 'on-track' | 'warning' | 'critical' | 'achieved';
-  isCustom?: boolean;
+  isCustom?: boolean | undefined;
   // Al-Ahsa Client Cascading Strategy Attributes
   pillarCode?: string | undefined;
   pillarTitle?: string | undefined;
@@ -141,8 +141,8 @@ export interface StrategicInitiative {
   risksCount: number;
   actionsCount: number;
   description: string;
-  keyProjects?: string[];
-  isCustom?: boolean;
+  keyProjects?: string[] | undefined;
+  isCustom?: boolean | undefined;
 }
 
 export interface RiskItem {

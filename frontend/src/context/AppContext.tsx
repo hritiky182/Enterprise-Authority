@@ -38,6 +38,10 @@ import { ROLE_PERMISSIONS_MAP, RolePermissions } from '../utils/permissions';
 import { toast } from 'sonner';
 
 export interface CreateStrategyPayload {
+  selectedThemeId?: string | undefined;
+  selectedGoalId?: string | undefined;
+  selectedObjectiveId?: string | undefined;
+  selectedInitiativeId?: string | undefined;
   theme: {
     code?: string | undefined;
     title: string;
@@ -96,11 +100,12 @@ export interface CreateStrategyPayload {
       dueDate: string;
       status: 'Completed' | 'In Progress' | 'Pending';
     }[] | undefined;
+    keyProjects?: string[] | undefined;
   } | undefined;
 }
 
 interface ModalConfig {
-  type: 'risk' | 'objective' | 'initiative' | 'kpi' | 'compliance' | 'bcm' | 'action' | 'policy' | 'document' | 'create_action' | 'create_risk' | 'import_strategy';
+  type: 'risk' | 'objective' | 'initiative' | 'kpi' | 'compliance' | 'bcm' | 'action' | 'policy' | 'document' | 'create_action' | 'create_risk' | 'create_kpi' | 'create_initiative' | 'import_strategy';
   item?: any;
 }
 
@@ -135,6 +140,8 @@ interface AppContextType {
   initiatives: StrategicInitiative[];
   kpis: KPI[];
   addStrategy: (payload: CreateStrategyPayload) => { themeId: string; goalId: string; objectiveId: string };
+  addKPI: (kpi: Omit<KPI, 'id'>) => KPI;
+  addInitiative: (init: Omit<StrategicInitiative, 'id'>) => StrategicInitiative;
   deleteStrategyTheme: (themeId: string) => void;
   resetStrategies: () => void;
   updateObjective: (id: string, updates: Partial<StrategicObjective>, note?: string) => void;
@@ -699,103 +706,156 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return formatted.length;
   };
 
+  const addKPI = (newKpiData: Omit<KPI, 'id'>) => {
+    const id = `kpi-${Date.now()}`;
+    const targetVal = Number(newKpiData.target) || 100;
+    const actualVal = Number(newKpiData.actual) || 0;
+    const achievementPct = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
+
+    const createdKpi: KPI = {
+      ...newKpiData,
+      id,
+      target: targetVal,
+      actual: actualVal,
+      achievementPct,
+      isCustom: true,
+    };
+
+    setKpis((prev) => {
+      const updated = [...prev, createdKpi];
+      sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+      return updated;
+    });
+
+    setObjectives((prev) => {
+      const updated = prev.map((o) =>
+        o.id === newKpiData.objectiveId ? { ...o, kpiCount: (o.kpiCount || 0) + 1 } : o
+      );
+      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success(`KPI "${createdKpi.code} ${createdKpi.name}" Created`, {
+      description: 'Added to live Strategy Matrix and OKR register.',
+    });
+    return createdKpi;
+  };
+
+  const addInitiative = (newInitData: Omit<StrategicInitiative, 'id'>) => {
+    const id = `init-${Date.now()}`;
+    const createdInit: StrategicInitiative = {
+      ...newInitData,
+      id,
+      isCustom: true,
+    };
+
+    setInitiatives((prev) => {
+      const updated = [...prev, createdInit];
+      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success(`Initiative "${createdInit.title}" Created`, {
+      description: 'Added to strategic delivery roadmap.',
+    });
+    return createdInit;
+  };
+
   const addStrategy = (payload: CreateStrategyPayload) => {
-    const themeId = `st-${Date.now()}`;
-    const goalId = `sg-${Date.now()}`;
-    const objectiveId = `so-${Date.now()}`;
     const nextThemeNum = themes.length + 1;
 
-    const themeCode = payload.theme.code?.trim() || `ST-${String(nextThemeNum).padStart(2, '0')}`;
-    const newTheme: StrategicTheme = {
-      id: themeId,
-      code: themeCode,
-      title: payload.theme.title,
-      description: payload.theme.description,
-      color: payload.theme.color || 'blue',
-      weight: Number(payload.theme.weight) || 20,
-      isCustom: true,
-    };
+    // 1. Resolve Strategic Pillar (Theme) - Existing vs New
+    const existingTheme = payload.selectedThemeId
+      ? themes.find((t) => t.id === payload.selectedThemeId)
+      : null;
 
-    const goalCode = payload.goal.code?.trim() || `SG-${nextThemeNum}.1`;
-    const newGoal: StrategicGoal = {
-      id: goalId,
-      code: goalCode,
-      themeId,
-      title: payload.goal.title,
-      description: payload.goal.description || '',
-      isCustom: true,
-    };
+    let themeId = existingTheme ? existingTheme.id : `st-${Date.now()}`;
+    let themeCode = existingTheme ? existingTheme.code : (payload.theme.code?.trim() || `ST-${String(nextThemeNum).padStart(2, '0')}`);
+    let themeTitle = existingTheme ? existingTheme.title : payload.theme.title;
 
-    const objCode = payload.objective.code?.trim() || `OBJ-${nextThemeNum}01`;
-    const newObjective: StrategicObjective = {
-      id: objectiveId,
-      code: objCode,
-      goalId,
-      themeId,
-      themeName: newTheme.title,
-      title: payload.objective.title,
-      owner: payload.objective.owner || currentUser.name,
-      department: payload.objective.department || currentUser.department,
-      sectorId: payload.objective.sectorId,
-      sectorName: payload.objective.sectorName,
-      kpiCount: payload.kpi && payload.kpi.name?.trim() ? 1 : 0,
-      status: payload.objective.status || 'on-track',
-      targetYear: Number(payload.objective.targetYear) || 2027,
-      progress: Number(payload.objective.progress) || 15,
-      isCustom: true,
-    };
-
-    let newKpi: KPI | null = null;
-    if (payload.kpi && payload.kpi.name?.trim()) {
-      const kpiCode = payload.kpi.code?.trim() || `KPI-${nextThemeNum}01`;
-      const targetVal = Number(payload.kpi.target) || 100;
-      const actualVal = Number(payload.kpi.actual) || 0;
-      const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
-
-      const pCode = payload.kpi.pillarCode || (newTheme.code.includes('02') || newTheme.title.includes('People') || newTheme.title.includes('02') ? '02' : '01');
-      const pTitle = payload.kpi.pillarTitle || newTheme.title;
-
-      newKpi = {
-        id: `kpi-${Date.now()}`,
-        code: kpiCode,
-        objectiveId,
-        objectiveTitle: newObjective.title,
-        name: payload.kpi.name,
-        unit: payload.kpi.unit || '%',
-        owner: newObjective.owner,
-        target: targetVal,
-        actual: actualVal,
-        achievementPct: achievement,
-        frequency: payload.kpi.frequency || 'Quarterly',
-        status: payload.kpi.status || 'on-track',
-        // Client Cascading Attributes
-        formula: payload.kpi.formula || '',
-        baseline: payload.kpi.baseline !== undefined ? payload.kpi.baseline : '-',
-        target2026: payload.kpi.target2026 !== undefined ? payload.kpi.target2026 : `${targetVal}${payload.kpi.unit || '%'}`,
-        target2027: payload.kpi.target2027 !== undefined ? payload.kpi.target2027 : `${targetVal}${payload.kpi.unit || '%'}`,
-        strategicInitiative: payload.kpi.strategicInitiative || payload.initiative?.title || '',
-        keyMilestone: payload.kpi.keyMilestone || payload.initiative?.milestones?.[0]?.title || '',
-        keyProject: payload.kpi.keyProject || '',
-        pillarCode: pCode,
-        pillarTitle: pTitle,
-        sectorId: payload.objective.sectorId,
-        sectorName: payload.objective.sectorName,
+    let newTheme: StrategicTheme | null = null;
+    if (!existingTheme) {
+      newTheme = {
+        id: themeId,
+        code: themeCode,
+        title: themeTitle,
+        description: payload.theme.description,
+        color: payload.theme.color || 'blue',
+        weight: Number(payload.theme.weight) || 20,
         isCustom: true,
       };
     }
 
+    // 2. Resolve Strategic Goal - Existing vs New
+    const existingGoal = payload.selectedGoalId
+      ? goals.find((g) => g.id === payload.selectedGoalId)
+      : null;
+
+    let goalId = existingGoal ? existingGoal.id : `sg-${Date.now()}`;
+    let goalCode = existingGoal ? existingGoal.code : (payload.goal.code?.trim() || `SG-${nextThemeNum}.1`);
+    let goalTitle = existingGoal ? existingGoal.title : payload.goal.title;
+
+    let newGoal: StrategicGoal | null = null;
+    if (!existingGoal) {
+      newGoal = {
+        id: goalId,
+        code: goalCode,
+        themeId,
+        title: goalTitle,
+        description: payload.goal.description || '',
+        isCustom: true,
+      };
+    }
+
+    // 3. Resolve Strategic Objective - Existing vs New
+    const existingObjective = payload.selectedObjectiveId
+      ? objectives.find((o) => o.id === payload.selectedObjectiveId)
+      : null;
+
+    let objectiveId = existingObjective ? existingObjective.id : `so-${Date.now()}`;
+    let objCode = existingObjective ? existingObjective.code : (payload.objective.code?.trim() || `OBJ-${nextThemeNum}01`);
+    let objTitle = existingObjective ? existingObjective.title : payload.objective.title;
+
+    let newObjective: StrategicObjective | null = null;
+    if (!existingObjective) {
+      newObjective = {
+        id: objectiveId,
+        code: objCode,
+        goalId,
+        themeId,
+        themeName: themeTitle,
+        title: objTitle,
+        owner: payload.objective.owner || currentUser.name,
+        department: payload.objective.department || currentUser.department,
+        sectorId: payload.objective.sectorId,
+        sectorName: payload.objective.sectorName,
+        kpiCount: payload.kpi && payload.kpi.name?.trim() ? 1 : 0,
+        status: payload.objective.status || 'on-track',
+        targetYear: Number(payload.objective.targetYear) || 2027,
+        progress: Number(payload.objective.progress) || 15,
+        isCustom: true,
+      };
+    }
+
+    // 4. Resolve Strategic Initiative - Existing vs New
+    const existingInitiative = payload.selectedInitiativeId
+      ? initiatives.find((i) => i.id === payload.selectedInitiativeId)
+      : null;
+
+    let initTitle = existingInitiative ? existingInitiative.title : (payload.initiative?.title?.trim() || '');
     let newInit: StrategicInitiative | null = null;
-    if (payload.initiative && payload.initiative.title?.trim()) {
+
+    if (!existingInitiative && payload.initiative && payload.initiative.title?.trim()) {
       const initCode = payload.initiative.code?.trim() || `INIT-${String(initiatives.length + 1).padStart(2, '0')}`;
       newInit = {
         id: `init-${Date.now()}`,
         code: initCode,
         objectiveId,
-        objectiveTitle: newObjective.title,
+        objectiveTitle: objTitle,
         title: payload.initiative.title,
         description: payload.initiative.description || '',
-        owner: payload.initiative.owner || newObjective.owner,
-        department: payload.initiative.department || newObjective.department,
+        owner: payload.initiative.owner || (existingObjective?.owner || currentUser.name),
+        department: payload.initiative.department || (existingObjective?.department || currentUser.department),
         budgetSAR: Number(payload.initiative.budgetSAR) || 5000000,
         spentSAR: Number(payload.initiative.spentSAR) || 500000,
         progress: Number(payload.initiative.progress) || 15,
@@ -810,46 +870,87 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         })) || [
           {
             id: `m-${Date.now()}-1`,
-            title: 'Initial Architecture & Scope Approval',
+            title: 'Framework & Initial Scope Sign-off',
             dueDate: '2026-10-15',
             status: 'Completed',
           },
-          {
-            id: `m-${Date.now()}-2`,
-            title: 'Enterprise Pilot Execution',
-            dueDate: '2027-03-31',
-            status: 'In Progress',
-          },
         ],
+        keyProjects: payload.kpi?.keyProject ? [payload.kpi.keyProject] : ['Regional Strategic Project'],
         risksCount: 1,
         actionsCount: 1,
         isCustom: true,
       };
     }
 
+    // 5. Build KPI if provided
+    let newKpi: KPI | null = null;
+    if (payload.kpi && payload.kpi.name?.trim()) {
+      const kpiCode = payload.kpi.code?.trim() || `KPI-${nextThemeNum}01`;
+      const targetVal = Number(payload.kpi.target) || 100;
+      const actualVal = Number(payload.kpi.actual) || 0;
+      const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
+
+      const pCode = payload.kpi.pillarCode || (themeCode.includes('02') || themeTitle.includes('People') || themeTitle.includes('02') ? '02' : '01');
+      const pTitle = payload.kpi.pillarTitle || themeTitle;
+
+      newKpi = {
+        id: `kpi-${Date.now()}`,
+        code: kpiCode,
+        objectiveId,
+        objectiveTitle: objTitle,
+        name: payload.kpi.name,
+        unit: payload.kpi.unit || '%',
+        owner: existingObjective?.owner || payload.objective.owner || currentUser.name,
+        target: targetVal,
+        actual: actualVal,
+        achievementPct: achievement,
+        frequency: payload.kpi.frequency || 'Quarterly',
+        status: payload.kpi.status || 'on-track',
+        // Client Cascading Attributes
+        formula: payload.kpi.formula || '',
+        baseline: payload.kpi.baseline !== undefined ? payload.kpi.baseline : '-',
+        target2026: payload.kpi.target2026 !== undefined ? payload.kpi.target2026 : `${targetVal}${payload.kpi.unit || '%'}`,
+        target2027: payload.kpi.target2027 !== undefined ? payload.kpi.target2027 : `${targetVal}${payload.kpi.unit || '%'}`,
+        strategicInitiative: payload.kpi.strategicInitiative || initTitle,
+        keyMilestone: payload.kpi.keyMilestone || payload.initiative?.milestones?.[0]?.title || existingInitiative?.milestones?.[0]?.title || '',
+        keyProject: payload.kpi.keyProject || existingInitiative?.keyProjects?.[0] || '',
+        pillarCode: pCode,
+        pillarTitle: pTitle,
+        sectorId: payload.objective.sectorId || existingObjective?.sectorId,
+        sectorName: payload.objective.sectorName || existingObjective?.sectorName,
+        isCustom: true,
+      };
+    }
+
     // Persist & update states
-    setThemes((prev) => {
-      const updated = [...prev, newTheme];
-      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
-      return updated;
-    });
+    if (newTheme) {
+      setThemes((prev) => {
+        const updated = [...prev, newTheme!];
+        sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+        return updated;
+      });
+    }
 
-    setGoals((prev) => {
-      const updated = [...prev, newGoal];
-      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
-      return updated;
-    });
+    if (newGoal) {
+      setGoals((prev) => {
+        const updated = [...prev, newGoal!];
+        sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+        return updated;
+      });
+    }
 
-    setObjectives((prev) => {
-      const updated = [...prev, newObjective];
-      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
-      return updated;
-    });
-
-    if (newKpi) {
-      setKpis((prev) => {
-        const updated = [...prev, newKpi!];
-        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+    if (newObjective) {
+      setObjectives((prev) => {
+        const updated = [...prev, newObjective!];
+        sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+        return updated;
+      });
+    } else if (existingObjective && newKpi) {
+      setObjectives((prev) => {
+        const updated = prev.map((o) =>
+          o.id === existingObjective.id ? { ...o, kpiCount: (o.kpiCount || 0) + 1 } : o
+        );
+        sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
         return updated;
       });
     }
@@ -860,10 +961,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
         return updated;
       });
+    } else if (existingInitiative && payload.kpi?.keyProject) {
+      // Append keyProject to existing initiative if not already present
+      setInitiatives((prev) => {
+        const updated = prev.map((i) => {
+          if (i.id === existingInitiative.id) {
+            const currentProjects = i.keyProjects || [];
+            if (!currentProjects.includes(payload.kpi!.keyProject!)) {
+              return { ...i, keyProjects: [...currentProjects, payload.kpi!.keyProject!] };
+            }
+          }
+          return i;
+        });
+        sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+        return updated;
+      });
     }
 
-    toast.success(`Strategy "${newTheme.title}" Created`, {
-      description: `Pillar ${newTheme.code} & Objective ${newObjective.code} are now live in the Strategy Architecture.`,
+    if (newKpi) {
+      setKpis((prev) => {
+        const updated = [...prev, newKpi!];
+        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    toast.success(`Strategy Updated Successfully`, {
+      description: `Aligned under ${themeTitle} ➔ ${objTitle}`,
     });
 
     return { themeId, goalId, objectiveId };
@@ -1104,6 +1228,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         initiatives,
         kpis,
         addStrategy,
+        addKPI,
+        addInitiative,
         deleteStrategyTheme,
         resetStrategies,
         updateObjective,

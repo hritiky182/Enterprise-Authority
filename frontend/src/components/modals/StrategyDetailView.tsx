@@ -26,6 +26,7 @@ import {
   Check,
   Award,
   Zap,
+  Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -42,6 +43,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
     initiatives,
     risks,
     actions,
+    openModal,
     currentUser,
     permissions,
     updateObjective,
@@ -451,10 +453,28 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
       {activeTab === 'kpis' && (
         <div className="space-y-4 animate-in fade-in">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-mono uppercase font-bold text-slate-700">
-              Measurable Key Performance Indicators ({displayKpis.length})
-            </span>
-            <span className="text-[11px] text-slate-500">Target metrics mapped to {item.code}</span>
+            <div>
+              <span className="font-mono uppercase font-bold text-slate-700">
+                Measurable Key Performance Indicators ({displayKpis.length})
+              </span>
+              <span className="text-[11px] text-slate-500 block">Target metrics mapped to {item.code}</span>
+            </div>
+            {!permissions.isReadOnly && (
+              <button
+                onClick={() =>
+                  openModal('create_kpi', {
+                    objectiveId: item.id,
+                    objectiveTitle: item.title,
+                    pillarCode: parentTheme.code,
+                    pillarTitle: parentTheme.title,
+                  })
+                }
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Cascaded KPI</span>
+              </button>
+            )}
           </div>
 
           <div className="space-y-3">
@@ -573,13 +593,29 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
       {/* TAB 3: INITIATIVES & MILESTONES */}
       {activeTab === 'initiatives' && (
         <div className="space-y-4 animate-in fade-in">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="uppercase font-bold text-slate-700">
-              Tactical Initiatives Executing Objective ({displayInits.length})
-            </span>
-            <span className="text-slate-500">
-              Total Budget: SAR {(totalBudget / 1000000).toFixed(1)}M
-            </span>
+          <div className="flex items-center justify-between text-xs">
+            <div>
+              <span className="uppercase font-bold text-slate-700 font-mono">
+                Tactical Initiatives Executing Objective ({displayInits.length})
+              </span>
+              <span className="text-slate-500 font-mono block text-[11px]">
+                Total Budget: SAR {(totalBudget / 1000000).toFixed(1)}M
+              </span>
+            </div>
+            {!permissions.isReadOnly && (
+              <button
+                onClick={() =>
+                  openModal('create_initiative', {
+                    objectiveId: item.id,
+                    objectiveTitle: item.title,
+                  })
+                }
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 cursor-pointer transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Initiative</span>
+              </button>
+            )}
           </div>
 
           <div className="space-y-4">

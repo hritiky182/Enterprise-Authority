@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { KPI } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
@@ -17,6 +18,7 @@ import {
   Building2,
   Award,
   BookOpen,
+  Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -116,7 +118,33 @@ export const ClientStrategyMatrix: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() =>
+                openModal('create_kpi', {
+                  objectiveId: selectedObjectiveFilter === '2.2' ? 'so-2-2' : 'so-2-1',
+                  objectiveTitle:
+                    selectedObjectiveFilter === '2.2'
+                      ? '2.2 Support Entities in Improving Quality of Life and Enhancing Services Provided to the Community'
+                      : '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+                  pillarCode: '02',
+                  pillarTitle: '02 People and Society',
+                })
+              }
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Quick Add KPI</span>
+            </button>
+
+            <Link
+              to="/strategy/create"
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Strategy Formulation</span>
+            </Link>
+
             <button
               onClick={handleExportCSV}
               className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
