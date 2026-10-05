@@ -55,6 +55,8 @@ export interface CreateStrategyPayload {
     title: string;
     owner: string;
     department: string;
+    sectorId?: string | undefined;
+    sectorName?: string | undefined;
     targetYear?: number | undefined;
     progress?: number | undefined;
     status?: 'on-track' | 'at-risk' | 'behind' | 'achieved' | undefined;
@@ -67,6 +69,15 @@ export interface CreateStrategyPayload {
     actual?: number | undefined;
     frequency?: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual' | undefined;
     status?: 'on-track' | 'warning' | 'critical' | 'achieved' | undefined;
+    formula?: string | undefined;
+    baseline?: string | number | undefined;
+    target2026?: string | number | undefined;
+    target2027?: string | number | undefined;
+    strategicInitiative?: string | undefined;
+    keyMilestone?: string | undefined;
+    keyProject?: string | undefined;
+    pillarCode?: string | undefined;
+    pillarTitle?: string | undefined;
   } | undefined;
   initiative?: {
     code?: string | undefined;
@@ -725,6 +736,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       title: payload.objective.title,
       owner: payload.objective.owner || currentUser.name,
       department: payload.objective.department || currentUser.department,
+      sectorId: payload.objective.sectorId,
+      sectorName: payload.objective.sectorName,
       kpiCount: payload.kpi && payload.kpi.name?.trim() ? 1 : 0,
       status: payload.objective.status || 'on-track',
       targetYear: Number(payload.objective.targetYear) || 2027,
@@ -739,6 +752,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const actualVal = Number(payload.kpi.actual) || 0;
       const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
 
+      const pCode = payload.kpi.pillarCode || (newTheme.code.includes('02') || newTheme.title.includes('People') || newTheme.title.includes('02') ? '02' : '01');
+      const pTitle = payload.kpi.pillarTitle || newTheme.title;
+
       newKpi = {
         id: `kpi-${Date.now()}`,
         code: kpiCode,
@@ -752,6 +768,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         achievementPct: achievement,
         frequency: payload.kpi.frequency || 'Quarterly',
         status: payload.kpi.status || 'on-track',
+        // Client Cascading Attributes
+        formula: payload.kpi.formula || '',
+        baseline: payload.kpi.baseline !== undefined ? payload.kpi.baseline : '-',
+        target2026: payload.kpi.target2026 !== undefined ? payload.kpi.target2026 : `${targetVal}${payload.kpi.unit || '%'}`,
+        target2027: payload.kpi.target2027 !== undefined ? payload.kpi.target2027 : `${targetVal}${payload.kpi.unit || '%'}`,
+        strategicInitiative: payload.kpi.strategicInitiative || payload.initiative?.title || '',
+        keyMilestone: payload.kpi.keyMilestone || payload.initiative?.milestones?.[0]?.title || '',
+        keyProject: payload.kpi.keyProject || '',
+        pillarCode: pCode,
+        pillarTitle: pTitle,
+        sectorId: payload.objective.sectorId,
+        sectorName: payload.objective.sectorName,
         isCustom: true,
       };
     }

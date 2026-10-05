@@ -78,6 +78,8 @@ export interface StrategicObjective {
   titleAr?: string;
   owner: string;
   department: string;
+  sectorId?: string | undefined;
+  sectorName?: string | undefined;
   kpiCount: number;
   status: 'on-track' | 'at-risk' | 'behind' | 'achieved';
   targetYear: number;
@@ -101,15 +103,17 @@ export interface KPI {
   status: 'on-track' | 'warning' | 'critical' | 'achieved';
   isCustom?: boolean;
   // Al-Ahsa Client Cascading Strategy Attributes
-  pillarCode?: string;
-  pillarTitle?: string;
-  formula?: string;
-  baseline?: string | number;
-  target2026?: string | number;
-  target2027?: string | number;
-  strategicInitiative?: string;
-  keyMilestone?: string;
-  keyProject?: string;
+  pillarCode?: string | undefined;
+  pillarTitle?: string | undefined;
+  sectorId?: string | undefined;
+  sectorName?: string | undefined;
+  formula?: string | undefined;
+  baseline?: string | number | undefined;
+  target2026?: string | number | undefined;
+  target2027?: string | number | undefined;
+  strategicInitiative?: string | undefined;
+  keyMilestone?: string | undefined;
+  keyProject?: string | undefined;
 }
 
 export interface Milestone {
