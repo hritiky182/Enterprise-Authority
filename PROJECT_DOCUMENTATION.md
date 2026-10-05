@@ -57,11 +57,31 @@ The main control center for C-level leadership. At a glance, executives can view
 - **5×5 Risk Matrix**: Visual grid mapping out Critical, High, Moderate, and Low organizational risks.
 - **Monthly Execution Trajectory**: Line charts comparing planned vs. actual strategy execution over time.
 
-### 3.2 Strategic Performance & OKR Goals
-Translates long-term enterprise vision into daily execution:
-- **Strategic Themes**: Core pillars (e.g., *Digital Transformation*, *Institutional Excellence*, *Economic Sustainability*).
-- **Objectives & Key Results (OKRs)**: Specific target metrics (e.g., "Achieve 95% e-service adoption by Q4").
-- **Budget Tracking**: Capital expenditure progress per strategic program.
+### 3.2 Strategic Performance & OKR Goals (Al Ahsa Development Authority Implementation)
+Translates the institutional vision — **"Vision: A Leader in Sustainable Development in Al-Ahsa"** (هيئة تطوير الأحساء) — into operational execution:
+- **Strategic Pillars**: Directly embeds **02 People and Society** alongside institutional excellence, economic sustainability, and smart city infrastructure.
+- **Cascading Strategy Matrix**:
+  - **Objective 2.1: Enhance Community Participation and Awareness of the Development Strategy**
+    - *KPI 2.1.1*: Percentage Increase in the Number of Event Visitors `((Total Actual Event Visitors - Total Targeted Visitors) * 100%)` | 2026 Target: 75% | 2027 Target: 85%
+    - *KPI 2.1.2*: Digital Engagement Index with the Authority `(Average Results of Engagement Analysis Reports for the Authority's Social Media Platforms)` | Baseline: 2.00% | 2026 Target: 3.50% | 2027 Target: 4.00%
+    - *KPI 2.1.3*: Awareness Rate of the Development Strategy in Al-Ahsa `(Average Survey Results)` | 2027 Target: 40%
+    - *KPI 2.1.4*: Number of Days Festivals and Shows Are Held `(Total Number of Days Festivals and Shows Are Held)` | Baseline: 70 | 2026 Target: 73 | 2027 Target: 75
+  - **Objective 2.2: Support Entities in Improving Quality of Life and Enhancing Services Provided to the Community**
+    - *KPI 2.2.1*: Residents' Satisfaction Index for Services Provided `(Average Results of Satisfaction Surveys)` | 2027 Target: 50%
+    - *KPI 2.2.2*: Number of Palm Trees within the Oasis `(Total Number of Palm Trees (in Millions))` | Baseline: 2.5M | 2026 Target: 2.5M | 2027 Target: 2.5M
+- **Strategic Initiatives & Key Projects**:
+  - *Initiative 1*: Raise Awareness of the Al-Ahsa Strategy & Digital Engagement (Projects: Al-Ahsa Strategy Awareness Project, Digital Engagement with the Authority Project).
+  - *Initiative 2*: Enhance Community Participation & Involvement in Preparing Development Plans (Projects: Digital Platform & Technical Integration, Community Empowerment, Events & Impact).
+  - *Initiative 3*: Enhance and Improve Quality of Life in Al-Ahsa (Project: Quality of Life Improvement Project; Milestones: Quality of Life Indicators Framework aligned with the national Vision 2030 Quality of Life Program).
+- **The Authority's Operational Structure (Org Chart)**:
+  - **Leadership**: Authority Board, Board Secretariat, Chief Executive Officer (CEO), CEO Office.
+  - **Advisory & Oversight Units**: Internal Audit, Marketing & Public Relations, Governance Risk & Compliance (GRC), Data Management Office (DMO), Legal Affairs, Cybersecurity.
+  - **5 Operational Sectors (20 Departments)**:
+    1. *Support Services Sector*: Human Capital, Administrative Services, Procurement, Finance & Accounting, Information Technology, Documents & Archives Center.
+    2. *Programs & Projects Management Sector*: Regional Programs & Projects, Enterprise Project Management Office (EPMO), Special Projects.
+    3. *Spatial & Urban Development Sector*: Urban & Rural Planning, Transport & Infrastructure, Urban Observatory, Policies & Land Standards.
+    4. *Investment & Partnership Development Sector*: Investment, Partnership Development, Business Enablement & Promotion, Privatization.
+    5. *Strategy & Sector Development Sector*: Strategy Development, Economic & Research Studies, Tourism Destination Management Office.
 
 ### 3.3 Enterprise Risk Management (ERM)
 Helps leaders identify, analyze, and minimize threats before they cause damage:
@@ -94,17 +114,20 @@ Generates polished, official summary reports for board meetings, steering commit
 
 ---
 
-## 4. User Roles & Permission Levels
+## 4. User Roles & Permission Levels (Authority Governance Tiers)
 
-To maintain confidentiality and operational security, the system adjusts what users can see and do based on their **Role Persona**:
+To maintain confidentiality and operational security, the system adjusts what users can see and do based on their **Role Persona**, mapped directly to the Authority's operational tiers:
 
-| Persona Role | Who This Is For | What They Can Do |
+| Persona Role | Organizational Position (From Chart) | Key Permissions & Scope |
 | :--- | :--- | :--- |
-| 👑 **Executive** | C-Level Leadership, Board Members, Managing Directors | Full access across all modules. Can create risks, approve action plans, and manage system users. |
-| 🛡️ **Risk Manager** | Chief Risk Officers, GRC Leads, Compliance Officers | Full access to Risk, Cyber, and Action registers. Can register risks, assess scores, and assign mitigation plans. |
-| 🏢 **Department Head** | General Managers, Sector Directors, Department Leaders | Access to Strategy, Performance, Actions, and Department Tasks. Can create and update action plans for their team. |
-| 🔍 **Auditor** | Internal Auditors, External Regulatory Inspectors | Read-only inspection access across Compliance, Governance, and Reports. Cannot edit data. |
-| 👁️ **Viewer** | General Enterprise Staff & Stakeholders | High-level summary view of Strategy and Performance scorecards. Cannot alter any records. |
+| 👑 **Authority Board & CEO** | Authority Board, Board Secretariat, CEO Office | Strategic command center oversight, executive OKRs, risk appetite governance, and board reporting. |
+| 📊 **Sector Director General** | 5 Operational Sectors (Spatial & Urban, PPM, Strategy, etc.) | Strategy Cascading Matrix, sector OKRs, 2026/2027 KPIs, and strategic initiative tracking. |
+| 📋 **Department Manager** | 20 Sector Functional Departments | Operational task assignments, action plan mitigation updates, and departmental BCM continuity. |
+| 🛡️ **GRC & Enterprise Risk** | Governance, Risk & Compliance Unit | Enterprise risk registers (ISO 31000), 5×5 heatmaps, governance committees, and compliance policies. |
+| 🔒 **Cybersecurity Officer** | Cybersecurity Unit | NCA ECC framework compliance, cyber asset posture, threat exposure, and IT security controls. |
+| 🔍 **Internal Audit** | Internal Audit Unit | Independent read-only audit inspection across all sectors, compliance evidence, risk logs, and policy trails. |
+| ⚙️ **Administrator** | Support Services Sector (Information Technology) | Full system administration, security controls, user RBAC provisioning, and data management. |
+| 👁️ **Viewer** | Regional Programs & Community Stakeholders | Read-only view of public strategy progress, scorecards, and high-level indicator trends. |
 
 ---
 

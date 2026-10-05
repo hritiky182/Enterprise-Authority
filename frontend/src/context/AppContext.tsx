@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
   User,
   Role,
+  Sector,
   RiskItem,
   StrategicTheme,
   StrategicGoal,
@@ -16,6 +17,8 @@ import {
   NotificationItem,
 } from '../types';
 import {
+  ORGANIZATION_INFO,
+  AUTHORITY_SECTORS,
   CURRENT_USER,
   MOCK_USERS,
   RISKS as initialRisks,
@@ -154,6 +157,10 @@ interface AppContextType {
   bcmProcesses: BCMProcess[];
   bcmPlans: BCMPlan[];
   
+  // Organization Structure & Client Metadata
+  sectors: Sector[];
+  organization: typeof ORGANIZATION_INFO;
+  
   // Modal / Drawer State
   activeModal: ModalConfig | null;
   openModal: (type: ModalConfig['type'], item?: any) => void;
@@ -175,7 +182,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const savedUser = sessionStorage.getItem('eda_user');
     if (savedUser) {
       try {
-        return JSON.parse(savedUser);
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.role && (parsed.role === 'Authority Board & CEO' || ROLE_PERMISSIONS_MAP[parsed.role as Role])) {
+          return parsed;
+        }
       } catch (e) {
         return CURRENT_USER;
       }
@@ -206,7 +216,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_themes');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((t: any) => t.title?.includes('People and Society') || t.id === 'st-people')) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -218,7 +231,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_goals');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((g: any) => g.id === 'sg-people-1' || g.title?.includes('Community Participation'))) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -230,7 +246,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_objectives');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((o: any) => o.code === '2.1' || o.id === 'so-2-1')) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -242,7 +261,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_initiatives');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((i: any) => i.id === 'init-aha-1' || i.code?.includes('AHA'))) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -254,7 +276,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_kpis');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((k: any) => k.code === '2.1.1' || k.id === 'kpi-2-1-1')) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -280,7 +305,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const saved = sessionStorage.getItem('eda_users');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.some((u: any) => u.role === 'Authority Board & CEO' || u.id === 'usr-106')) {
+          return parsed;
+        }
       } catch (e) {
         /* fallback */
       }
@@ -1067,6 +1095,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         importUsers,
         bcmProcesses,
         bcmPlans,
+        sectors: AUTHORITY_SECTORS,
+        organization: ORGANIZATION_INFO,
         activeModal,
         openModal,
         closeModal,
