@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { DEPARTMENTS } from '../data/mockData';
+import { DEPARTMENTS, AUTHORITY_SECTORS } from '../data/mockData';
 import {
   Target,
   ArrowLeft,
@@ -21,6 +21,10 @@ import {
   Globe,
   Plus,
   RefreshCw,
+  Calculator,
+  Compass,
+  FolderGit2,
+  Milestone,
 } from 'lucide-react';
 import { StatusBadge } from '../components/common/StatusBadge';
 
@@ -36,24 +40,38 @@ const COLOR_OPTIONS = [
 
 const PRESETS = [
   {
-    name: '🌴 Al-Ahsa 02 People & Society (Client Benchmark)',
+    name: '🌴 Al-Ahsa 2.1.1: Event Visitors Growth',
+    badge: 'Client Matrix Benchmark',
+    themeCode: '02',
     themeTitle: '02 People and Society',
     themeDescription: 'Enhance community participation, civic awareness of the development strategy, and improve quality of life and oasis services.',
-    color: 'blue',
+    color: 'emerald',
     weight: 35,
+    goalCode: 'SG-2.1',
     goalTitle: 'Community Participation & Development Strategy Awareness',
     goalDescription: 'Foster active civic participation, digital dialogue, and widespread community alignment with the Al-Ahsa Development Strategy.',
+    objCode: '2.1',
     objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+    sectorId: 'sec-strategy',
+    sectorName: 'Strategy & Sector Development Sector',
     department: 'Strategy Development',
     targetYear: 2027,
     progress: 78,
     objStatus: 'on-track' as const,
-    kpiName: '2.1.1 Percentage Increase in the Number of Event Visitors',
+    kpiCode: '2.1.1',
+    kpiName: 'Percentage Increase in the Number of Event Visitors',
+    kpiFormula: '(Total Actual Event Visitors - Total Targeted Visitors) * 100%',
+    kpiBaseline: '-',
+    kpiTarget2026: '75%',
+    kpiTarget2027: '85%',
     kpiTarget: 75,
     kpiActual: 72,
     kpiUnit: '%',
     kpiFrequency: 'Annual' as const,
     kpiStatus: 'on-track' as const,
+    keyProject: 'Al-Ahsa Strategy Awareness Project',
+    keyMilestone: 'Develop the General Framework for Community Awareness of the Al-Ahsa Strategy',
+    initCode: 'INIT-AHA-01',
     initTitle: 'Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority',
     initDescription: 'Comprehensive public awareness campaign, multimedia storytelling of the Al-Ahsa Development Strategy, and active digital engagement channels.',
     budgetSAR: 8500000,
@@ -62,108 +80,204 @@ const PRESETS = [
     milestoneDate: '2026-06-30',
   },
   {
+    name: '📱 Al-Ahsa 2.1.2: Digital Engagement Index',
+    badge: 'Social Analytics',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Foster digital dialogue and community engagement across all official Al Ahsa Authority social media and service portals.',
+    color: 'blue',
+    weight: 30,
+    goalCode: 'SG-2.1',
+    goalTitle: 'Digital Dialogue & Stakeholder Interactivity',
+    goalDescription: 'Expand omnichannel digital reach and community feedback mechanisms.',
+    objCode: '2.1',
+    objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+    sectorId: 'sec-strategy',
+    sectorName: 'Strategy & Sector Development Sector',
+    department: 'Marketing & Public Relations',
+    targetYear: 2027,
+    progress: 65,
+    objStatus: 'on-track' as const,
+    kpiCode: '2.1.2',
+    kpiName: 'Digital Engagement Index with the Authority',
+    kpiFormula: "Average Results of Engagement Analysis Reports for the Authority's Social Media Platforms",
+    kpiBaseline: '2.00%',
+    kpiTarget2026: '3.50%',
+    kpiTarget2027: '4.00%',
+    kpiTarget: 3.5,
+    kpiActual: 2.8,
+    kpiUnit: '%',
+    kpiFrequency: 'Quarterly' as const,
+    kpiStatus: 'on-track' as const,
+    keyProject: 'Digital Engagement with the Authority Project',
+    keyMilestone: "Develop the Authority's Digital Content Strategy",
+    initCode: 'INIT-AHA-01',
+    initTitle: 'Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority',
+    initDescription: 'Digital outreach campaigns, social analytics integration, and community feedback surveys.',
+    budgetSAR: 4200000,
+    spentSAR: 2100000,
+    milestoneTitle: "Develop the Authority's Digital Content Strategy",
+    milestoneDate: '2026-09-30',
+  },
+  {
+    name: '🗳️ Al-Ahsa 2.1.3: Strategy Awareness Rate',
+    badge: 'Civic Surveys',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Measure and grow population-wide comprehension of the Al-Ahsa vision and strategic developmental milestones.',
+    color: 'teal',
+    weight: 25,
+    goalCode: 'SG-2.1',
+    goalTitle: 'Public Understanding of Regional Vision',
+    goalDescription: 'Implement continuous public surveys and community dashboard reporting.',
+    objCode: '2.1',
+    objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+    sectorId: 'sec-ppm',
+    sectorName: 'Programs & Projects Management Sector',
+    department: 'Regional Programs & Projects',
+    targetYear: 2027,
+    progress: 40,
+    objStatus: 'on-track' as const,
+    kpiCode: '2.1.3',
+    kpiName: 'Awareness Rate of the Development Strategy in Al-Ahsa',
+    kpiFormula: 'Average Survey Results',
+    kpiBaseline: '-',
+    kpiTarget2026: '-',
+    kpiTarget2027: '40%',
+    kpiTarget: 40,
+    kpiActual: 28,
+    kpiUnit: '%',
+    kpiFrequency: 'Annual' as const,
+    kpiStatus: 'on-track' as const,
+    keyProject: 'Digital Platform and Technical Integration for Community Engagement',
+    keyMilestone: 'Build the Unified Digital Platform for Community Engagement Reporting - Surveys - Voting - Dashboards',
+    initCode: 'INIT-AHA-02',
+    initTitle: '7. Enhance Community Participation and Involvement in Preparing Development Plans',
+    initDescription: 'Unified civic engagement digital portal with voting, public consultations, and regional dashboards.',
+    budgetSAR: 12000000,
+    spentSAR: 4800000,
+    milestoneTitle: 'Build the Unified Digital Platform for Community Engagement',
+    milestoneDate: '2026-12-31',
+  },
+  {
+    name: '🌴 Al-Ahsa 2.2.2: Oasis Palm Trees Preservation',
+    badge: 'Heritage & Ecology',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Sustain and protect the UNESCO-listed Al-Ahsa agricultural heritage, palm oasis density, and municipal services.',
+    color: 'emerald',
+    weight: 35,
+    goalCode: 'SG-2.2',
+    goalTitle: 'Oasis Ecological Heritage & Quality of Life',
+    goalDescription: 'Sustain oasis palm tree population and expand urban environmental services across Al-Ahsa.',
+    objCode: '2.2',
+    objTitle: '2.2 Support Entities in Improving Quality of Life and Enhancing Services Provided to the Community',
+    sectorId: 'sec-sud',
+    sectorName: 'Spatial & Urban Development Sector',
+    department: 'Urban & Rural Planning',
+    targetYear: 2027,
+    progress: 90,
+    objStatus: 'on-track' as const,
+    kpiCode: '2.2.2',
+    kpiName: 'Number of Palm Trees within the Oasis',
+    kpiFormula: 'Total Number of Palm Trees (in Millions)',
+    kpiBaseline: '2.5',
+    kpiTarget2026: '2.5',
+    kpiTarget2027: '2.5',
+    kpiTarget: 2.5,
+    kpiActual: 2.5,
+    kpiUnit: 'M Trees',
+    kpiFrequency: 'Annual' as const,
+    kpiStatus: 'achieved' as const,
+    keyProject: 'Quality of Life Improvement Project',
+    keyMilestone: 'Develop a Quality of Life Indicators Framework for Al-Ahsa, Aligned with the Quality of Life Program',
+    initCode: 'INIT-AHA-03',
+    initTitle: '8. Enhance and Improve Quality of Life in Al-Ahsa',
+    initDescription: 'Ecosystem protection, municipal park expansions, and agricultural irrigation support for the historic oasis.',
+    budgetSAR: 22000000,
+    spentSAR: 14500000,
+    milestoneTitle: 'Quality of Life Indicators Framework Delivery',
+    milestoneDate: '2026-11-30',
+  },
+  {
+    name: '🎪 Al-Ahsa 2.1.4: Festivals & Shows Count',
+    badge: 'Events & Culture',
+    themeCode: '02',
+    themeTitle: '02 People and Society',
+    themeDescription: 'Promote cultural vitality, civic gatherings, and tourism experiences across Al-Ahsa regional venues.',
+    color: 'amber',
+    weight: 25,
+    goalCode: 'SG-2.1',
+    goalTitle: 'Cultural Vibrancy & Event Staging',
+    goalDescription: 'Organize high-impact cultural festivals and community events in the oasis.',
+    objCode: '2.1',
+    objTitle: '2.1 Enhance Community Participation and Awareness of the Development Strategy',
+    sectorId: 'sec-strategy',
+    sectorName: 'Strategy & Sector Development Sector',
+    department: 'Tourism Destination Management Office',
+    targetYear: 2027,
+    progress: 82,
+    objStatus: 'on-track' as const,
+    kpiCode: '2.1.4',
+    kpiName: 'Number of Days Festivals and Shows Are Held',
+    kpiFormula: 'Total Number of Days Festivals and Shows Are Held',
+    kpiBaseline: '70',
+    kpiTarget2026: '73',
+    kpiTarget2027: '75',
+    kpiTarget: 75,
+    kpiActual: 72,
+    kpiUnit: 'Days',
+    kpiFrequency: 'Annual' as const,
+    kpiStatus: 'on-track' as const,
+    keyProject: 'Community Empowerment, Events and Impact Project',
+    keyMilestone: 'Support Local Initiatives and the Community Economy',
+    initCode: 'INIT-AHA-02',
+    initTitle: '7. Enhance Community Participation and Involvement in Preparing Development Plans',
+    initDescription: 'Staging festivals, cultural showcases, and heritage activation across historic districts.',
+    budgetSAR: 9500000,
+    spentSAR: 6200000,
+    milestoneTitle: 'Annual Festivals & Cultural Calendar Launch',
+    milestoneDate: '2026-10-15',
+  },
+  {
     name: '🤖 AI & Autonomous Digital Core',
+    badge: 'Smart Governance',
+    themeCode: 'ST-05',
     themeTitle: 'Artificial Intelligence & Intelligent Digital Core',
     themeDescription: 'Modernize enterprise IT backbone with agentic AI workflows, automated telemetry, and cognitive operations.',
     color: 'indigo',
     weight: 25,
+    goalCode: 'SG-5.1',
     goalTitle: 'Accelerate Enterprise Automation and Cloud-Native Resilience',
     goalDescription: 'Transition critical enterprise pipelines to autonomous event-driven processing and cloud automation.',
+    objCode: 'OBJ-501',
     objTitle: 'Deploy Enterprise Generative AI Workflows across 12 Business Units',
-    department: 'Strategic Development Office',
+    sectorId: 'sec-ss',
+    sectorName: 'Support Services Sector',
+    department: 'Information Technology',
     targetYear: 2027,
     progress: 20,
     objStatus: 'on-track' as const,
+    kpiCode: 'KPI-501',
     kpiName: 'Autonomous Workflow Adoption Rate',
+    kpiFormula: '(Automated Workflows / Total Workflows) * 100%',
+    kpiBaseline: '15%',
+    kpiTarget2026: '60%',
+    kpiTarget2027: '95%',
     kpiTarget: 95,
     kpiActual: 38,
     kpiUnit: '%',
     kpiFrequency: 'Quarterly' as const,
     kpiStatus: 'on-track' as const,
+    keyProject: 'AI Core Infrastructure Project',
+    keyMilestone: 'Deploy Multi-Agent Telemetry Across 12 Units',
+    initCode: 'INIT-05',
     initTitle: 'Enterprise Cognitive Platform & Agentic Automation Rollout',
     initDescription: 'Deploy scalable multi-agent microservices and LLM-assisted knowledge management infrastructure.',
     budgetSAR: 18500000,
     spentSAR: 3200000,
     milestoneTitle: 'Cognitive Architecture Blueprint & Vendor Sign-off',
     milestoneDate: '2026-11-30',
-  },
-  {
-    name: '🌿 ESG & Sustainable Clean Operations',
-    themeTitle: 'Global ESG Excellence & Carbon Neutrality 2030',
-    themeDescription: 'Incorporate sustainability metrics across procurement, solar-driven facilities, and circular waste management.',
-    color: 'emerald',
-    weight: 20,
-    goalTitle: 'Transition Core Infrastructure to 100% Clean Energy & Net-Zero',
-    goalDescription: 'Substantially reduce operational greenhouse emissions and deploy automated environmental telemetry.',
-    objTitle: 'Reduce Scope 1 & 2 Corporate Carbon Emissions by 40%',
-    department: 'Enterprise Risk & Resilience Directorate',
-    targetYear: 2028,
-    progress: 32,
-    objStatus: 'on-track' as const,
-    kpiName: 'Carbon Footprint Reduction Index',
-    kpiTarget: 40,
-    kpiActual: 18,
-    kpiUnit: '%',
-    kpiFrequency: 'Bi-Annual' as const,
-    kpiStatus: 'on-track' as const,
-    initTitle: 'Smart Facility Solar Microgrid & Energy Efficiency Retrofit',
-    initDescription: 'Install high-efficiency solar arrays and smart IoT energy meters across corporate headquarters.',
-    budgetSAR: 24000000,
-    spentSAR: 7500000,
-    milestoneTitle: 'Solar Microgrid Grid Interconnection Approval',
-    milestoneDate: '2026-12-15',
-  },
-  {
-    name: '🛡️ Advanced Zero-Trust Cyber Resilience',
-    themeTitle: 'Next-Generation Zero-Trust Cyber Defense',
-    themeDescription: 'Architect resilient defense-in-depth security perimeter, automated SOAR workflows, and cyber recovery posture.',
-    color: 'blue',
-    weight: 25,
-    goalTitle: 'Fortify Mission-Critical Digital Assets against Advanced Threats',
-    goalDescription: 'Establish micro-segmented access, quantum-ready encryption, and 24/7 autonomous threat hunting.',
-    objTitle: 'Implement Zero-Trust Network Access Across 100% Enterprise Endpoints',
-    department: 'Cybersecurity & IT Governance',
-    targetYear: 2026,
-    progress: 45,
-    objStatus: 'on-track' as const,
-    kpiName: 'Mean Time to Detect & Contain (MTTC)',
-    kpiTarget: 15,
-    kpiActual: 28,
-    kpiUnit: 'Mins',
-    kpiFrequency: 'Monthly' as const,
-    kpiStatus: 'warning' as const,
-    initTitle: 'Autonomous Threat Detection & Immutable Cloud Backup Network',
-    initDescription: 'Roll out automated EDR/XDR with instant containment playbooks and air-gapped immutable recovery.',
-    budgetSAR: 14500000,
-    spentSAR: 5200000,
-    milestoneTitle: 'Micro-segmentation policy verification across all subnets',
-    milestoneDate: '2026-10-31',
-  },
-  {
-    name: '⚡ Global Client Experience & Service Mesh',
-    themeTitle: 'Omnichannel Client Engagement & Digital Ecosystem',
-    themeDescription: 'Deliver personalized, frictionless client services through intelligent portal and unified CRM mesh.',
-    color: 'purple',
-    weight: 15,
-    goalTitle: 'Elevate Enterprise Client Satisfaction to Industry Top Decile',
-    goalDescription: 'Unify disparate stakeholder touchpoints into a unified, high-availability self-service ecosystem.',
-    objTitle: 'Attain Global Client Satisfaction (CSAT) Rating of 95%',
-    department: 'Strategic Development Office',
-    targetYear: 2027,
-    progress: 15,
-    objStatus: 'on-track' as const,
-    kpiName: 'Customer Lifetime Satisfaction (CSAT)',
-    kpiTarget: 95,
-    kpiActual: 82,
-    kpiUnit: '%',
-    kpiFrequency: 'Quarterly' as const,
-    kpiStatus: 'on-track' as const,
-    initTitle: 'Next-Gen Unified Enterprise Portal & API Hub',
-    initDescription: 'Centralize enterprise self-service, real-time ticket escalation, and client SLA transparency.',
-    budgetSAR: 9800000,
-    spentSAR: 1900000,
-    milestoneTitle: 'Beta Client Beta Group Pilot Onboarding',
-    milestoneDate: '2026-11-15',
   },
 ];
 
@@ -172,71 +286,97 @@ export const CreateStrategyPage: React.FC = () => {
   const { themes, addStrategy, currentUser } = useApp();
 
   const nextThemeNum = themes.length + 1;
-  const defaultThemeCode = `ST-${String(nextThemeNum).padStart(2, '0')}`;
+  const defaultThemeCode = `02`;
   const defaultGoalCode = `SG-${nextThemeNum}.1`;
-  const defaultObjCode = `OBJ-${nextThemeNum}01`;
-  const defaultKpiCode = `KPI-${nextThemeNum}01`;
-  const defaultInitCode = `INIT-${String(nextThemeNum).padStart(2, '0')}`;
+  const defaultObjCode = `2.1`;
+  const defaultKpiCode = `2.1.1`;
+  const defaultInitCode = `INIT-AHA-01`;
 
-  // Form states
+  // Form states - Core Theme & Goal
   const [themeCode, setThemeCode] = useState(defaultThemeCode);
-  const [themeTitle, setThemeTitle] = useState('AI-Powered Customer Excellence & Digital Core');
+  const [themeTitle, setThemeTitle] = useState('02 People and Society');
   const [themeDescription, setThemeDescription] = useState(
-    'Transform enterprise operations through intelligent automation, automated telemetry, and cognitive customer experiences.'
+    'Enhance community participation, civic awareness of the development strategy, and improve quality of life and oasis services.'
   );
-  const [themeColor, setThemeColor] = useState('blue');
-  const [themeWeight, setThemeWeight] = useState(25);
+  const [themeColor, setThemeColor] = useState('emerald');
+  const [themeWeight, setThemeWeight] = useState(35);
 
-  const [goalCode, setGoalCode] = useState(defaultGoalCode);
-  const [goalTitle, setGoalTitle] = useState('Accelerate Enterprise Automation and Cloud-Native Agility');
-  const [goalDescription, setGoalDescription] = useState('Build intelligent microservices to support modern corporate workflows.');
+  const [goalCode, setGoalCode] = useState('SG-2.1');
+  const [goalTitle, setGoalTitle] = useState('Community Participation & Development Strategy Awareness');
+  const [goalDescription, setGoalDescription] = useState('Foster active civic participation and widespread community alignment.');
 
-  const [objCode, setObjCode] = useState(defaultObjCode);
-  const [objTitle, setObjTitle] = useState('Deploy Generative AI Agentic Workflows across 12 Business Units');
+  // Objective & Sector Cascading
+  const [objCode, setObjCode] = useState('2.1');
+  const [objTitle, setObjTitle] = useState('2.1 Enhance Community Participation and Awareness of the Development Strategy');
   const [objOwner, setObjOwner] = useState(currentUser.name);
-  const [objDept, setObjDept] = useState(currentUser.department || 'Strategic Development Office');
+  const [sectorId, setSectorId] = useState('sec-strategy');
+  const [sectorName, setSectorName] = useState('Strategy & Sector Development Sector');
+  const [objDept, setObjDept] = useState('Strategy Development');
   const [targetYear, setTargetYear] = useState(2027);
-  const [objProgress, setObjProgress] = useState(20);
+  const [objProgress, setObjProgress] = useState(75);
   const [objStatus, setObjStatus] = useState<'on-track' | 'at-risk' | 'behind' | 'achieved'>('on-track');
 
-  const [kpiCode, setKpiCode] = useState(defaultKpiCode);
-  const [kpiName, setKpiName] = useState('Autonomous Workflow Adoption Rate');
-  const [kpiTarget, setKpiTarget] = useState(90);
-  const [kpiActual, setKpiActual] = useState(35);
+  // KPI & Matrix Mathematical Specification
+  const [kpiCode, setKpiCode] = useState('2.1.1');
+  const [kpiName, setKpiName] = useState('Percentage Increase in the Number of Event Visitors');
+  const [kpiFormula, setKpiFormula] = useState('(Total Actual Event Visitors - Total Targeted Visitors) * 100%');
+  const [kpiBaseline, setKpiBaseline] = useState<string | number>('-');
+  const [kpiTarget2026, setKpiTarget2026] = useState<string | number>('75%');
+  const [kpiTarget2027, setKpiTarget2027] = useState<string | number>('85%');
+  const [kpiTarget, setKpiTarget] = useState(75);
+  const [kpiActual, setKpiActual] = useState(72);
   const [kpiUnit, setKpiUnit] = useState('%');
-  const [kpiFrequency, setKpiFrequency] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Quarterly');
+  const [kpiFrequency, setKpiFrequency] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Annual');
   const [kpiStatus, setKpiStatus] = useState<'on-track' | 'warning' | 'critical' | 'achieved'>('on-track');
+  const [keyProject, setKeyProject] = useState('Al-Ahsa Strategy Awareness Project');
+  const [keyMilestone, setKeyMilestone] = useState('Develop the General Framework for Community Awareness of the Al-Ahsa Strategy');
+  const [pillarCode, setPillarCode] = useState('02');
 
+  // Initiative & Budget
   const [initCode, setInitCode] = useState(defaultInitCode);
-  const [initTitle, setInitTitle] = useState('Enterprise Cognitive Platform Rollout');
-  const [initDescription, setInitDescription] = useState('Enterprise-wide rollout of scalable cognitive microservices.');
-  const [budgetSAR, setBudgetSAR] = useState(15000000);
-  const [spentSAR, setSpentSAR] = useState(2500000);
-  const [startDate, setStartDate] = useState('2026-03-01');
+  const [initTitle, setInitTitle] = useState('Raise Awareness of the Al-Ahsa Strategy and the Level of Digital Engagement with the Authority');
+  const [initDescription, setInitDescription] = useState('Comprehensive public awareness campaign and active digital engagement channels.');
+  const [budgetSAR, setBudgetSAR] = useState(8500000);
+  const [spentSAR, setSpentSAR] = useState(5200000);
+  const [startDate, setStartDate] = useState('2026-01-01');
   const [endDate, setEndDate] = useState('2027-12-31');
-  const [milestoneTitle, setMilestoneTitle] = useState('Core Architecture & Security Sign-off');
-  const [milestoneDueDate, setMilestoneDueDate] = useState('2026-10-31');
+  const [milestoneTitle, setMilestoneTitle] = useState('Develop the General Framework for Community Awareness of the Al-Ahsa Strategy');
+  const [milestoneDueDate, setMilestoneDueDate] = useState('2026-06-30');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const applyPreset = (preset: typeof PRESETS[0]) => {
+    setThemeCode(preset.themeCode || defaultThemeCode);
     setThemeTitle(preset.themeTitle);
     setThemeDescription(preset.themeDescription);
     setThemeColor(preset.color);
     setThemeWeight(preset.weight);
+    setGoalCode(preset.goalCode || defaultGoalCode);
     setGoalTitle(preset.goalTitle);
     setGoalDescription(preset.goalDescription);
+    setObjCode(preset.objCode || defaultObjCode);
     setObjTitle(preset.objTitle);
+    setSectorId(preset.sectorId || 'sec-strategy');
+    setSectorName(preset.sectorName || 'Strategy & Sector Development Sector');
     setObjDept(preset.department);
     setTargetYear(preset.targetYear);
     setObjProgress(preset.progress);
     setObjStatus(preset.objStatus);
+    setKpiCode(preset.kpiCode || defaultKpiCode);
     setKpiName(preset.kpiName);
+    setKpiFormula(preset.kpiFormula || '');
+    setKpiBaseline(preset.kpiBaseline !== undefined ? preset.kpiBaseline : '-');
+    setKpiTarget2026(preset.kpiTarget2026 !== undefined ? preset.kpiTarget2026 : `${preset.kpiTarget}${preset.kpiUnit}`);
+    setKpiTarget2027(preset.kpiTarget2027 !== undefined ? preset.kpiTarget2027 : `${preset.kpiTarget}${preset.kpiUnit}`);
+    setKeyProject(preset.keyProject || '');
+    setKeyMilestone(preset.keyMilestone || '');
+    setPillarCode(preset.themeCode || '02');
     setKpiTarget(preset.kpiTarget);
     setKpiActual(preset.kpiActual);
     setKpiUnit(preset.kpiUnit);
     setKpiFrequency(preset.kpiFrequency);
     setKpiStatus(preset.kpiStatus);
+    setInitCode(preset.initCode || defaultInitCode);
     setInitTitle(preset.initTitle);
     setInitDescription(preset.initDescription);
     setBudgetSAR(preset.budgetSAR);
@@ -272,6 +412,8 @@ export const CreateStrategyPage: React.FC = () => {
           title: objTitle.trim(),
           owner: objOwner.trim() || currentUser.name,
           department: objDept,
+          sectorId,
+          sectorName,
           targetYear: Number(targetYear),
           progress: Number(objProgress),
           status: objStatus,
@@ -285,6 +427,15 @@ export const CreateStrategyPage: React.FC = () => {
               actual: Number(kpiActual),
               frequency: kpiFrequency,
               status: kpiStatus,
+              formula: kpiFormula.trim(),
+              baseline: kpiBaseline,
+              target2026: kpiTarget2026,
+              target2027: kpiTarget2027,
+              strategicInitiative: initTitle.trim(),
+              keyMilestone: keyMilestone.trim() || milestoneTitle.trim(),
+              keyProject: keyProject.trim(),
+              pillarCode: pillarCode || '02',
+              pillarTitle: themeTitle || '02 People and Society',
             }
           : undefined,
         initiative: initTitle.trim()
@@ -421,9 +572,12 @@ export const CreateStrategyPage: React.FC = () => {
                   type="text"
                   required
                   value={themeCode}
-                  onChange={(e) => setThemeCode(e.target.value)}
+                  onChange={(e) => {
+                    setThemeCode(e.target.value);
+                    setPillarCode(e.target.value);
+                  }}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. ST-05"
+                  placeholder="e.g. 02"
                 />
               </div>
 
@@ -600,14 +754,27 @@ export const CreateStrategyPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Owner / Lead Officer</label>
-                <input
-                  type="text"
-                  required
-                  value={objOwner}
-                  onChange={(e) => setObjOwner(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                />
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Operational Sector (Client Governance Tier)
+                </label>
+                <select
+                  value={sectorId}
+                  onChange={(e) => {
+                    const selId = e.target.value;
+                    setSectorId(selId);
+                    const foundSec = AUTHORITY_SECTORS.find((s) => s.id === selId);
+                    if (foundSec) {
+                      setSectorName(foundSec.name);
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  {AUTHORITY_SECTORS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.code})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -629,6 +796,17 @@ export const CreateStrategyPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Owner / Lead Officer</label>
+                <input
+                  type="text"
+                  required
+                  value={objOwner}
+                  onChange={(e) => setObjOwner(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Target Year</label>
                 <select
@@ -657,26 +835,26 @@ export const CreateStrategyPage: React.FC = () => {
                   <option value="achieved">Achieved</option>
                 </select>
               </div>
+            </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-700">Initial Progress</label>
-                  <span className="text-xs font-mono font-bold text-blue-700">{objProgress}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value={objProgress}
-                  onChange={(e) => setObjProgress(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer mt-1"
-                />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-slate-700">Initial Progress</label>
+                <span className="text-xs font-mono font-bold text-blue-700">{objProgress}%</span>
               </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={objProgress}
+                onChange={(e) => setObjProgress(Number(e.target.value))}
+                className="w-full accent-blue-600 cursor-pointer mt-1"
+              />
             </div>
           </div>
 
-          {/* Card 4: Key Performance Indicator (KPI) */}
+          {/* Card 4: Key Performance Indicator (KPI & Cascading Matrix Specification) */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
@@ -685,11 +863,11 @@ export const CreateStrategyPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">Key Performance Indicator (KPI)</h3>
-                  <p className="text-[11px] text-slate-500">Measurable metric tied directly to this objective</p>
+                  <p className="text-[11px] text-slate-500">Measurable metric with formula & multi-year cascading targets</p>
                 </div>
               </div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                Level 4: Metric
+                Level 4: Metric & Formula
               </span>
             </div>
 
@@ -701,6 +879,7 @@ export const CreateStrategyPage: React.FC = () => {
                   value={kpiCode}
                   onChange={(e) => setKpiCode(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="e.g. 2.1.1"
                 />
               </div>
 
@@ -711,16 +890,79 @@ export const CreateStrategyPage: React.FC = () => {
                   value={kpiName}
                   onChange={(e) => setKpiName(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="e.g. Autonomous Workflow Adoption Rate"
+                  placeholder="e.g. Percentage Increase in the Number of Event Visitors"
                 />
               </div>
             </div>
 
+            {/* Mathematical Calculation Formula */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                  <Calculator className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Mathematical Calculation Formula</span>
+                </label>
+                <span className="text-[10px] font-mono text-slate-400">Exact formula from strategy matrix</span>
+              </div>
+              <input
+                type="text"
+                value={kpiFormula}
+                onChange={(e) => setKpiFormula(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                placeholder="e.g. (Total Actual Event Visitors - Total Targeted Visitors) * 100%"
+              />
+              {kpiFormula && (
+                <div className="mt-1.5 p-2 bg-slate-900 text-blue-300 rounded-lg text-[11px] font-mono flex items-center gap-2 border border-slate-800">
+                  <span className="text-slate-400 font-bold">f(x) =</span>
+                  <span className="truncate">{kpiFormula}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Multi-Year Cascading Targets & Baseline Grid */}
+            <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-2">
+              <span className="text-xs font-bold text-slate-800 block">Cascading Multi-Year Targets (Client Matrix)</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">Baseline Value</label>
+                  <input
+                    type="text"
+                    value={kpiBaseline}
+                    onChange={(e) => setKpiBaseline(e.target.value)}
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    placeholder="e.g. 2.00% or 70 or -"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-blue-700 mb-1">2026 Target</label>
+                  <input
+                    type="text"
+                    value={kpiTarget2026}
+                    onChange={(e) => setKpiTarget2026(e.target.value)}
+                    className="w-full px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-xs font-mono font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    placeholder="e.g. 75%"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-emerald-700 mb-1">2027 Target</label>
+                  <input
+                    type="text"
+                    value={kpiTarget2027}
+                    onChange={(e) => setKpiTarget2027(e.target.value)}
+                    className="w-full px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-mono font-bold text-emerald-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    placeholder="e.g. 85%"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Execution Measurement Parameters */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Target Value</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Numeric Target</label>
                 <input
                   type="number"
+                  step="any"
                   value={kpiTarget}
                   onChange={(e) => setKpiTarget(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -728,9 +970,10 @@ export const CreateStrategyPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Actual / Baseline</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Actual / Current</label>
                 <input
                   type="number"
+                  step="any"
                   value={kpiActual}
                   onChange={(e) => setKpiActual(Number(e.target.value))}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -744,7 +987,7 @@ export const CreateStrategyPage: React.FC = () => {
                   value={kpiUnit}
                   onChange={(e) => setKpiUnit(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="%, SAR, Score, Days"
+                  placeholder="%, M Trees, Days, SAR"
                 />
               </div>
 
@@ -760,6 +1003,37 @@ export const CreateStrategyPage: React.FC = () => {
                   <option value="Bi-Annual">Bi-Annual</option>
                   <option value="Annual">Annual</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Key Project & Milestone Linkage */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
+                  <FolderGit2 className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Key Project Name</span>
+                </label>
+                <input
+                  type="text"
+                  value={keyProject}
+                  onChange={(e) => setKeyProject(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="e.g. Al-Ahsa Strategy Awareness Project"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
+                  <Milestone className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Key Project Milestone</span>
+                </label>
+                <input
+                  type="text"
+                  value={keyMilestone}
+                  onChange={(e) => setKeyMilestone(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="e.g. Develop the General Framework for Community Awareness..."
+                />
               </div>
             </div>
           </div>
@@ -942,33 +1216,63 @@ export const CreateStrategyPage: React.FC = () => {
                     <div className="bg-emerald-600 h-full transition-all" style={{ width: `${objProgress}%` }} />
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-0.5">
-                    <span>Target Year: {targetYear}</span>
-                    <span>Dept: {objDept}</span>
+                  <div className="flex flex-col gap-0.5 text-[10px] text-slate-500 font-mono pt-0.5">
+                    <div className="flex items-center justify-between">
+                      <span>Target Year: {targetYear}</span>
+                      <span>Dept: {objDept}</span>
+                    </div>
+                    {sectorName && (
+                      <div className="text-slate-400 truncate">
+                        Sector: {sectorName}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* KPI Snapshot Pill */}
               {kpiName && (
-                <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between text-xs">
-                  <div>
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5">
-                      <span className="font-mono text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded">
+                      <span className="font-mono text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                         {kpiCode}
                       </span>
-                      <span className="font-semibold text-slate-800">{kpiName}</span>
+                      <span className="font-semibold text-slate-800 line-clamp-1">{kpiName}</span>
                     </div>
-                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                      Frequency: {kpiFrequency} • Status: {kpiStatus}
-                    </div>
-                  </div>
-                  <div className="text-right font-mono">
-                    <span className="text-[10px] text-slate-400 block">Actual / Target</span>
-                    <span className="font-bold text-slate-900">
+                    <span className="font-mono text-xs font-bold text-slate-900">
                       {kpiActual} / {kpiTarget} {kpiUnit}
                     </span>
                   </div>
+
+                  {kpiFormula && (
+                    <div className="p-1.5 bg-slate-900 text-blue-300 rounded text-[10px] font-mono flex items-center gap-1.5 overflow-hidden">
+                      <Calculator className="w-3 h-3 text-blue-400 shrink-0" />
+                      <span className="truncate">{kpiFormula}</span>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-3 gap-1 bg-slate-50 p-2 rounded-lg text-center font-mono text-[10px] border border-slate-100">
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Baseline</span>
+                      <span className="font-bold text-slate-700">{kpiBaseline || '-'}</span>
+                    </div>
+                    <div>
+                      <span className="text-blue-500 block text-[9px]">2026 Target</span>
+                      <span className="font-bold text-blue-700">{kpiTarget2026 || '-'}</span>
+                    </div>
+                    <div>
+                      <span className="text-emerald-600 block text-[9px]">2027 Target</span>
+                      <span className="font-bold text-emerald-700">{kpiTarget2027 || '-'}</span>
+                    </div>
+                  </div>
+
+                  {keyProject && (
+                    <div className="text-[10px] text-slate-600 flex items-center gap-1.5 pt-0.5">
+                      <FolderGit2 className="w-3 h-3 text-indigo-500 shrink-0" />
+                      <span className="font-semibold truncate">Project: {keyProject}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
