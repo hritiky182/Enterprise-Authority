@@ -182,9 +182,9 @@ export const Sidebar: React.FC = () => {
         <div className="p-3 border-t border-slate-800 bg-slate-950/40 text-[10px] text-slate-400 font-mono flex items-center justify-between">
           <div className="flex items-center space-x-1.5">
             <Shield className="w-3.5 h-3.5 text-blue-400" />
-            <span>ENTERPRISE GRC v3.4</span>
+            <span>{t('ENTERPRISE GRC v3.4')}</span>
           </div>
-          <span className="text-blue-400 font-bold">ENTERPRISE</span>
+          <span className="text-blue-400 font-bold">{t('ENTERPRISE')}</span>
         </div>
       )}
     </aside>

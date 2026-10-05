@@ -10,7 +10,7 @@ import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 import { ImportRiskModal } from '../components/modals/ImportRiskModal';
 
 export const EnterpriseRiskPage: React.FC = () => {
-  const { risks, openModal, permissions } = useApp();
+  const { risks, openModal, permissions, lang, t } = useApp();
   const [selectedCell, setSelectedCell] = useState<{ likelihood: number; impact: number } | null>(null);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
@@ -38,14 +38,14 @@ export const EnterpriseRiskPage: React.FC = () => {
 
   const riskColumns: Column<RiskItem>[] = [
     {
-      header: 'Risk Code',
+      header: t('Risk Code'),
       accessorKey: 'code',
       sortable: true,
       width: '110px',
       cell: (r) => <span className="font-mono font-bold text-slate-900">{r.code}</span>,
     },
     {
-      header: 'Risk Title & Description',
+      header: t('Risk Title & Description'),
       accessorKey: 'title',
       sortable: true,
       cell: (r) => (
@@ -54,18 +54,19 @@ export const EnterpriseRiskPage: React.FC = () => {
             {r.title}
           </div>
           <div className="text-[10px] text-slate-400 font-mono">
-            {r.category} • {r.department}
+            {t(r.category)} • {t(r.department)}
           </div>
         </div>
       ),
     },
     {
-      header: 'Owner',
+      header: t('Owner'),
       accessorKey: 'owner',
       sortable: true,
+      cell: (r) => <span>{t(r.owner)}</span>,
     },
     {
-      header: 'Inherent',
+      header: t('Inherent'),
       accessorKey: 'inherentScore',
       sortable: true,
       width: '90px',
@@ -79,33 +80,33 @@ export const EnterpriseRiskPage: React.FC = () => {
               : 'bg-blue-50 text-blue-700 border-blue-200'
           }`}
         >
-          Score {r.inherentScore}
+          {lang === 'ar' ? `درجة ${r.inherentScore}` : `Score ${r.inherentScore}`}
         </span>
       ),
     },
     {
-      header: 'Residual',
+      header: t('Residual'),
       accessorKey: 'residualScore',
       sortable: true,
       width: '90px',
       cell: (r) => (
         <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-          Score {r.residualScore}
+          {lang === 'ar' ? `درجة ${r.residualScore}` : `Score ${r.residualScore}`}
         </span>
       ),
     },
     {
-      header: 'Treatment',
+      header: t('Treatment'),
       accessorKey: 'treatment',
       sortable: true,
       cell: (r) => (
         <span className="text-xs font-mono font-semibold px-2 py-0.5 bg-slate-100 text-slate-700 rounded">
-          {r.treatment}
+          {t(r.treatment)}
         </span>
       ),
     },
     {
-      header: 'Status',
+      header: t('Status'),
       accessorKey: 'status',
       sortable: true,
       cell: (r) => <StatusBadge status={r.status} />,
@@ -120,11 +121,11 @@ export const EnterpriseRiskPage: React.FC = () => {
           <Breadcrumbs />
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1 mt-2">
             <ShieldAlert className="w-4 h-4" />
-            <span>ENTERPRISE RISK MANAGEMENT (ISO 31000)</span>
+            <span>{t('ENTERPRISE RISK MANAGEMENT (ISO 31000)')}</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900">Enterprise Risk Register & Heatmap</h1>
+          <h1 className="text-xl font-bold text-slate-900">{t('Enterprise Risk Register & Heatmap')}</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Identify, assess, and treat strategic, operational, financial, and compliance risk exposures across all organizational departments.
+            {t('Identify, assess, and treat strategic, operational, financial, and compliance risk exposures across all organizational departments.')}
           </p>
         </div>
 
@@ -135,7 +136,7 @@ export const EnterpriseRiskPage: React.FC = () => {
             className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Upload className="w-3.5 h-3.5 text-rose-600" />
-            <span>Import Risk Register</span>
+            <span>{t('Import Risk Register')}</span>
           </button>
 
           {permissions.canCreateRisk && (
@@ -144,7 +145,7 @@ export const EnterpriseRiskPage: React.FC = () => {
               className="px-4 py-2 bg-rose-600 text-white rounded-xl font-semibold text-xs hover:bg-rose-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              Register New Risk
+              {t('Register New Risk')}
             </button>
           )}
         </div>
@@ -190,14 +191,15 @@ export const EnterpriseRiskPage: React.FC = () => {
           {selectedCell && (
             <div className="flex items-center gap-2 text-xs bg-amber-50 border border-amber-200 text-amber-900 px-3 py-1.5 rounded-lg">
               <span>
-                Filtered by Matrix Cell: Likelihood <strong>{selectedCell.likelihood}</strong> × Impact{' '}
-                <strong>{selectedCell.impact}</strong> ({filteredRisks.length} Risks)
+                {lang === 'ar'
+                  ? `تمت التصفية حسب خلية المصفوفة: الاحتمالية ${selectedCell.likelihood} × الأثر ${selectedCell.impact} (${filteredRisks.length} مخاطر)`
+                  : `Filtered by Matrix Cell: Likelihood ${selectedCell.likelihood} × Impact ${selectedCell.impact} (${filteredRisks.length} Risks)`}
               </span>
               <button
                 onClick={() => setSelectedCell(null)}
                 className="text-amber-700 hover:text-amber-900 font-bold ml-2 cursor-pointer"
               >
-                Clear Filter ✕
+                {t('Clear Filter ✕')}
               </button>
             </div>
           )}
@@ -219,14 +221,18 @@ export const EnterpriseRiskPage: React.FC = () => {
       <DataTable
         data={filteredRisks}
         columns={riskColumns}
-        title="Enterprise Risk Register"
-        subtitle={`Showing ${filteredRisks.length} active risk items in ISO 31000 inventory`}
-        searchPlaceholder="Search risks by code, title, owner, category..."
+        title={t('Enterprise Risk Register')}
+        subtitle={
+          lang === 'ar'
+            ? `عرض ${filteredRisks.length} من عناصر المخاطر النشطة في سجل ISO 31000`
+            : `Showing ${filteredRisks.length} active risk items in ISO 31000 inventory`
+        }
+        searchPlaceholder={t('Search risks by code, title, owner, category...')}
         onRowClick={(r) => openModal('risk', r)}
         primaryAction={
           permissions.canCreateRisk
             ? {
-                label: 'Register Risk',
+                label: t('Register Risk'),
                 onClick: () => openModal('create_risk'),
                 icon: <Plus className="w-3.5 h-3.5" />,
               }
@@ -235,24 +241,24 @@ export const EnterpriseRiskPage: React.FC = () => {
         filterOptions={[
           {
             key: 'category',
-            label: 'Category',
+            label: t('Category'),
             options: [
-              { label: 'Operational', value: 'operational' },
-              { label: 'Strategic', value: 'strategic' },
-              { label: 'Financial', value: 'financial' },
-              { label: 'Compliance', value: 'compliance' },
-              { label: 'Cyber', value: 'cyber' },
-              { label: 'Reputational', value: 'reputational' },
+              { label: t('Operational'), value: 'operational' },
+              { label: t('Strategic'), value: 'strategic' },
+              { label: t('Financial'), value: 'financial' },
+              { label: t('Compliance'), value: 'compliance' },
+              { label: t('Cyber'), value: 'cyber' },
+              { label: t('Reputational'), value: 'reputational' },
             ],
           },
           {
             key: 'status',
-            label: 'Status',
+            label: t('Status'),
             options: [
-              { label: 'Open', value: 'open' },
-              { label: 'Mitigating', value: 'mitigating' },
-              { label: 'Accepted', value: 'accepted' },
-              { label: 'Closed', value: 'closed' },
+              { label: t('Open'), value: 'open' },
+              { label: t('Mitigating'), value: 'mitigating' },
+              { label: t('Accepted'), value: 'accepted' },
+              { label: t('Closed'), value: 'closed' },
             ],
           },
         ]}

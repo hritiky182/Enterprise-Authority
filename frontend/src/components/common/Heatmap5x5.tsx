@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RiskItem } from '../../types';
 import { LayoutGrid, BarChart2, ShieldAlert, AlertTriangle, ShieldCheck, Info } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Heatmap5x5Props {
   risks: RiskItem[];
@@ -13,22 +14,23 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
   onSelectCell,
   selectedCell,
 }) => {
+  const { lang, t } = useApp();
   const [viewMode, setViewMode] = useState<'matrix' | 'distribution'>('matrix');
 
   const likelihoodLabels = [
-    { level: 5, label: '5 - Almost Certain' },
-    { level: 4, label: '4 - Likely' },
-    { level: 3, label: '3 - Possible' },
-    { level: 2, label: '2 - Unlikely' },
-    { level: 1, label: '1 - Rare' },
+    { level: 5, label: lang === 'ar' ? '5 - مؤكد تقريباً' : '5 - Almost Certain' },
+    { level: 4, label: lang === 'ar' ? '4 - محتمل جداً' : '4 - Likely' },
+    { level: 3, label: lang === 'ar' ? '3 - ممكن' : '3 - Possible' },
+    { level: 2, label: lang === 'ar' ? '2 - غير مرجح' : '2 - Unlikely' },
+    { level: 1, label: lang === 'ar' ? '1 - نادر' : '1 - Rare' },
   ];
 
   const impactLabels = [
-    { level: 1, label: '1 - Minor' },
-    { level: 2, label: '2 - Moderate' },
-    { level: 3, label: '3 - Serious' },
-    { level: 4, label: '4 - Major' },
-    { level: 5, label: '5 - Critical' },
+    { level: 1, label: lang === 'ar' ? '1 - طفيف' : '1 - Minor' },
+    { level: 2, label: lang === 'ar' ? '2 - متوسط' : '2 - Moderate' },
+    { level: 3, label: lang === 'ar' ? '3 - ملحوظ' : '3 - Serious' },
+    { level: 4, label: lang === 'ar' ? '4 - كبير' : '4 - Major' },
+    { level: 5, label: lang === 'ar' ? '5 - حرج' : '5 - Critical' },
   ];
 
   const getCellScore = (l: number, i: number) => l * i;
@@ -99,14 +101,14 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
         <div>
           <div className="flex items-center space-x-2">
             <h3 className="panel-title text-slate-900 font-bold text-base">
-              5×5 Enterprise Risk Matrix & Heatmap
+              {t('5×5 Enterprise Risk Matrix & Heatmap')}
             </h3>
             <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
-              ISO 31000 Standard
+              {t('ISO 31000 Standard')}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Real-time evaluation of likelihood vs consequence exposures across institutional domains.
+            {t('Real-time evaluation of likelihood vs consequence exposures across institutional domains.')}
           </p>
         </div>
 
@@ -122,7 +124,7 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              <span>Matrix View</span>
+              <span>{t('Matrix View')}</span>
             </button>
             <button
               onClick={() => setViewMode('distribution')}
@@ -133,7 +135,7 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
               }`}
             >
               <BarChart2 className="w-3.5 h-3.5" />
-              <span>Severity Breakdown</span>
+              <span>{t('Severity Breakdown')}</span>
             </button>
           </div>
         </div>
@@ -143,28 +145,28 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
         <div className="flex items-center space-x-4">
           <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
-            Risk Tier Legend:
+            {t('Risk Tier Legend:')}
           </span>
           <div className="flex items-center space-x-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" />
-            <span className="text-slate-600 font-medium">Low (1-4)</span>
+            <span className="text-slate-600 font-medium">{t('Low (1-4)')}</span>
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block" />
-            <span className="text-slate-600 font-medium">Moderate (5-9)</span>
+            <span className="text-slate-600 font-medium">{t('Moderate (5-9)')}</span>
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
-            <span className="text-slate-600 font-medium">High (10-15)</span>
+            <span className="text-slate-600 font-medium">{t('High (10-15)')}</span>
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-600 inline-block" />
-            <span className="text-slate-600 font-medium">Critical (16-25)</span>
+            <span className="text-slate-600 font-medium">{t('Critical (16-25)')}</span>
           </div>
         </div>
 
         <span className="text-[11px] text-slate-400 font-mono">
-          Click any cell to filter the register
+          {t('Click any cell to filter the register')}
         </span>
       </div>
 
@@ -174,13 +176,13 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
           <div className="min-w-[620px]">
             {/* Impact Axis Label */}
             <div className="text-center text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-2 pl-36">
-              Impact (Consequence Level) →
+              {lang === 'ar' ? 'الأثر (مستوى العواقب) ←' : 'Impact (Consequence Level) →'}
             </div>
 
             <div className="grid grid-cols-6 gap-2">
               {/* Top-left Axis Header */}
               <div className="p-2 text-[11px] font-mono font-bold text-slate-400 flex items-end justify-end pr-3">
-                Likelihood ↓
+                {lang === 'ar' ? 'الاحتمالية ↓' : 'Likelihood ↓'}
               </div>
 
               {/* Impact Header Cards */}
@@ -227,7 +229,10 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
                             <span
                               className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${badgeBg} shadow-xs animate-in zoom-in-75`}
                             >
-                              {cellRisks.length} {cellRisks.length === 1 ? 'Risk' : 'Risks'}
+                              {cellRisks.length}{' '}
+                              {cellRisks.length === 1
+                                ? lang === 'ar' ? 'خطر' : 'Risk'
+                                : lang === 'ar' ? 'مخاطر' : 'Risks'}
                             </span>
                           )}
                         </div>
@@ -242,13 +247,13 @@ export const Heatmap5x5: React.FC<Heatmap5x5Props> = ({
                             </div>
                             {cellRisks.length > 1 && (
                               <div className="text-[10px] font-mono font-medium text-slate-500">
-                                +{cellRisks.length - 1} more item
+                                +{cellRisks.length - 1} {lang === 'ar' ? 'إضافي' : 'more item'}
                               </div>
                             )}
                           </div>
                         ) : (
                           <div className="text-[10px] font-mono text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                            No risks
+                            {lang === 'ar' ? 'لا توجد مخاطر' : 'No risks'}
                           </div>
                         )}
                       </button>

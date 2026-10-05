@@ -1,11 +1,52 @@
 import React from 'react';
+import { useApp } from '../../context/AppContext';
 
 interface StatusBadgeProps {
   status: string;
   variant?: 'status' | 'risk' | 'priority' | 'criticality';
 }
 
+const ARABIC_STATUS_MAP: Record<string, string> = {
+  'on-track': 'ضمن المسار',
+  'ontrack': 'ضمن المسار',
+  'achieved': 'مُحقق',
+  'compliant': 'ممتثل',
+  'completed': 'مكتمل',
+  'ready': 'جاهز',
+  'passed': 'ناجح',
+  'approved': 'معتمد',
+  'active': 'نشط',
+  'at-risk': 'في خطر',
+  'at risk': 'في خطر',
+  'warning': 'يحتاج متابعة',
+  'partially compliant': 'ممتثل جزئياً',
+  'in progress': 'قيد التنفيذ',
+  'under review': 'قيد المراجعة',
+  'mitigating': 'قيد المعالجة',
+  'needs review': 'يحتاج مراجعة',
+  'partial pass': 'اجتياز جزئي',
+  'remediating': 'معالجة',
+  'behind': 'متأخر',
+  'critical': 'حرج',
+  'non-compliant': 'غير ممتثل',
+  'critical gap': 'فجوة حرجة',
+  'unpatched': 'غير معالج',
+  'failed': 'غير مجتاز',
+  'blocked': 'معطل',
+  'open': 'مفتوح',
+  'accepted': 'مقبول',
+  'draft': 'مسودة',
+  'planning': 'قيد التخطيط',
+  'to do': 'قيد الانتظار',
+  'not started': 'لم يبدأ',
+  'high': 'مرتفع',
+  'medium': 'متوسط',
+  'low': 'منخفض',
+  'moderate': 'معتدل',
+};
+
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, variant = 'status' }) => {
+  const { lang } = useApp();
   const normalized = status.toLowerCase();
 
   let colorClasses = 'bg-slate-100 text-slate-700 border-slate-200';
@@ -64,12 +105,19 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, variant = 'sta
     }
   }
 
+  const displayText =
+    lang === 'ar'
+      ? ARABIC_STATUS_MAP[normalized] ||
+        ARABIC_STATUS_MAP[normalized.replace(/[\s_-]+/g, '-')] ||
+        status
+      : status;
+
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs border ${colorClasses} font-mono tracking-tight capitalize whitespace-nowrap shadow-2xs`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-75" />
-      {status}
+      <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 rtl:mr-0 rtl:ml-1.5 opacity-75" />
+      {displayText}
     </span>
   );
 };

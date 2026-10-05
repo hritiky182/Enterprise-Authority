@@ -6,7 +6,7 @@ import { DataTable, Column } from '../components/common/DataTable';
 import { CheckSquare, LayoutGrid, List, Plus, Tag, Clock, ArrowRightLeft } from 'lucide-react';
 
 export const TasksPage: React.FC = () => {
-  const { tasks, updateTaskColumn, addTask, currentUser } = useApp();
+  const { tasks, updateTaskColumn, addTask, currentUser, lang, t } = useApp();
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
@@ -26,31 +26,31 @@ export const TasksPage: React.FC = () => {
   };
 
   const columnsList: { id: TaskItem['boardColumn']; label: string; color: string }[] = [
-    { id: 'todo', label: 'To Do', color: 'border-slate-300 bg-slate-50' },
-    { id: 'in_progress', label: 'In Progress', color: 'border-amber-300 bg-amber-50/30' },
-    { id: 'blocked', label: 'Blocked', color: 'border-rose-300 bg-rose-50/30' },
-    { id: 'completed', label: 'Completed', color: 'border-emerald-300 bg-emerald-50/30' },
+    { id: 'todo', label: t('To Do'), color: 'border-slate-300 bg-slate-50' },
+    { id: 'in_progress', label: t('In Progress'), color: 'border-amber-300 bg-amber-50/30' },
+    { id: 'blocked', label: t('Blocked'), color: 'border-rose-300 bg-rose-50/30' },
+    { id: 'completed', label: t('Completed'), color: 'border-emerald-300 bg-emerald-50/30' },
   ];
 
   const taskTableColumns: Column<TaskItem>[] = [
-    { header: 'Task ID', accessorKey: 'code', sortable: true, cell: (t) => <span className="font-mono font-bold text-slate-900">{t.code}</span> },
-    { header: 'Task Title', accessorKey: 'title', sortable: true, cell: (t) => <span className="font-semibold text-slate-900">{t.title}</span> },
-    { header: 'Assignee', accessorKey: 'assignee', sortable: true },
-    { header: 'Priority', accessorKey: 'priority', cell: (t) => <StatusBadge status={t.priority} variant="priority" /> },
-    { header: 'Due Date', accessorKey: 'dueDate', cell: (t) => <span className="font-mono text-slate-600">{t.dueDate}</span> },
+    { header: t('Task ID'), accessorKey: 'code', sortable: true, cell: (tItem) => <span className="font-mono font-bold text-slate-900">{tItem.code}</span> },
+    { header: t('Task Title'), accessorKey: 'title', sortable: true, cell: (tItem) => <span className="font-semibold text-slate-900">{tItem.title}</span> },
+    { header: t('Assignee'), accessorKey: 'assignee', sortable: true, cell: (tItem) => <span>{t(tItem.assignee)}</span> },
+    { header: t('Priority'), accessorKey: 'priority', cell: (tItem) => <StatusBadge status={tItem.priority} variant="priority" /> },
+    { header: t('Due Date'), accessorKey: 'dueDate', cell: (tItem) => <span className="font-mono text-slate-600">{tItem.dueDate}</span> },
     {
-      header: 'Board Stage',
+      header: t('Board Stage'),
       accessorKey: 'boardColumn',
-      cell: (t) => (
+      cell: (tItem) => (
         <select
-          value={t.boardColumn}
-          onChange={(e) => updateTaskColumn(t.id, e.target.value as any)}
+          value={tItem.boardColumn}
+          onChange={(e) => updateTaskColumn(tItem.id, e.target.value as any)}
           className="px-2 py-1 rounded border border-slate-200 text-xs font-mono bg-white text-slate-800"
         >
-          <option value="todo">To Do</option>
-          <option value="in_progress">In Progress</option>
-          <option value="blocked">Blocked</option>
-          <option value="completed">Completed</option>
+          <option value="todo">{t('To Do')}</option>
+          <option value="in_progress">{t('In Progress')}</option>
+          <option value="blocked">{t('Blocked')}</option>
+          <option value="completed">{t('Completed')}</option>
         </select>
       ),
     },
@@ -63,13 +63,13 @@ export const TasksPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
             <CheckSquare className="w-4 h-4" />
-            <span>OPERATIONAL TASK BOARD</span>
+            <span>{t('OPERATIONAL TASK BOARD')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
-            Kanban Task Execution & Sprint Board
+            {t('Kanban Task Execution & Sprint Board')}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Operational workflow stage tracking across To Do, In Progress, Blocked & Completed.
+            {t('Operational workflow stage tracking across To Do, In Progress, Blocked & Completed.')}
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export const TasksPage: React.FC = () => {
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              Kanban View
+              {t('Kanban View')}
             </button>
             <button
               onClick={() => setViewMode('list')}
@@ -91,7 +91,7 @@ export const TasksPage: React.FC = () => {
               }`}
             >
               <List className="w-3.5 h-3.5" />
-              List View
+              {t('List View')}
             </button>
           </div>
         </div>
@@ -103,7 +103,7 @@ export const TasksPage: React.FC = () => {
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Add quick task (e.g. Schedule ISO 27001 evidence upload)..."
+          placeholder={lang === 'ar' ? 'إضافة مهمة سريعة (مثال: جدولة رفع أدلة ISO 27001)...' : 'Add quick task (e.g. Schedule ISO 27001 evidence upload)...'}
           className="flex-1 px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
         />
         <button
@@ -111,7 +111,7 @@ export const TasksPage: React.FC = () => {
           className="px-4 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center gap-1 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          Add Task
+          {t('Add Task')}
         </button>
       </form>
 
@@ -151,7 +151,7 @@ export const TasksPage: React.FC = () => {
                       </h4>
 
                       <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-100">
-                        <span>{task.assignee}</span>
+                        <span>{t(task.assignee)}</span>
                         <span>{task.dueDate}</span>
                       </div>
 
@@ -160,12 +160,12 @@ export const TasksPage: React.FC = () => {
                         <select
                           value={task.boardColumn}
                           onChange={(e) => updateTaskColumn(task.id, e.target.value as any)}
-                          className="w-full text-[10px] p-1 border border-slate-200 rounded font-mono bg-slate-50 text-slate-700"
+                          className="w-full text-[10px] p-1 border border-slate-200 rounded font-mono bg-slate-50 text-slate-700 cursor-pointer"
                         >
-                          <option value="todo">Move → To Do</option>
-                          <option value="in_progress">Move → In Progress</option>
-                          <option value="blocked">Move → Blocked</option>
-                          <option value="completed">Move → Completed</option>
+                          <option value="todo">{lang === 'ar' ? 'نقل ← قيد الانتظار' : 'Move → To Do'}</option>
+                          <option value="in_progress">{lang === 'ar' ? 'نقل ← قيد التنفيذ' : 'Move → In Progress'}</option>
+                          <option value="blocked">{lang === 'ar' ? 'نقل ← متوقفة' : 'Move → Blocked'}</option>
+                          <option value="completed">{lang === 'ar' ? 'نقل ← مكتملة' : 'Move → Completed'}</option>
                         </select>
                       </div>
                     </div>
@@ -180,8 +180,8 @@ export const TasksPage: React.FC = () => {
       {/* LIST VIEW */}
       {viewMode === 'list' && (
         <DataTable
-          title="Operational Task Register"
-          subtitle="Task assignments and completion status"
+          title={lang === 'ar' ? 'سجل المهام التشغيلية' : 'Operational Task Register'}
+          subtitle={lang === 'ar' ? 'تكليفات المهام وحالة الإنجاز التشغيلي' : 'Task assignments and completion status'}
           data={tasks}
           columns={taskTableColumns}
         />

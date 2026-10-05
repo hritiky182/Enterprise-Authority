@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
 import { AUTHORITY_SECTORS, DEPARTMENTS, ORGANIZATION_INFO } from '../../data/mockData';
 import { Department, Sector } from '../../types';
 import {
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 
 export const OperationalStructureView: React.FC = () => {
+  const { lang, t } = useApp();
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeViewMode, setActiveViewMode] = useState<'hierarchy' | 'grid'>('hierarchy');
@@ -74,13 +76,15 @@ export const OperationalStructureView: React.FC = () => {
           <div className="space-y-1">
             <div className="flex items-center space-x-2 text-xs font-mono text-amber-300">
               <Network className="w-4 h-4" />
-              <span>THE AUTHORITY'S OPERATIONAL STRUCTURE</span>
+              <span>{lang === 'ar' ? 'الهيكل التنظيمي والتشغيلي المعتمد للهيئة' : "THE AUTHORITY'S OPERATIONAL STRUCTURE"}</span>
             </div>
             <h2 className="text-xl font-bold font-sans">
-              Al Ahsa Development Authority Organization Framework
+              {lang === 'ar' ? 'إطار الهيكل التنظيمي لهيئة تطوير الأحساء' : 'Al Ahsa Development Authority Organization Framework'}
             </h2>
             <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Official executive architecture encompassing the Authority Board, CEO Office, oversight directorates, and 5 specialized operational sectors governing regional sustainable development.
+              {lang === 'ar'
+                ? 'الهيكل الإداري التنفيذي الرسمي الذي يشمل مجلس الهيئة، ومكتب الرئيس التنفيذي، والإدارات الرقابية والاستشارية، و5 قطاعات تشغيلية متخصصة تقود مسيرة التنمية الإقليمية المستدامة.'
+                : 'Official executive architecture encompassing the Authority Board, CEO Office, oversight directorates, and 5 specialized operational sectors governing regional sustainable development.'}
             </p>
           </div>
 
@@ -94,7 +98,7 @@ export const OperationalStructureView: React.FC = () => {
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Org Chart Tree
+              {lang === 'ar' ? 'المخطط الهيكلي التفاعلي' : 'Org Chart Tree'}
             </button>
             <button
               onClick={() => setActiveViewMode('grid')}
@@ -104,14 +108,16 @@ export const OperationalStructureView: React.FC = () => {
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Departments Directory ({DEPARTMENTS.length})
+              {lang === 'ar' ? `دليل الإدارات والأقسام (${DEPARTMENTS.length})` : `Departments Directory (${DEPARTMENTS.length})`}
             </button>
           </div>
         </div>
 
         {/* Quick Sector Filter Bar */}
         <div className="mt-5 pt-4 border-t border-slate-700/60 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono uppercase font-bold text-slate-400 mr-1">Filter Sector:</span>
+          <span className="text-[10px] font-mono uppercase font-bold text-slate-400 mr-1">
+            {lang === 'ar' ? 'تصفية حسب القطاع:' : 'Filter Sector:'}
+          </span>
           <button
             onClick={() => setSelectedSector(null)}
             className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer ${
@@ -120,7 +126,7 @@ export const OperationalStructureView: React.FC = () => {
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            All Sectors & Units ({DEPARTMENTS.length})
+            {lang === 'ar' ? `جميع القطاعات والوحدات (${DEPARTMENTS.length})` : `All Sectors & Units (${DEPARTMENTS.length})`}
           </button>
           {AUTHORITY_SECTORS.map((sec) => (
             <button

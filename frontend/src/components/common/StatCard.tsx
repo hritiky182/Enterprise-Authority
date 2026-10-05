@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface StatCardProps {
   title: string;
@@ -28,6 +29,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   onClick,
   accentColor,
 }) => {
+  const { t, lang } = useApp();
   return (
     <div
       onClick={onClick}
@@ -40,7 +42,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       )}
       <div className="flex items-start justify-between">
         <div>
-          <span className="panel-label block mb-1">{title}</span>
+          <span className="panel-label block mb-1">{t(title)}</span>
           <div className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
             {value}
           </div>
@@ -73,10 +75,10 @@ export const StatCard: React.FC<StatCardProps> = ({
                 {trend.value}
               </span>
             )}
-            {trend.label && <span className="text-slate-500">{trend.label}</span>}
+            {trend.label && <span className="text-slate-500">{t(trend.label)}</span>}
           </div>
         ) : (
-          <span className="text-xs text-slate-500">{subtext || '\u00A0'}</span>
+          <span className="text-xs text-slate-500">{subtext ? t(subtext) : '\u00A0'}</span>
         )}
 
         {badgeText && (
@@ -91,7 +93,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                 : 'bg-blue-50 text-blue-700 border-blue-200'
             }`}
           >
-            {badgeText}
+            {t(badgeText)}
           </span>
         )}
       </div>

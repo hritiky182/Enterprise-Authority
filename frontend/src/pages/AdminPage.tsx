@@ -34,7 +34,7 @@ Majed Al-Mutairi,majed.mutairi@ahda.gov.sa,Strategic Performance Lead,Strategy D
 Noura Al-Hassan,noura.hassan@ahda.gov.sa,Chief Internal Auditor,Internal Audit,Auditor`;
 
 export const AdminPage: React.FC = () => {
-  const { currentUser, switchUserRole, users, importUsers } = useApp();
+  const { currentUser, switchUserRole, users, importUsers, lang, t } = useApp();
   const [activeTab, setActiveTab] = useState<'users' | 'roles' | 'departments' | 'data_import'>('users');
 
   // User CSV upload state
@@ -56,39 +56,39 @@ export const AdminPage: React.FC = () => {
 
   const userColumns: Column<User>[] = [
     {
-      header: 'User Profile',
+      header: t('User Profile'),
       accessorKey: 'name',
       sortable: true,
       cell: (u) => (
         <div className="flex items-center space-x-3">
           <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
           <div>
-            <div className="font-semibold text-slate-900">{u.name}</div>
+            <div className="font-semibold text-slate-900">{t(u.name)}</div>
             <div className="text-[10px] text-slate-400 font-mono">{u.email}</div>
           </div>
         </div>
       ),
     },
-    { header: 'Job Title', accessorKey: 'title', sortable: true, cell: (u) => <span className="font-medium text-slate-800">{u.title}</span> },
-    { header: 'Department', accessorKey: 'department', sortable: true, cell: (u) => <span className="text-slate-600">{u.department}</span> },
+    { header: t('Job Title'), accessorKey: 'title', sortable: true, cell: (u) => <span className="font-medium text-slate-800">{lang === 'ar' ? (u.titleAr || u.title) : u.title}</span> },
+    { header: t('Department'), accessorKey: 'department', sortable: true, cell: (u) => <span className="text-slate-600">{t(u.department)}</span> },
     {
-      header: 'Active Role',
+      header: t('Active Role'),
       accessorKey: 'role',
       sortable: true,
       cell: (u) => (
         <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-          {u.role}
+          {t(u.role)}
         </span>
       ),
     },
     {
-      header: 'Switch Simulation',
+      header: t('Switch Simulation'),
       cell: (u) => (
         <button
           onClick={() => switchUserRole(u.role)}
           className="px-2.5 py-1 rounded bg-slate-900 text-white text-[11px] font-semibold hover:bg-slate-800 cursor-pointer"
         >
-          Simulate User
+          {t('Simulate User')}
         </button>
       ),
     },

@@ -38,65 +38,6 @@ import { ROLE_PERMISSIONS_MAP, RolePermissions } from '../utils/permissions';
 import { toast } from 'sonner';
 import { t as translate, Language } from '../utils/translations';
 
-export interface StrategyKpiInput {
-  id?: string | undefined;
-  code?: string | undefined;
-  name: string;
-  nameAr?: string | undefined;
-  unit?: string | undefined;
-  target?: number | undefined;
-  actual?: number | undefined;
-  frequency?: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual' | undefined;
-  status?: 'on-track' | 'warning' | 'critical' | 'achieved' | undefined;
-  formula?: string | undefined;
-  baseline?: string | number | undefined;
-  target2026?: string | number | undefined;
-  target2027?: string | number | undefined;
-  strategicInitiative?: string | undefined;
-  keyMilestone?: string | undefined;
-  keyProject?: string | undefined;
-  pillarCode?: string | undefined;
-  pillarTitle?: string | undefined;
-}
-
-export interface StrategyInitiativeInput {
-  id?: string | undefined;
-  code?: string | undefined;
-  title: string;
-  description?: string | undefined;
-  owner?: string | undefined;
-  department?: string | undefined;
-  budgetSAR?: number | undefined;
-  spentSAR?: number | undefined;
-  progress?: number | undefined;
-  startDate?: string | undefined;
-  endDate?: string | undefined;
-  status?: 'In Progress' | 'Planning' | 'At Risk' | 'Completed' | undefined;
-  milestones?: {
-    id?: string | undefined;
-    title: string;
-    dueDate: string;
-    status?: 'Completed' | 'In Progress' | 'Pending';
-  }[] | undefined;
-  keyProjects?: string[] | undefined;
-}
-
-export interface StrategyObjectiveInput {
-  id?: string | undefined;
-  code?: string | undefined;
-  title: string;
-  titleAr?: string | undefined;
-  owner?: string | undefined;
-  department?: string | undefined;
-  sectorId?: string | undefined;
-  sectorName?: string | undefined;
-  targetYear?: number | undefined;
-  progress?: number | undefined;
-  status?: 'on-track' | 'at-risk' | 'behind' | 'achieved' | undefined;
-  kpis?: StrategyKpiInput[] | undefined;
-  initiatives?: StrategyInitiativeInput[] | undefined;
-}
-
 export interface CreateStrategyPayload {
   selectedThemeId?: string | undefined;
   selectedGoalId?: string | undefined;
@@ -109,17 +50,59 @@ export interface CreateStrategyPayload {
     color?: string | undefined;
     weight?: number | undefined;
   };
-  goal?: {
+  goal: {
     code?: string | undefined;
     title: string;
     description?: string | undefined;
   };
-  // Multiple objectives array
-  objectives?: StrategyObjectiveInput[] | undefined;
-  // Backward compatibility fields
-  objective?: StrategyObjectiveInput | undefined;
-  kpi?: StrategyKpiInput | undefined;
-  initiative?: StrategyInitiativeInput | undefined;
+  objective: {
+    code?: string | undefined;
+    title: string;
+    owner: string;
+    department: string;
+    sectorId?: string | undefined;
+    sectorName?: string | undefined;
+    targetYear?: number | undefined;
+    progress?: number | undefined;
+    status?: 'on-track' | 'at-risk' | 'behind' | 'achieved' | undefined;
+  };
+  kpi?: {
+    code?: string | undefined;
+    name: string;
+    unit?: string | undefined;
+    target?: number | undefined;
+    actual?: number | undefined;
+    frequency?: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual' | undefined;
+    status?: 'on-track' | 'warning' | 'critical' | 'achieved' | undefined;
+    formula?: string | undefined;
+    baseline?: string | number | undefined;
+    target2026?: string | number | undefined;
+    target2027?: string | number | undefined;
+    strategicInitiative?: string | undefined;
+    keyMilestone?: string | undefined;
+    keyProject?: string | undefined;
+    pillarCode?: string | undefined;
+    pillarTitle?: string | undefined;
+  } | undefined;
+  initiative?: {
+    code?: string | undefined;
+    title: string;
+    description?: string | undefined;
+    owner?: string | undefined;
+    department?: string | undefined;
+    budgetSAR?: number | undefined;
+    spentSAR?: number | undefined;
+    progress?: number | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    status?: 'In Progress' | 'Planning' | 'At Risk' | 'Completed' | undefined;
+    milestones?: {
+      title: string;
+      dueDate: string;
+      status: 'Completed' | 'In Progress' | 'Pending';
+    }[] | undefined;
+    keyProjects?: string[] | undefined;
+  } | undefined;
 }
 
 interface ModalConfig {
@@ -149,12 +132,12 @@ interface AppContextType {
   setSearchQuery: (q: string) => void;
   notifications: NotificationItem[];
   markNotificationRead: (id: string) => void;
-  
+
   // Dynamic Entities
   risks: RiskItem[];
   addRisk: (risk: Omit<RiskItem, 'id' | 'code' | 'inherentScore' | 'residualScore' | 'lastAssessedDate'>) => void;
   updateRiskStatus: (id: string, status: RiskItem['status'], treatment?: RiskItem['treatment']) => void;
-  
+
   themes: StrategicTheme[];
   goals: StrategicGoal[];
   objectives: StrategicObjective[];
@@ -174,11 +157,11 @@ interface AppContextType {
     initiatives?: StrategicInitiative[];
     kpis?: KPI[];
   }) => { themesCount: number; objectivesCount: number; kpisCount: number; initiativesCount: number };
-  
+
   actions: ActionItem[];
   addAction: (action: Omit<ActionItem, 'id' | 'code'>) => void;
   updateActionStatus: (id: string, status: ActionItem['status'], progress: number) => void;
-  
+
   tasks: TaskItem[];
   updateTaskColumn: (taskId: string, column: TaskItem['boardColumn']) => void;
   addTask: (task: Omit<TaskItem, 'id' | 'code'>) => void;
@@ -195,11 +178,11 @@ interface AppContextType {
 
   bcmProcesses: BCMProcess[];
   bcmPlans: BCMPlan[];
-  
+
   // Organization Structure & Client Metadata
   sectors: Sector[];
   organization: typeof ORGANIZATION_INFO;
-  
+
   // Modal / Drawer State
   activeModal: ModalConfig | null;
   openModal: (type: ModalConfig['type'], item?: any) => void;
@@ -260,7 +243,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     return initialRisks;
   });
-  
+
   const [themes, setThemes] = useState<StrategicTheme[]>(() => {
     const saved = sessionStorage.getItem('eda_themes');
     if (saved) {
@@ -521,7 +504,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const residualLikelihood = Math.max(1, Math.round(likelihood * 0.7));
       const residualImpact = Math.max(1, Math.round(impact * 0.7));
       const residualScore = r.residualScore !== undefined ? Number(r.residualScore) : residualLikelihood * residualImpact;
-      
+
       const category: RiskItem['category'] = validCategories.includes(r.category as any) ? (r.category as RiskItem['category']) : 'Operational';
       const status: RiskItem['status'] = validStatuses.includes(r.status as any) ? (r.status as RiskItem['status']) : 'Open';
       const treatment: RiskItem['treatment'] = validTreatments.includes(r.treatment as any) ? (r.treatment as RiskItem['treatment']) : 'Mitigate';
@@ -839,8 +822,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       : null;
 
     let goalId = existingGoal ? existingGoal.id : `sg-${Date.now()}`;
-    let goalCode = existingGoal ? existingGoal.code : (payload.goal?.code?.trim() || `SG-${nextThemeNum}.1`);
-    let goalTitle = existingGoal ? existingGoal.title : (payload.goal?.title || 'Primary Strategic Goal');
+    let goalCode = existingGoal ? existingGoal.code : (payload.goal.code?.trim() || `SG-${nextThemeNum}.1`);
+    let goalTitle = existingGoal ? existingGoal.title : payload.goal.title;
 
     let newGoal: StrategicGoal | null = null;
     if (!existingGoal) {
@@ -849,165 +832,125 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         code: goalCode,
         themeId,
         title: goalTitle,
-        description: payload.goal?.description || '',
+        description: payload.goal.description || '',
         isCustom: true,
       };
     }
 
-    // 3. Normalize Objectives List (Supports single objective or array of multiple objectives)
-    let objectivesList: StrategyObjectiveInput[] = [];
-    if (payload.objectives && payload.objectives.length > 0) {
-      objectivesList = payload.objectives;
-    } else if (payload.objective && payload.objective.title?.trim()) {
-      objectivesList = [
-        {
-          ...payload.objective,
-          kpis: payload.kpi ? [payload.kpi] : [],
-          initiatives: payload.initiative ? [payload.initiative] : [],
-        },
-      ];
-    } else if (payload.selectedObjectiveId) {
-      const exist = objectives.find((o) => o.id === payload.selectedObjectiveId);
-      if (exist) {
-        objectivesList = [
-          {
-            id: exist.id,
-            code: exist.code,
-            title: exist.title,
-            owner: exist.owner,
-            department: exist.department,
-            sectorId: exist.sectorId,
-            sectorName: exist.sectorName,
-            status: exist.status,
-            targetYear: exist.targetYear,
-            progress: exist.progress,
-            kpis: payload.kpi ? [payload.kpi] : [],
-            initiatives: payload.initiative ? [payload.initiative] : [],
-          },
-        ];
-      }
+    // 3. Resolve Strategic Objective - Existing vs New
+    const existingObjective = payload.selectedObjectiveId
+      ? objectives.find((o) => o.id === payload.selectedObjectiveId)
+      : null;
+
+    let objectiveId = existingObjective ? existingObjective.id : `so-${Date.now()}`;
+    let objCode = existingObjective ? existingObjective.code : (payload.objective.code?.trim() || `OBJ-${nextThemeNum}01`);
+    let objTitle = existingObjective ? existingObjective.title : payload.objective.title;
+
+    let newObjective: StrategicObjective | null = null;
+    if (!existingObjective) {
+      newObjective = {
+        id: objectiveId,
+        code: objCode,
+        goalId,
+        themeId,
+        themeName: themeTitle,
+        title: objTitle,
+        owner: payload.objective.owner || currentUser.name,
+        department: payload.objective.department || currentUser.department,
+        sectorId: payload.objective.sectorId,
+        sectorName: payload.objective.sectorName,
+        kpiCount: payload.kpi && payload.kpi.name?.trim() ? 1 : 0,
+        status: payload.objective.status || 'on-track',
+        targetYear: Number(payload.objective.targetYear) || 2027,
+        progress: Number(payload.objective.progress) || 15,
+        isCustom: true,
+      };
     }
 
-    const newObjectivesToInsert: StrategicObjective[] = [];
-    const newKpisToInsert: KPI[] = [];
-    const newInitiativesToInsert: StrategicInitiative[] = [];
-    const updatedObjectiveIds: string[] = [];
+    // 4. Resolve Strategic Initiative - Existing vs New
+    const existingInitiative = payload.selectedInitiativeId
+      ? initiatives.find((i) => i.id === payload.selectedInitiativeId)
+      : null;
 
-    objectivesList.forEach((objInput, objIdx) => {
-      const existingObj = objInput.id ? objectives.find((o) => o.id === objInput.id) : null;
-      const objId = existingObj ? existingObj.id : (objInput.id || `so-${Date.now()}-${objIdx}`);
-      const objCode = existingObj ? existingObj.code : (objInput.code?.trim() || `OBJ-${nextThemeNum}.${objIdx + 1}`);
-      const objTitle = existingObj ? existingObj.title : objInput.title;
-      updatedObjectiveIds.push(objId);
+    let initTitle = existingInitiative ? existingInitiative.title : (payload.initiative?.title?.trim() || '');
+    let newInit: StrategicInitiative | null = null;
 
-      const kpisCount = objInput.kpis?.length || 0;
+    if (!existingInitiative && payload.initiative && payload.initiative.title?.trim()) {
+      const initCode = payload.initiative.code?.trim() || `INIT-${String(initiatives.length + 1).padStart(2, '0')}`;
+      newInit = {
+        id: `init-${Date.now()}`,
+        code: initCode,
+        objectiveId,
+        objectiveTitle: objTitle,
+        title: payload.initiative.title,
+        description: payload.initiative.description || '',
+        owner: payload.initiative.owner || (existingObjective?.owner || currentUser.name),
+        department: payload.initiative.department || (existingObjective?.department || currentUser.department),
+        budgetSAR: Number(payload.initiative.budgetSAR) || 5000000,
+        spentSAR: Number(payload.initiative.spentSAR) || 500000,
+        progress: Number(payload.initiative.progress) || 15,
+        startDate: payload.initiative.startDate || '2026-01-01',
+        endDate: payload.initiative.endDate || '2027-12-31',
+        status: payload.initiative.status || 'Planning',
+        milestones: payload.initiative.milestones?.map((m, idx) => ({
+          id: `m-${Date.now()}-${idx}`,
+          title: m.title,
+          dueDate: m.dueDate,
+          status: m.status,
+        })) || [
+            {
+              id: `m-${Date.now()}-1`,
+              title: 'Framework & Initial Scope Sign-off',
+              dueDate: '2026-10-15',
+              status: 'Completed',
+            },
+          ],
+        keyProjects: payload.kpi?.keyProject ? [payload.kpi.keyProject] : ['Regional Strategic Project'],
+        risksCount: 1,
+        actionsCount: 1,
+        isCustom: true,
+      };
+    }
 
-      if (!existingObj) {
-        newObjectivesToInsert.push({
-          id: objId,
-          code: objCode,
-          goalId,
-          themeId,
-          themeName: themeTitle,
-          title: objTitle,
-          owner: objInput.owner || currentUser.name,
-          department: objInput.department || currentUser.department,
-          kpiCount: kpisCount,
-          status: objInput.status || 'on-track',
-          targetYear: Number(objInput.targetYear) || 2027,
-          progress: Number(objInput.progress) || 15,
-          isCustom: true,
-          ...(objInput.titleAr ? { titleAr: objInput.titleAr } : {}),
-          ...(objInput.sectorId ? { sectorId: objInput.sectorId } : {}),
-          ...(objInput.sectorName ? { sectorName: objInput.sectorName } : {}),
-        });
-      }
+    // 5. Build KPI if provided
+    let newKpi: KPI | null = null;
+    if (payload.kpi && payload.kpi.name?.trim()) {
+      const kpiCode = payload.kpi.code?.trim() || `KPI-${nextThemeNum}01`;
+      const targetVal = Number(payload.kpi.target) || 100;
+      const actualVal = Number(payload.kpi.actual) || 0;
+      const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
 
-      // KPIs under this objective
-      if (objInput.kpis && objInput.kpis.length > 0) {
-        objInput.kpis.forEach((kpiInput, kpiIdx) => {
-          if (!kpiInput.name?.trim()) return;
-          const kCode = kpiInput.code?.trim() || `${objCode}.${kpiIdx + 1}`;
-          const targetVal = Number(kpiInput.target) || 100;
-          const actualVal = Number(kpiInput.actual) || 0;
-          const achievement = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
-          const pCode = kpiInput.pillarCode || themeCode || '02';
-          const pTitle = kpiInput.pillarTitle || themeTitle;
+      const pCode = payload.kpi.pillarCode || (themeCode.includes('02') || themeTitle.includes('People') || themeTitle.includes('02') ? '02' : '01');
+      const pTitle = payload.kpi.pillarTitle || themeTitle;
 
-          newKpisToInsert.push({
-            id: kpiInput.id || `kpi-${Date.now()}-${objIdx}-${kpiIdx}`,
-            code: kCode,
-            objectiveId: objId,
-            objectiveTitle: objTitle,
-            name: kpiInput.name,
-            nameAr: kpiInput.nameAr,
-            unit: kpiInput.unit || '%',
-            owner: objInput.owner || currentUser.name,
-            target: targetVal,
-            actual: actualVal,
-            achievementPct: achievement,
-            frequency: kpiInput.frequency || 'Quarterly',
-            status: kpiInput.status || 'on-track',
-            formula: kpiInput.formula || '',
-            baseline: kpiInput.baseline !== undefined ? kpiInput.baseline : '-',
-            target2026: kpiInput.target2026 !== undefined ? kpiInput.target2026 : `${targetVal}${kpiInput.unit || '%'}`,
-            target2027: kpiInput.target2027 !== undefined ? kpiInput.target2027 : `${targetVal}${kpiInput.unit || '%'}`,
-            strategicInitiative: kpiInput.strategicInitiative || '',
-            keyMilestone: kpiInput.keyMilestone || '',
-            keyProject: kpiInput.keyProject || '',
-            pillarCode: pCode,
-            pillarTitle: pTitle,
-            sectorId: objInput.sectorId,
-            sectorName: objInput.sectorName,
-            isCustom: true,
-          });
-        });
-      }
-
-      // Initiatives under this objective
-      if (objInput.initiatives && objInput.initiatives.length > 0) {
-        objInput.initiatives.forEach((initInput, initIdx) => {
-          if (!initInput.title?.trim()) return;
-          const initCode = initInput.code?.trim() || `INIT-${objCode}-${initIdx + 1}`;
-
-          newInitiativesToInsert.push({
-            id: initInput.id || `init-${Date.now()}-${objIdx}-${initIdx}`,
-            code: initCode,
-            objectiveId: objId,
-            objectiveTitle: objTitle,
-            title: initInput.title,
-            description: initInput.description || '',
-            owner: initInput.owner || objInput.owner || currentUser.name,
-            department: initInput.department || objInput.department || currentUser.department,
-            budgetSAR: Number(initInput.budgetSAR) || 5000000,
-            spentSAR: Number(initInput.spentSAR) || 500000,
-            progress: Number(initInput.progress) || 15,
-            startDate: initInput.startDate || '2026-01-01',
-            endDate: initInput.endDate || '2027-12-31',
-            status: initInput.status || 'Planning',
-            milestones: initInput.milestones?.map((m, mIdx) => ({
-              id: m.id || `m-${Date.now()}-${objIdx}-${initIdx}-${mIdx}`,
-              title: m.title,
-              dueDate: m.dueDate,
-              status: m.status || 'In Progress',
-            })) || [
-              {
-                id: `m-${Date.now()}-${objIdx}-${initIdx}-1`,
-                title: 'Framework & Initial Scope Sign-off',
-                dueDate: '2026-10-15',
-                status: 'Completed',
-              },
-            ],
-            keyProjects: initInput.keyProjects && initInput.keyProjects.length > 0
-              ? initInput.keyProjects
-              : ['Regional Strategic Project'],
-            risksCount: 1,
-            actionsCount: 1,
-            isCustom: true,
-          });
-        });
-      }
-    });
+      newKpi = {
+        id: `kpi-${Date.now()}`,
+        code: kpiCode,
+        objectiveId,
+        objectiveTitle: objTitle,
+        name: payload.kpi.name,
+        unit: payload.kpi.unit || '%',
+        owner: existingObjective?.owner || payload.objective.owner || currentUser.name,
+        target: targetVal,
+        actual: actualVal,
+        achievementPct: achievement,
+        frequency: payload.kpi.frequency || 'Quarterly',
+        status: payload.kpi.status || 'on-track',
+        // Client Cascading Attributes
+        formula: payload.kpi.formula || '',
+        baseline: payload.kpi.baseline !== undefined ? payload.kpi.baseline : '-',
+        target2026: payload.kpi.target2026 !== undefined ? payload.kpi.target2026 : `${targetVal}${payload.kpi.unit || '%'}`,
+        target2027: payload.kpi.target2027 !== undefined ? payload.kpi.target2027 : `${targetVal}${payload.kpi.unit || '%'}`,
+        strategicInitiative: payload.kpi.strategicInitiative || initTitle,
+        keyMilestone: payload.kpi.keyMilestone || payload.initiative?.milestones?.[0]?.title || existingInitiative?.milestones?.[0]?.title || '',
+        keyProject: payload.kpi.keyProject || existingInitiative?.keyProjects?.[0] || '',
+        pillarCode: pCode,
+        pillarTitle: pTitle,
+        sectorId: payload.objective.sectorId || existingObjective?.sectorId,
+        sectorName: payload.objective.sectorName || existingObjective?.sectorName,
+        isCustom: true,
+      };
+    }
 
     // Persist & update states
     if (newTheme) {
@@ -1026,35 +969,58 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       });
     }
 
-    if (newObjectivesToInsert.length > 0) {
+    if (newObjective) {
       setObjectives((prev) => {
-        const updated = [...prev, ...newObjectivesToInsert];
+        const updated = [...prev, newObjective!];
+        sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+        return updated;
+      });
+    } else if (existingObjective && newKpi) {
+      setObjectives((prev) => {
+        const updated = prev.map((o) =>
+          o.id === existingObjective.id ? { ...o, kpiCount: (o.kpiCount || 0) + 1 } : o
+        );
         sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
         return updated;
       });
     }
 
-    if (newKpisToInsert.length > 0) {
-      setKpis((prev) => {
-        const updated = [...prev, ...newKpisToInsert];
-        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+    if (newInit) {
+      setInitiatives((prev) => {
+        const updated = [...prev, newInit!];
+        sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
         return updated;
       });
-    }
-
-    if (newInitiativesToInsert.length > 0) {
+    } else if (existingInitiative && payload.kpi?.keyProject) {
+      // Append keyProject to existing initiative if not already present
       setInitiatives((prev) => {
-        const updated = [...prev, ...newInitiativesToInsert];
+        const updated = prev.map((i) => {
+          if (i.id === existingInitiative.id) {
+            const currentProjects = i.keyProjects || [];
+            if (!currentProjects.includes(payload.kpi!.keyProject!)) {
+              return { ...i, keyProjects: [...currentProjects, payload.kpi!.keyProject!] };
+            }
+          }
+          return i;
+        });
         sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
         return updated;
       });
     }
 
-    toast.success(`Strategic Pillar Formulated Successfully`, {
-      description: `Aligned under ${themeTitle} with ${objectivesList.length} Objectives, ${newKpisToInsert.length} KPIs, and ${newInitiativesToInsert.length} Initiatives.`,
+    if (newKpi) {
+      setKpis((prev) => {
+        const updated = [...prev, newKpi!];
+        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    toast.success(`Strategy Updated Successfully`, {
+      description: `Aligned under ${themeTitle} ➔ ${objTitle}`,
     });
 
-    return { themeId, goalId, objectiveId: updatedObjectiveIds[0] || '' };
+    return { themeId, goalId, objectiveId };
   };
 
   const deleteStrategyTheme = (themeId: string) => {

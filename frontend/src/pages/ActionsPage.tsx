@@ -8,7 +8,7 @@ import { ListTodo, Plus, CheckCircle2, AlertTriangle, Clock } from 'lucide-react
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 export const ActionsPage: React.FC = () => {
-  const { actions, openModal, updateActionStatus, permissions } = useApp();
+  const { actions, openModal, updateActionStatus, permissions, lang, t } = useApp();
   const [sourceFilter, setSourceFilter] = useState<string>('all');
 
   const filteredActions = actions.filter((a) => {
@@ -23,25 +23,25 @@ export const ActionsPage: React.FC = () => {
   const completedCount = actions.filter((a) => a.status === 'Completed').length;
 
   const actionColumns: Column<ActionItem>[] = [
-    { header: 'Action Code', accessorKey: 'code', sortable: true, width: '110px', cell: (a) => <span className="font-mono font-bold text-slate-900">{a.code}</span> },
+    { header: t('Action Code'), accessorKey: 'code', sortable: true, width: '110px', cell: (a) => <span className="font-mono font-bold text-slate-900">{a.code}</span> },
     {
-      header: 'Action Plan Title & Source',
+      header: t('Action Plan Title & Source'),
       accessorKey: 'title',
       sortable: true,
       cell: (a) => (
         <div>
           <div className="font-semibold text-slate-900">{a.title}</div>
           <div className="text-[10px] text-slate-400 font-mono">
-            Source: <span className="font-bold text-slate-700">{a.source}</span> • {a.sourceRefTitle}
+            {lang === 'ar' ? 'المصدر:' : 'Source:'} <span className="font-bold text-slate-700">{a.source}</span> • {a.sourceRefTitle}
           </div>
         </div>
       ),
     },
-    { header: 'Owner', accessorKey: 'owner', sortable: true, cell: (a) => <span className="font-medium text-slate-800">{a.owner}</span> },
-    { header: 'Priority', accessorKey: 'priority', sortable: true, cell: (a) => <StatusBadge status={a.priority} variant="priority" /> },
-    { header: 'Due Date', accessorKey: 'dueDate', sortable: true, cell: (a) => <span className="font-mono text-slate-600">{a.dueDate}</span> },
+    { header: t('Owner'), accessorKey: 'owner', sortable: true, cell: (a) => <span className="font-medium text-slate-800">{t(a.owner)}</span> },
+    { header: t('Priority'), accessorKey: 'priority', sortable: true, cell: (a) => <StatusBadge status={a.priority} variant="priority" /> },
+    { header: t('Due Date'), accessorKey: 'dueDate', sortable: true, cell: (a) => <span className="font-mono text-slate-600">{a.dueDate}</span> },
     {
-      header: 'Progress',
+      header: t('Progress'),
       accessorKey: 'progress',
       sortable: true,
       width: '120px',
@@ -55,7 +55,7 @@ export const ActionsPage: React.FC = () => {
       ),
     },
     {
-      header: 'Status',
+      header: t('Status'),
       accessorKey: 'status',
       sortable: true,
       cell: (a) => (
@@ -65,10 +65,10 @@ export const ActionsPage: React.FC = () => {
           onChange={(e) => updateActionStatus(a.id, e.target.value as any, a.progress)}
           className="px-2 py-1 rounded border border-slate-200 text-xs font-medium bg-white text-slate-800 disabled:bg-slate-100 disabled:cursor-not-allowed cursor-pointer"
         >
-          <option value="Not Started">Not Started</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Under Review">Under Review</option>
-          <option value="Completed">Completed</option>
+          <option value="Not Started">{t('Not Started')}</option>
+          <option value="In Progress">{t('In Progress')}</option>
+          <option value="Under Review">{t('Under Review')}</option>
+          <option value="Completed">{t('Completed')}</option>
         </select>
       ),
     },
@@ -82,13 +82,13 @@ export const ActionsPage: React.FC = () => {
           <Breadcrumbs />
           <div className="flex items-center space-x-2 text-xs font-mono text-amber-600 mb-1 mt-2">
             <ListTodo className="w-4 h-4" />
-            <span>CENTRALIZED ACTION ITEM GOVERNANCE</span>
+            <span>{t('CENTRALIZED ACTION ITEM GOVERNANCE')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
-            Cross-Domain Action Plans & Corrective Measures
+            {t('Cross-Domain Action Plans & Corrective Measures')}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Single-pane-of-glass execution tracking across Strategy, ERM Risk, Cyber, Governance, Compliance & BCM.
+            {t('Single-pane-of-glass execution tracking across Strategy, ERM Risk, Cyber, Governance, Compliance & BCM.')}
           </p>
         </div>
 
@@ -98,21 +98,21 @@ export const ActionsPage: React.FC = () => {
             className="px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold text-xs hover:bg-blue-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
-            New Action Plan
+            {t('New Action Plan')}
           </button>
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Action Plans" value={actions.length} subtext="Across 6 Enterprise Domains" badgeText="Central" badgeColor="blue" />
-        <StatCard title="Critical Priority" value={criticalCount} subtext="Immediate Oversight" badgeText="Critical" badgeColor="rose" />
-        <StatCard title="In Progress" value={inProgressCount} subtext="Active Operational Execution" badgeText="Active" badgeColor="amber" />
-        <StatCard title="Completed" value={completedCount} subtext="Verified & Closed" badgeText="Completed" badgeColor="blue" />
+        <StatCard title="Total Action Plans" value={actions.length} subtext={lang === 'ar' ? 'عبر 6 مجالات مؤسسية' : 'Across 6 Enterprise Domains'} badgeText={lang === 'ar' ? 'مركزي' : 'Central'} badgeColor="blue" />
+        <StatCard title="Critical Priority" value={criticalCount} subtext={lang === 'ar' ? 'متابعة وإشراف فوري' : 'Immediate Oversight'} badgeText="Critical" badgeColor="rose" />
+        <StatCard title="In Progress" value={inProgressCount} subtext={lang === 'ar' ? 'تنفيذ تشغيلي نشط' : 'Active Operational Execution'} badgeText={lang === 'ar' ? 'نشط' : 'Active'} badgeColor="amber" />
+        <StatCard title="Completed" value={completedCount} subtext={lang === 'ar' ? 'تم التحقق والإغلاق' : 'Verified & Closed'} badgeText={lang === 'ar' ? 'مكتمل' : 'Completed'} badgeColor="blue" />
       </div>
 
       {/* Filter Options */}
       <div className="flex items-center space-x-2 bg-white p-3 rounded-xl border border-slate-200 text-xs font-mono">
-        <span className="font-semibold text-slate-700 mr-2">Filter Source:</span>
+        <span className="font-semibold text-slate-700 mr-2">{lang === 'ar' ? 'تصفية حسب المصدر:' : 'Filter Source:'}</span>
         {['all', 'Strategy', 'ERM', 'Cyber', 'Governance', 'Compliance', 'BCM'].map((src) => (
           <button
             key={src}
@@ -123,14 +123,14 @@ export const ActionsPage: React.FC = () => {
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            {src}
+            {src === 'all' ? (lang === 'ar' ? 'الكل' : 'all') : src}
           </button>
         ))}
       </div>
 
       <DataTable
-        title="Central Action Plans Register"
-        subtitle="Real-time execution status and target due dates"
+        title={t('Central Action Plans')}
+        subtitle={lang === 'ar' ? 'حالة التنفيذ في الوقت الحقيقي ومواعيد الإنجاز المستهدفة' : 'Real-time execution status and target due dates'}
         data={filteredActions}
         columns={actionColumns}
         onRowClick={(action) => openModal('action', action)}

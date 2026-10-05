@@ -50,28 +50,33 @@ export const PerformancePage: React.FC = () => {
 
   const kpiColumns: Column<KPI>[] = [
     {
-      header: 'Code',
+      header: t('Code'),
       accessorKey: 'code',
       sortable: true,
       width: '100px',
       cell: (k) => <span className="font-mono font-bold text-slate-900">{k.code}</span>,
     },
     {
-      header: 'Indicator Name',
+      header: t('Indicator Name'),
       accessorKey: 'name',
       sortable: true,
       cell: (k) => (
         <div>
-          <div className="font-semibold text-slate-900">{k.name}</div>
-          <div className="text-[10px] text-slate-400 truncate max-w-xs">{k.objectiveTitle}</div>
+          <div className="font-semibold text-slate-900">{lang === 'ar' ? (k.nameAr || k.name) : k.name}</div>
+          <div className="text-[10px] text-slate-400 truncate max-w-xs">{lang === 'ar' ? (k.objectiveTitleAr || k.objectiveTitle) : k.objectiveTitle}</div>
         </div>
       ),
     },
-    { header: 'Owner', accessorKey: 'owner', sortable: true },
-    { header: 'Target', accessorKey: 'target', cell: (k) => <span className="font-mono">{k.target} {k.unit}</span> },
-    { header: 'Actual', accessorKey: 'actual', cell: (k) => <span className="font-mono font-bold text-slate-900">{k.actual} {k.unit}</span> },
     {
-      header: 'Achievement %',
+      header: t('Owner'),
+      accessorKey: 'owner',
+      sortable: true,
+      cell: (k) => <span>{t(k.owner)}</span>,
+    },
+    { header: t('Target Year'), accessorKey: 'target', cell: (k) => <span className="font-mono">{k.target} {k.unit}</span> },
+    { header: t('Actual'), accessorKey: 'actual', cell: (k) => <span className="font-mono font-bold text-slate-900">{k.actual} {k.unit}</span> },
+    {
+      header: t('Achievement %'),
       accessorKey: 'achievementPct',
       sortable: true,
       cell: (k) => (
@@ -80,7 +85,7 @@ export const PerformancePage: React.FC = () => {
         </span>
       ),
     },
-    { header: 'Status', accessorKey: 'status', cell: (k) => <StatusBadge status={k.status} /> },
+    { header: t('Status'), accessorKey: 'status', cell: (k) => <StatusBadge status={k.status} /> },
   ];
 
   return (
@@ -91,13 +96,15 @@ export const PerformancePage: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
               <BarChart3 className="w-4 h-4" />
-              <span>INSTITUTIONAL PERFORMANCE MONITORING</span>
+              <span>{lang === 'ar' ? 'مراقبة الأداء المؤسسي' : 'INSTITUTIONAL PERFORMANCE MONITORING'}</span>
             </div>
             <h1 className="text-xl font-bold text-slate-900">
-              Departmental & KPI Performance Analytics
+              {lang === 'ar' ? 'تحليلات أداء الإدارات ومؤشرات الأداء (KPIs)' : 'Departmental & KPI Performance Analytics'}
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Filter performance data by fiscal year, quarter, enterprise department, and strategic theme.
+              {lang === 'ar'
+                ? 'تصفية بيانات الأداء حسب السنة المالية، والربع السنوي، والإدارة، والركيزة الاستراتيجية.'
+                : 'Filter performance data by fiscal year, quarter, enterprise department, and strategic theme.'}
             </p>
           </div>
 
@@ -107,7 +114,7 @@ export const PerformancePage: React.FC = () => {
             className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
           >
             <Upload className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Import KPI Data</span>
+            <span>{lang === 'ar' ? 'استيراد بيانات المؤشرات' : 'Import KPI Data'}</span>
           </button>
         </div>
 
@@ -115,7 +122,7 @@ export const PerformancePage: React.FC = () => {
         <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs">
           <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">Year:</span>
+            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'السنة:' : 'Year:'}</span>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
@@ -128,31 +135,31 @@ export const PerformancePage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <span className="font-semibold text-slate-700">Period:</span>
+            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الفترة:' : 'Period:'}</span>
             <select
               value={selectedQuarter}
               onChange={(e) => setSelectedQuarter(e.target.value)}
               className="bg-transparent font-mono font-bold text-slate-900 focus:outline-none"
             >
-              <option value="Q1">Q1 (Jan-Mar)</option>
-              <option value="Q2">Q2 (Apr-Jun)</option>
-              <option value="Q3">Q3 (Jul-Sep)</option>
-              <option value="Q4">Q4 (Oct-Dec)</option>
+              <option value="Q1">{lang === 'ar' ? 'الربع الأول (يناير - مارس)' : 'Q1 (Jan-Mar)'}</option>
+              <option value="Q2">{lang === 'ar' ? 'الربع الثاني (أبريل - يونيو)' : 'Q2 (Apr-Jun)'}</option>
+              <option value="Q3">{lang === 'ar' ? 'الربع الثالث (يوليو - سبتمبر)' : 'Q3 (Jul-Sep)'}</option>
+              <option value="Q4">{lang === 'ar' ? 'الربع الرابع (أكتوبر - ديسمبر)' : 'Q4 (Oct-Dec)'}</option>
             </select>
           </div>
 
           <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
             <Building className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">Department:</span>
+            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الإدارة:' : 'Department:'}</span>
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
               className="bg-transparent font-semibold text-slate-900 focus:outline-none"
             >
-              <option value="all">All Departments (6)</option>
+              <option value="all">{lang === 'ar' ? 'جميع الإدارات (6)' : 'All Departments (6)'}</option>
               {DEPARTMENTS.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.code} - {d.name}
+                  {d.code} - {lang === 'ar' ? (d.nameAr || d.name) : d.name}
                 </option>
               ))}
             </select>
@@ -160,13 +167,13 @@ export const PerformancePage: React.FC = () => {
 
           <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
             <Target className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">Theme:</span>
+            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الركيزة:' : 'Theme:'}</span>
             <select
               value={selectedTheme}
               onChange={(e) => setSelectedTheme(e.target.value)}
               className="bg-transparent font-semibold text-slate-900 focus:outline-none"
             >
-              <option value="all">All Themes ({themes.length})</option>
+              <option value="all">{lang === 'ar' ? `جميع الركائز (${themes.length})` : `All Themes (${themes.length})`}</option>
               {themes.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.code} - {lang === 'ar' ? (t.titleAr || t.title) : t.title}
@@ -180,8 +187,14 @@ export const PerformancePage: React.FC = () => {
       {/* Department Scores Comparison Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <h3 className="panel-title text-slate-900 mb-1">Department Performance vs Targets</h3>
-          <p className="text-xs text-slate-500 mb-4">{selectedYear} {selectedQuarter} Actual Score vs KPI Benchmark Target</p>
+          <h3 className="panel-title text-slate-900 mb-1">
+            {lang === 'ar' ? 'أداء الإدارات مقابل المستهدفات' : 'Department Performance vs Targets'}
+          </h3>
+          <p className="text-xs text-slate-500 mb-4">
+            {lang === 'ar'
+              ? `${selectedYear} ${selectedQuarter} النتيجة الفعلية مقابل المستهدف المعياري لمؤشرات الأداء`
+              : `${selectedYear} ${selectedQuarter} Actual Score vs KPI Benchmark Target`}
+          </p>
 
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -191,16 +204,20 @@ export const PerformancePage: React.FC = () => {
                 <YAxis domain={[50, 100]} tick={{ fontSize: 11, fill: '#64748b' }} />
                 <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
                 <Legend />
-                <Bar dataKey="score" name="Actual Score %" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="target" name="Benchmark Target %" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="score" name={lang === 'ar' ? 'النتيجة الفعلية %' : 'Actual Score %'} fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="target" name={lang === 'ar' ? 'المستهدف المعياري %' : 'Benchmark Target %'} fill="#94a3b8" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <h3 className="panel-title text-slate-900 mb-1">YTD Monthly Performance Trend</h3>
-          <p className="text-xs text-slate-500 mb-4">Multi-domain scoring trajectory Jan - Aug 2026</p>
+          <h3 className="panel-title text-slate-900 mb-1">
+            {lang === 'ar' ? 'مسار الأداء الشهري منذ بداية العام' : 'YTD Monthly Performance Trend'}
+          </h3>
+          <p className="text-xs text-slate-500 mb-4">
+            {lang === 'ar' ? 'مسار النتائج عبر القطاعات المتعددة يناير - أغسطس 2026' : 'Multi-domain scoring trajectory Jan - Aug 2026'}
+          </p>
 
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -210,10 +227,10 @@ export const PerformancePage: React.FC = () => {
                 <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#64748b' }} />
                 <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
                 <Legend />
-                <Line type="monotone" dataKey="strategy" name="Strategy" stroke="#10b981" strokeWidth={2.5} />
-                <Line type="monotone" dataKey="risk" name="Risk Mitigation" stroke="#f59e0b" strokeWidth={2} />
-                <Line type="monotone" dataKey="compliance" name="Compliance" stroke="#3b82f6" strokeWidth={2} />
-                <Line type="monotone" dataKey="bcm" name="BCM Readiness" stroke="#8b5cf6" strokeWidth={2} />
+                <Line type="monotone" dataKey="strategy" name={lang === 'ar' ? 'الاستراتيجية' : 'Strategy'} stroke="#10b981" strokeWidth={2.5} />
+                <Line type="monotone" dataKey="risk" name={lang === 'ar' ? 'معالجة المخاطر' : 'Risk Mitigation'} stroke="#f59e0b" strokeWidth={2} />
+                <Line type="monotone" dataKey="compliance" name={lang === 'ar' ? 'الالتزام' : 'Compliance'} stroke="#3b82f6" strokeWidth={2} />
+                <Line type="monotone" dataKey="bcm" name={lang === 'ar' ? 'جاهزية BCM' : 'BCM Readiness'} stroke="#8b5cf6" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -222,8 +239,8 @@ export const PerformancePage: React.FC = () => {
 
       {/* KPI Performance Table */}
       <DataTable
-        title="Key Performance Indicator (KPI) Detailed Scorecard"
-        subtitle="Individual metric target achievements across all enterprise operational programs"
+        title={lang === 'ar' ? 'بطاقة الأداء التفصيلية لمؤشرات الأداء الرئيسية (KPIs)' : 'Key Performance Indicator (KPI) Detailed Scorecard'}
+        subtitle={lang === 'ar' ? 'مستويات إنجاز المستهدفات الفردية عبر كافة البرامج التشغيلية المؤسسية' : 'Individual metric target achievements across all enterprise operational programs'}
         data={filteredKpis}
         columns={kpiColumns}
       />

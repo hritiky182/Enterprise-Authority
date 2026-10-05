@@ -102,19 +102,23 @@ export const ClientStrategyMatrix: React.FC = () => {
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
-                Official Strategic Framework
+                {lang === 'ar' ? 'الإطار الاستراتيجي المعتمد' : 'Official Strategic Framework'}
               </span>
-              <span className="text-xs text-slate-400 font-mono">هيئة تطوير الأحساء</span>
+              <span className="text-xs text-slate-400 font-mono">
+                {lang === 'ar' ? 'هيئة تطوير الأحساء' : 'Al Ahsa Development Authority'}
+              </span>
             </div>
 
             <div className="flex items-baseline gap-3">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
-                Vision: A Leader in Sustainable Development in Al-Ahsa
+                {lang === 'ar' ? 'الرؤية: ريادة في التنمية المستدامة في الأحساء' : 'Vision: A Leader in Sustainable Development in Al-Ahsa'}
               </h1>
             </div>
 
             <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Cascaded strategic performance architecture aligning Pillar <strong>02 People and Society</strong> objectives with measurable indicators, formula definitions, multi-year targets (2026–2027), and flagship enablement projects.
+              {lang === 'ar'
+                ? 'هندسة الأداء الاستراتيجي المتوائم مع أهداف الركيزة 02 (الإنسان والمجتمع) مع مؤشرات قابلة للقياس، وتعريفات المعادلات، ومستهدفات متعددة السنوات (2026–2027)، ومشاريع التمكين الرئيسية.'
+                : 'Cascaded strategic performance architecture aligning Pillar 02 People and Society objectives with measurable indicators, formula definitions, multi-year targets (2026–2027), and flagship enablement projects.'}
             </p>
           </div>
 
@@ -134,7 +138,7 @@ export const ClientStrategyMatrix: React.FC = () => {
               className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>+ Quick Add KPI</span>
+              <span>{lang === 'ar' ? '+ إضافة مؤشر سريع' : '+ Quick Add KPI'}</span>
             </button>
 
             <Link
@@ -142,7 +146,7 @@ export const ClientStrategyMatrix: React.FC = () => {
               className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>+ Strategy Formulation</span>
+              <span>{lang === 'ar' ? '+ صياغة الاستراتيجية' : '+ Strategy Formulation'}</span>
             </Link>
 
             <button
@@ -150,7 +154,7 @@ export const ClientStrategyMatrix: React.FC = () => {
               className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
             >
               <Download className="w-4 h-4 text-blue-300" />
-              <span>Export Spreadsheet</span>
+              <span>{lang === 'ar' ? 'تصدير جدول البيانات' : 'Export Spreadsheet'}</span>
             </button>
           </div>
         </div>
@@ -285,7 +289,7 @@ export const ClientStrategyMatrix: React.FC = () => {
                           {lang === 'ar' ? (parentObj?.titleAr || kpi.objectiveTitleAr || kpi.objectiveTitle) : kpi.objectiveTitle}
                         </div>
                         <div className="text-[10px] text-slate-400 mt-1 font-mono">
-                          {t('Owner')}: {kpi.owner}
+                          {t('Owner')}: {t(kpi.owner)}
                         </div>
                       </td>
 
@@ -299,11 +303,6 @@ export const ClientStrategyMatrix: React.FC = () => {
                             <div className="font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
                               {lang === 'ar' ? (kpi.nameAr || kpi.name) : kpi.name}
                             </div>
-                            {lang === 'ar' && kpi.name && (
-                              <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                                {kpi.name}
-                              </div>
-                            )}
                             {lang !== 'ar' && kpi.nameAr && (
                               <div className="text-[11px] text-slate-400 font-sans mt-0.5">
                                 {kpi.nameAr}
@@ -322,7 +321,7 @@ export const ClientStrategyMatrix: React.FC = () => {
                       {/* Indicator Calculation Formula */}
                       <td className="p-3.5 align-top">
                         <div className="p-2 rounded-lg bg-slate-50 border border-slate-200/80 font-mono text-[11px] text-slate-700 leading-relaxed">
-                          {kpi.formula || '—'}
+                          {lang === 'ar' ? (kpi.formulaAr || kpi.formula || '—') : (kpi.formula || '—')}
                         </div>
                       </td>
 
@@ -348,23 +347,27 @@ export const ClientStrategyMatrix: React.FC = () => {
                       {/* Strategic Initiatives */}
                       <td className="p-3.5 align-top">
                         <div className="text-xs text-slate-800 font-medium leading-relaxed">
-                          {kpi.strategicInitiative || '—'}
+                          {lang === 'ar' ? (kpi.strategicInitiativeAr || kpi.strategicInitiative || '—') : (kpi.strategicInitiative || '—')}
                         </div>
                       </td>
 
                       {/* Key Milestones */}
                       <td className="p-3.5 align-top">
                         <div className="text-xs text-slate-600 leading-relaxed bg-amber-50/40 p-2 rounded-lg border border-amber-200/60">
-                          <span className="text-[10px] font-mono font-bold uppercase text-amber-800 block mb-0.5">Milestone:</span>
-                          {kpi.keyMilestone || '—'}
+                          <span className="text-[10px] font-mono font-bold uppercase text-amber-800 block mb-0.5">
+                            {lang === 'ar' ? 'المعلم الرئيسي:' : 'Milestone:'}
+                          </span>
+                          {lang === 'ar' ? (kpi.keyMilestoneAr || kpi.keyMilestone || '—') : (kpi.keyMilestone || '—')}
                         </div>
                       </td>
 
                       {/* Key Projects */}
                       <td className="p-3.5 align-top">
                         <div className="font-semibold text-xs text-slate-900 bg-emerald-50/40 p-2 rounded-lg border border-emerald-200/60">
-                          <span className="text-[10px] font-mono font-bold uppercase text-emerald-800 block mb-0.5">Project:</span>
-                          {kpi.keyProject || '—'}
+                          <span className="text-[10px] font-mono font-bold uppercase text-emerald-800 block mb-0.5">
+                            {lang === 'ar' ? 'المشروع:' : 'Project:'}
+                          </span>
+                          {lang === 'ar' ? (kpi.keyProjectAr || kpi.keyProject || '—') : (kpi.keyProject || '—')}
                         </div>
                       </td>
                     </tr>
@@ -378,14 +381,14 @@ export const ClientStrategyMatrix: React.FC = () => {
         {/* Footer info strip */}
         <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
           <div className="flex items-center space-x-2">
-            <span className="font-mono font-bold text-slate-700">Source:</span>
-            <span>Al Ahsa Development Authority Strategic Performance Cascading Sheet (2026–2027)</span>
+            <span className="font-mono font-bold text-slate-700">{lang === 'ar' ? 'المصدر:' : 'Source:'}</span>
+            <span>{lang === 'ar' ? 'هيئة تطوير الأحساء - ورقة مواءمة الأداء الاستراتيجي (2026–2027)' : 'Al Ahsa Development Authority Strategic Performance Cascading Sheet (2026–2027)'}</span>
           </div>
 
           <div className="flex items-center space-x-3 text-[11px] font-mono">
-            <span>Showing {clientKpis.length} cascaded indicators</span>
+            <span>{lang === 'ar' ? `عرض ${clientKpis.length} مؤشرات موائمة` : `Showing ${clientKpis.length} cascaded indicators`}</span>
             <span className="text-slate-300">•</span>
-            <span className="text-blue-700 font-semibold">Click any row to open full objective OKR drawer</span>
+            <span className="text-blue-700 font-semibold">{lang === 'ar' ? 'انقر على أي صف لفتح تفاصيل الهدف الاستراتيجي (OKR)' : 'Click any row to open full objective OKR drawer'}</span>
           </div>
         </div>
       </div>

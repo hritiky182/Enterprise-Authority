@@ -110,17 +110,22 @@ export interface KPI {
   sectorId?: string | undefined;
   sectorName?: string | undefined;
   formula?: string | undefined;
+  formulaAr?: string | undefined;
   baseline?: string | number | undefined;
   target2026?: string | number | undefined;
   target2027?: string | number | undefined;
   strategicInitiative?: string | undefined;
+  strategicInitiativeAr?: string | undefined;
   keyMilestone?: string | undefined;
+  keyMilestoneAr?: string | undefined;
   keyProject?: string | undefined;
+  keyProjectAr?: string | undefined;
 }
 
 export interface Milestone {
   id: string;
   title: string;
+  titleAr?: string | undefined;
   dueDate: string;
   status: 'Completed' | 'In Progress' | 'Pending';
 }
@@ -131,6 +136,9 @@ export interface StrategicInitiative {
   objectiveId: string;
   objectiveTitle: string;
   title: string;
+  titleAr?: string | undefined;
+  description?: string | undefined;
+  descriptionAr?: string | undefined;
   owner: string;
   department: string;
   budgetSAR: number;
@@ -142,7 +150,6 @@ export interface StrategicInitiative {
   milestones: Milestone[];
   risksCount: number;
   actionsCount: number;
-  description: string;
   keyProjects?: string[] | undefined;
   isCustom?: boolean | undefined;
 }

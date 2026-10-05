@@ -5,7 +5,6 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StrategicObjective, StrategicInitiative, KPI } from '../types';
 import { ClientStrategyMatrix } from '../components/strategy/ClientStrategyMatrix';
-import { StrategyExecutionModel } from '../components/strategy/StrategyExecutionModel';
 import { OperationalStructureView } from '../components/organization/OperationalStructureView';
 import {
   Target,
@@ -27,7 +26,7 @@ import {
 
 export const StrategyPage: React.FC = () => {
   const { themes, goals, objectives, initiatives, kpis, openModal, deleteStrategyTheme, resetStrategies, lang, t } = useApp();
-  const [activeTab, setActiveTab] = useState<'model' | 'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('model');
+  const [activeTab, setActiveTab] = useState<'matrix' | 'hierarchy' | 'objectives' | 'initiatives' | 'kpis' | 'structure'>('matrix');
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
   const totalSpent = initiatives.reduce((sum, i) => sum + (i.spentSAR || 0), 0);
@@ -55,7 +54,7 @@ export const StrategyPage: React.FC = () => {
 
   const objectiveColumns: Column<StrategicObjective>[] = [
     {
-      header: 'Code',
+      header: t('Code'),
       accessorKey: 'code',
       sortable: true,
       width: '110px',
@@ -64,7 +63,7 @@ export const StrategyPage: React.FC = () => {
           <span className="font-mono font-bold text-slate-900">{o.code}</span>
           {o.isCustom && (
             <span className="text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-              NEW
+              {lang === 'ar' ? 'جديد' : 'NEW'}
             </span>
           )}
         </div>
@@ -77,32 +76,31 @@ export const StrategyPage: React.FC = () => {
       cell: (o) => (
         <div>
           <div className="font-semibold text-slate-900">{lang === 'ar' ? (o.titleAr || o.title) : o.title}</div>
-          {lang === 'ar' && o.title && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.title}</div>}
           {lang !== 'ar' && o.titleAr && <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.titleAr}</div>}
           <div className="text-[10px] text-slate-400">{o.themeName}</div>
         </div>
       ),
     },
     {
-      header: 'Owner',
+      header: t('Owner'),
       accessorKey: 'owner',
       sortable: true,
       cell: (o) => (
         <div>
-          <div className="font-medium text-slate-800">{o.owner}</div>
-          <div className="text-[10px] text-slate-400">{o.department}</div>
+          <div className="font-medium text-slate-800">{t(o.owner)}</div>
+          <div className="text-[10px] text-slate-400">{t(o.department)}</div>
         </div>
       ),
     },
     {
-      header: 'Target Year',
+      header: t('Target Year'),
       accessorKey: 'targetYear',
       sortable: true,
       width: '100px',
       cell: (o) => <span className="font-mono">{o.targetYear}</span>,
     },
     {
-      header: 'Progress',
+      header: t('Progress'),
       accessorKey: 'progress',
       sortable: true,
       width: '120px',
@@ -116,7 +114,7 @@ export const StrategyPage: React.FC = () => {
       ),
     },
     {
-      header: 'Status',
+      header: t('Status'),
       accessorKey: 'status',
       sortable: true,
       width: '110px',
@@ -126,7 +124,7 @@ export const StrategyPage: React.FC = () => {
 
   const kpiColumns: Column<KPI>[] = [
     {
-      header: 'KPI Code',
+      header: t('KPI Code'),
       accessorKey: 'code',
       sortable: true,
       width: '110px',
@@ -135,30 +133,32 @@ export const StrategyPage: React.FC = () => {
           <span className="font-mono font-bold text-slate-900">{k.code}</span>
           {k.isCustom && (
             <span className="text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-              NEW
+              {lang === 'ar' ? 'جديد' : 'NEW'}
             </span>
           )}
         </div>
       ),
     },
     {
-      header: 'Indicator Name',
+      header: t('Indicator Name'),
       accessorKey: 'name',
       sortable: true,
       cell: (k) => (
         <div>
-          <div className="font-semibold text-slate-900">{k.name}</div>
+          <div className="font-semibold text-slate-900">{lang === 'ar' ? (k.nameAr || k.name) : k.name}</div>
           {k.formula && (
             <div className="text-[10px] font-mono text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded mt-0.5 max-w-sm truncate border border-slate-200/60">
-              fx: {k.formula}
+              fx: {lang === 'ar' ? (k.formulaAr || k.formula) : k.formula}
             </div>
           )}
-          <div className="text-[10px] text-slate-400 truncate max-w-sm">{k.objectiveTitle}</div>
+          <div className="text-[10px] text-slate-400 truncate max-w-sm">
+            {lang === 'ar' ? (k.objectiveTitleAr || k.objectiveTitle) : k.objectiveTitle}
+          </div>
         </div>
       ),
     },
     {
-      header: 'Targets (26/27)',
+      header: lang === 'ar' ? 'المستهدفات (26/27)' : 'Targets (26/27)',
       sortable: false,
       cell: (k) => (
         <div className="text-[11px] font-mono">
@@ -167,9 +167,13 @@ export const StrategyPage: React.FC = () => {
         </div>
       ),
     },
-    { header: 'Actual', accessorKey: 'actual', cell: (k) => <span className="font-mono font-bold">{k.actual} {k.unit}</span> },
     {
-      header: 'Achievement %',
+      header: t('Actual'),
+      accessorKey: 'actual',
+      cell: (k) => <span className="font-mono font-bold">{k.actual} {k.unit}</span>,
+    },
+    {
+      header: t('Achievement %'),
       accessorKey: 'achievementPct',
       sortable: true,
       cell: (k) => (
@@ -178,8 +182,16 @@ export const StrategyPage: React.FC = () => {
         </span>
       ),
     },
-    { header: 'Frequency', accessorKey: 'frequency', cell: (k) => <span className="text-slate-600">{k.frequency}</span> },
-    { header: 'Status', accessorKey: 'status', cell: (k) => <StatusBadge status={k.status} /> },
+    {
+      header: t('Frequency'),
+      accessorKey: 'frequency',
+      cell: (k) => <span className="text-slate-600">{t(k.frequency)}</span>,
+    },
+    {
+      header: t('Status'),
+      accessorKey: 'status',
+      cell: (k) => <StatusBadge status={k.status} />,
+    },
   ];
 
   return (
@@ -189,13 +201,13 @@ export const StrategyPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
             <Target className="w-4 h-4" />
-            <span>AL AHSA DEVELOPMENT AUTHORITY • STRATEGY & GOVERNANCE</span>
+            <span>{t('AL AHSA DEVELOPMENT AUTHORITY • STRATEGY & GOVERNANCE')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
-            Strategy Architecture & Cascading Matrix
+            {t('Strategy Architecture & Cascading Matrix')}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Vision: A Leader in Sustainable Development in Al-Ahsa — Cascaded Objectives, KPIs & Projects
+            {t('Vision: A Leader in Sustainable Development in Al-Ahsa — Cascaded Objectives, KPIs & Projects')}
           </p>
         </div>
 
@@ -204,22 +216,9 @@ export const StrategyPage: React.FC = () => {
           {/* Tab Buttons */}
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl overflow-x-auto">
             <button
-              onClick={() => setActiveTab('model')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'model' ? 'bg-emerald-700 text-white shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Target className="w-3.5 h-3.5" />
-              <span>{lang === 'ar' ? 'نموذج الاستراتيجية (1-6)' : 'Strategy Model (1-6)'}</span>
-              <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${activeTab === 'model' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
-                {lang === 'ar' ? 'معتمد' : 'AHDA'}
-              </span>
-            </button>
-            <button
               onClick={() => setActiveTab('matrix')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>{lang === 'ar' ? 'مصفوفة الاستراتيجية' : 'Al-Ahsa Matrix'}</span>
@@ -229,41 +228,36 @@ export const StrategyPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('hierarchy')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'hierarchy' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${activeTab === 'hierarchy' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               {lang === 'ar' ? 'شجرة الركائز' : 'Hierarchy Tree'} ({themes.length})
             </button>
             <button
               onClick={() => setActiveTab('objectives')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'objectives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${activeTab === 'objectives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               {lang === 'ar' ? 'الأهداف' : 'Objectives'} ({objectives.length})
             </button>
             <button
               onClick={() => setActiveTab('kpis')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'kpis' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${activeTab === 'kpis' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               {lang === 'ar' ? 'المؤشرات' : 'KPIs'} ({kpis.length})
             </button>
             <button
               onClick={() => setActiveTab('initiatives')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'initiatives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${activeTab === 'initiatives' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               {lang === 'ar' ? 'المبادرات' : 'Initiatives'} ({initiatives.length})
             </button>
             <button
               onClick={() => setActiveTab('structure')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
-                activeTab === 'structure' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 ${activeTab === 'structure' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               <Network className="w-3.5 h-3.5" />
               <span>{lang === 'ar' ? 'الهيكل التنظيمي' : 'Org Structure'}</span>
@@ -321,9 +315,6 @@ export const StrategyPage: React.FC = () => {
         </div>
       </div>
 
-      {/* TAB: STRATEGY EXECUTION MODEL (6-STAGE CASCADING & INTEGRATED UNDERSTANDING) */}
-      {activeTab === 'model' && <StrategyExecutionModel />}
-
       {/* TAB 0: CLIENT AL-AHSA STRATEGY MATRIX */}
       {activeTab === 'matrix' && <ClientStrategyMatrix />}
 
@@ -351,22 +342,22 @@ export const StrategyPage: React.FC = () => {
                       {theme.isCustom && (
                         <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1 shadow-2xs">
                           <Sparkles className="w-3 h-3 text-amber-500" />
-                          <span>Dynamic Strategy</span>
+                          <span>{lang === 'ar' ? 'استراتيجية ديناميكية' : 'Dynamic Strategy'}</span>
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">{theme.description}</p>
+                    <p className="text-xs text-slate-500 mt-1">{lang === 'ar' ? (theme.descriptionAr || theme.description) : theme.description}</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
-                      Weight: {theme.weight}%
+                      {lang === 'ar' ? `الوزن: ${theme.weight}%` : `Weight: ${theme.weight}%`}
                     </span>
                     {theme.isCustom && (
                       <button
                         onClick={() => deleteStrategyTheme(theme.id)}
                         className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Delete this dynamic strategy"
+                        title={lang === 'ar' ? 'حذف هذه الاستراتيجية' : 'Delete this dynamic strategy'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -375,9 +366,11 @@ export const StrategyPage: React.FC = () => {
                 </div>
 
                 {/* Strategic Goals & Objectives nested list */}
-                <div className="pl-2 sm:pl-4 space-y-4 border-l-2 border-slate-200">
+                <div className="ps-2 sm:ps-4 space-y-4 border-s-2 border-slate-200">
                   {themeGoals.length === 0 ? (
-                    <div className="text-xs text-slate-400 italic py-2">No nested goals registered under this theme.</div>
+                    <div className="text-xs text-slate-400 italic py-2">
+                      {lang === 'ar' ? 'لا توجد أهداف مسجلة تحت هذه الركيزة.' : 'No nested goals registered under this theme.'}
+                    </div>
                   ) : (
                     themeGoals.map((goal) => {
                       const goalObjs = themeObjectives.filter((o) => o.goalId === goal.id);
@@ -388,11 +381,11 @@ export const StrategyPage: React.FC = () => {
                             <span className="font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                               {goal.code}
                             </span>
-                            <span>{goal.title}</span>
+                            <span>{lang === 'ar' ? (goal.titleAr || goal.title) : goal.title}</span>
                           </div>
 
                           {/* Objectives under Goal */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ps-4">
                             {goalObjs.map((obj) => {
                               const objKpis = kpis.filter((k) => k.objectiveId === obj.id);
                               const objInits = initiatives.filter((i) => i.objectiveId === obj.id);
@@ -410,27 +403,27 @@ export const StrategyPage: React.FC = () => {
                                       </span>
                                       {obj.isCustom && (
                                         <span className="text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-                                          NEW
+                                          {lang === 'ar' ? 'جديد' : 'NEW'}
                                         </span>
                                       )}
                                     </div>
                                     <StatusBadge status={obj.status} />
                                   </div>
                                   <h4 className="font-semibold text-xs text-slate-900 group-hover:text-emerald-700 transition-colors">
-                                    {obj.title}
+                                    {lang === 'ar' ? (obj.titleAr || obj.title) : obj.title}
                                   </h4>
 
                                   <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 font-mono">
-                                    <span>Owner: {obj.owner}</span>
-                                    <span className="font-bold text-emerald-700">{obj.progress}% Progress</span>
+                                    <span>{lang === 'ar' ? `المالك: ${t(obj.owner)}` : `Owner: ${obj.owner}`}</span>
+                                    <span className="font-bold text-emerald-700">{lang === 'ar' ? `الإنجاز ${obj.progress}%` : `${obj.progress}% Progress`}</span>
                                   </div>
 
                                   <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-1">
                                     <span className="bg-white px-2 py-0.5 rounded border border-slate-200">
-                                      {objKpis.length} KPIs
+                                      {lang === 'ar' ? `${objKpis.length} مؤشرات` : `${objKpis.length} KPIs`}
                                     </span>
                                     <span className="bg-white px-2 py-0.5 rounded border border-slate-200">
-                                      {objInits.length} Initiatives
+                                      {lang === 'ar' ? `${objInits.length} مبادرات` : `${objInits.length} Initiatives`}
                                     </span>
                                   </div>
                                 </div>
@@ -452,9 +445,11 @@ export const StrategyPage: React.FC = () => {
               <Plus className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Add Another Strategic Pillar</h3>
+              <h3 className="text-sm font-bold text-slate-900">{lang === 'ar' ? 'إضافة ركيزة استراتيجية جديدة' : 'Add Another Strategic Pillar'}</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto mt-0.5">
-                Formulate and deploy dynamic enterprise strategies with custom goals, target OKRs, and KPIs.
+                {lang === 'ar'
+                  ? 'صياغة ونشر الاستراتيجيات المؤسسية بأهداف تفصيلية ومؤشرات أداء مخصصة.'
+                  : 'Formulate and deploy dynamic enterprise strategies with custom goals, target OKRs, and KPIs.'}
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-1">
@@ -463,7 +458,7 @@ export const StrategyPage: React.FC = () => {
                 className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>Create Strategy</span>
+                <span>{t('Create Strategy')}</span>
               </Link>
               <button
                 type="button"
@@ -471,7 +466,7 @@ export const StrategyPage: React.FC = () => {
                 className="inline-flex items-center space-x-1.5 px-3 py-2 border border-slate-200 hover:bg-white text-slate-600 rounded-xl text-xs font-medium transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset Demo Strategies</span>
+                <span>{t('Reset Demo Strategies')}</span>
               </button>
             </div>
           </div>
@@ -481,8 +476,8 @@ export const StrategyPage: React.FC = () => {
       {/* TAB 2: OBJECTIVES TABLE */}
       {activeTab === 'objectives' && (
         <DataTable
-          title="Strategic Objectives Performance Matrix"
-          subtitle="Owner, Theme alignment, target deadlines and overall achievement progress"
+          title={t('Strategic Objectives Performance Matrix')}
+          subtitle={t('Owner, Theme alignment, target deadlines and overall achievement progress')}
           data={objectives}
           columns={objectiveColumns}
           onRowClick={(obj) => openModal('objective', obj)}
@@ -492,8 +487,8 @@ export const StrategyPage: React.FC = () => {
       {/* TAB 3: KPIS TABLE */}
       {activeTab === 'kpis' && (
         <DataTable
-          title="Key Performance Indicator (KPI) Management"
-          subtitle="Real-time actual measurements vs strategic target metrics"
+          title={t('Key Performance Indicator (KPI) Management')}
+          subtitle={t('Real-time actual measurements vs strategic target metrics')}
           data={kpis}
           columns={kpiColumns}
         />
@@ -516,29 +511,29 @@ export const StrategyPage: React.FC = () => {
                     <StatusBadge status={init.status} />
                     {init.isCustom && (
                       <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                        NEW INITIATIVE
+                        {lang === 'ar' ? 'مبادرة جديدة' : 'NEW INITIATIVE'}
                       </span>
                     )}
                   </div>
-                  <h3 className="font-bold text-sm text-slate-900 mt-2">{init.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{init.description}</p>
+                  <h3 className="font-bold text-sm text-slate-900 mt-2">{lang === 'ar' ? (init.titleAr || init.title) : init.title}</h3>
+                  <p className="text-xs text-slate-500 mt-1">{lang === 'ar' ? (init.descriptionAr || init.description) : init.description}</p>
                 </div>
               </div>
 
               {/* Budget & Progress stats */}
               <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
                 <div>
-                  <span className="panel-label">Budget Allocation</span>
+                  <span className="panel-label">{t('Budget Allocation')}</span>
                   <div className="font-mono font-bold text-sm text-slate-900 mt-0.5">
-                    SAR {(init.budgetSAR / 1000000).toFixed(1)}M
+                    {lang === 'ar' ? `${(init.budgetSAR / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(init.budgetSAR / 1000000).toFixed(1)}M`}
                   </div>
                   <div className="text-[10px] text-slate-500 font-mono">
-                    Spent: SAR {(init.spentSAR / 1000000).toFixed(1)}M
+                    {lang === 'ar' ? `المصروف: ${(init.spentSAR / 1000000).toFixed(1)} مليون ر.س` : `Spent: SAR ${(init.spentSAR / 1000000).toFixed(1)}M`}
                   </div>
                 </div>
 
                 <div>
-                  <span className="panel-label">Overall Completion</span>
+                  <span className="panel-label">{t('Overall Completion')}</span>
                   <div className="font-mono font-bold text-sm text-emerald-700 mt-0.5">
                     {init.progress}%
                   </div>
@@ -551,7 +546,7 @@ export const StrategyPage: React.FC = () => {
               {/* Milestones list */}
               <div>
                 <h4 className="font-semibold text-xs text-slate-900 uppercase tracking-wider mb-2">
-                  Key Deliverables & Milestones
+                  {t('Key Deliverables & Milestones')}
                 </h4>
                 <div className="space-y-1.5">
                   {init.milestones?.map((m) => (
@@ -573,7 +568,7 @@ export const StrategyPage: React.FC = () => {
               </div>
 
               <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 font-mono">
-                <span>Owner: {init.owner}</span>
+                <span>{lang === 'ar' ? `المالك: ${t(init.owner)}` : `Owner: ${init.owner}`}</span>
                 <span>{init.startDate} → {init.endDate}</span>
               </div>
             </div>

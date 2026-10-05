@@ -43,6 +43,8 @@ export const DashboardPage: React.FC = () => {
     openModal,
     setSelectedFilter,
     permissions,
+    lang,
+    t,
   } = useApp();
 
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ export const DashboardPage: React.FC = () => {
           <div className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
             {r.title}
           </div>
-          <div className="text-[11px] text-slate-500 font-mono">{r.department}</div>
+          <div className="text-[11px] text-slate-500 font-mono">{t(r.department)}</div>
         </div>
       ),
     },
@@ -115,10 +117,10 @@ export const DashboardPage: React.FC = () => {
   ];
 
   const objectivePieData = [
-    { name: 'Achieved', value: objectives.filter((o) => o.status === 'achieved').length, color: '#1d4ed8' },
-    { name: 'On Track', value: objectives.filter((o) => o.status === 'on-track').length, color: '#3b82f6' },
-    { name: 'At Risk', value: objectives.filter((o) => o.status === 'at-risk').length, color: '#f59e0b' },
-    { name: 'Behind', value: objectives.filter((o) => o.status === 'behind').length, color: '#f43f5e' },
+    { name: t('Achieved'), value: objectives.filter((o) => o.status === 'achieved').length, color: '#1d4ed8' },
+    { name: t('On Track'), value: objectives.filter((o) => o.status === 'on-track').length, color: '#3b82f6' },
+    { name: t('At Risk'), value: objectives.filter((o) => o.status === 'at-risk').length, color: '#f59e0b' },
+    { name: t('Behind'), value: objectives.filter((o) => o.status === 'behind').length, color: '#f43f5e' },
   ];
 
   return (
@@ -130,13 +132,13 @@ export const DashboardPage: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
               <Sparkles className="w-4 h-4" />
-              <span>ENTERPRISE EXECUTIVE COMMAND CENTER</span>
+              <span>{t('ENTERPRISE EXECUTIVE COMMAND CENTER')}</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-sans">
-              Strategic & Risk Governance Dashboard
+              {t('Strategic & Risk Governance Dashboard')}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-              Integrated real-time oversight of Institutional Performance (88.4%), NCA ECC Compliance (96.5%), 5×5 Enterprise Risk Exposure & BCM Operational Readiness.
+            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              {t('Integrated real-time oversight of Institutional Performance (88.4%), NCA ECC Compliance (96.5%), 5×5 Enterprise Risk Exposure & BCM Operational Readiness.')}
             </p>
           </div>
 
@@ -147,7 +149,7 @@ export const DashboardPage: React.FC = () => {
                 className="px-3.5 py-2 rounded-xl bg-rose-600 text-white font-semibold text-xs hover:bg-rose-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
               >
                 <ShieldAlert className="w-4 h-4" />
-                Log Risk
+                {t('Log Risk')}
               </button>
             )}
             {permissions.canCreateAction && (
@@ -156,7 +158,7 @@ export const DashboardPage: React.FC = () => {
                 className="px-3.5 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-500 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
               >
                 <ListTodo className="w-4 h-4" />
-                New Action Plan
+                {t('New Action Plan')}
               </button>
             )}
           </div>
@@ -276,15 +278,15 @@ export const DashboardPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="panel-title text-slate-900">Institutional OKR Trajectory</h3>
-                <p className="text-xs text-slate-500">2026 Monthly Strategy Execution vs Target</p>
+                <h3 className="panel-title text-slate-900">{t('Institutional OKR Trajectory')}</h3>
+                <p className="text-xs text-slate-500">{t('2026 Monthly Strategy Execution vs Target')}</p>
               </div>
               <button
                 onClick={() => navigate('/performance')}
                 className="text-xs font-semibold text-blue-700 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>Analytics</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>{t('Analytics')}</span>
+                <ArrowRight className={`w-3.5 h-3.5 ${lang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
             </div>
 
@@ -311,7 +313,7 @@ export const DashboardPage: React.FC = () => {
                   <Area
                     type="monotone"
                     dataKey="strategy"
-                    name="Strategy Progress %"
+                    name={t('Strategy Progress %')}
                     stroke="#2563eb"
                     fillOpacity={1}
                     fill="url(#colorStrategy)"
@@ -323,8 +325,8 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
-            <span>Target Index: 85.0%</span>
-            <span className="text-blue-700 font-bold">Current Actual: 88.4%</span>
+            <span>{t('Target Index: 85.0%')}</span>
+            <span className="text-blue-700 font-bold">{t('Current Actual: 88.4%')}</span>
           </div>
         </div>
       </div>
@@ -355,12 +357,12 @@ export const DashboardPage: React.FC = () => {
         <div className="lg:col-span-4 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between">
-              <h3 className="panel-title text-slate-900">Strategic Objectives Portfolio</h3>
+              <h3 className="panel-title text-slate-900">{t('Strategic Objectives Portfolio')}</h3>
               <button
                 onClick={() => navigate('/strategy')}
                 className="text-xs font-semibold text-blue-700 hover:underline cursor-pointer"
               >
-                View Tree
+                {t('View Tree')}
               </button>
             </div>
 
@@ -383,7 +385,7 @@ export const DashboardPage: React.FC = () => {
               </ResponsiveContainer>
               <div className="absolute text-center pointer-events-none">
                 <div className="text-xl font-bold font-mono text-slate-900">{objectives.length}</div>
-                <div className="text-[10px] text-slate-400 font-mono uppercase">Objectives</div>
+                <div className="text-[10px] text-slate-400 font-mono uppercase">{t('Objectives')}</div>
               </div>
             </div>
 
