@@ -143,7 +143,15 @@ interface AppContextType {
   objectives: StrategicObjective[];
   initiatives: StrategicInitiative[];
   kpis: KPI[];
+  cascadeStrategy: (payload: {
+    themeId: string;
+    goalIds: string[];
+    objectiveIds: string[];
+    kpiIds: string[];
+    initiativeIds: string[];
+  }) => void;
   addStrategy: (payload: CreateStrategyPayload) => { themeId: string; goalId: string; objectiveId: string };
+  addObjective: (objective: Omit<StrategicObjective, 'id'>) => StrategicObjective;
   addKPI: (kpi: Omit<KPI, 'id'>) => KPI;
   addInitiative: (init: Omit<StrategicInitiative, 'id'>) => StrategicInitiative;
   deleteStrategyTheme: (themeId: string) => void;
@@ -736,6 +744,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return formatted.length;
   };
 
+  const addObjective = (newObjData: Omit<StrategicObjective, 'id'>) => {
+    const id = `obj-${Date.now()}`;
+    const createdObj: StrategicObjective = {
+      ...newObjData,
+      id,
+      kpiCount: newObjData.kpiCount || 0,
+      status: newObjData.status || 'on-track',
+      progress: Number(newObjData.progress) || 0,
+      targetYear: Number(newObjData.targetYear) || 2026,
+      isCustom: true,
+    };
+
+    setObjectives((prev) => {
+      const updated = [...prev, createdObj];
+      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success(`Objective "${createdObj.code} ${createdObj.title}" Created`, {
+      description: 'Added to live Strategy framework and OKR portfolio.',
+    });
+    return createdObj;
+  };
+
   const addKPI = (newKpiData: Omit<KPI, 'id'>) => {
     const id = `kpi-${Date.now()}`;
     const targetVal = Number(newKpiData.target) || 100;
@@ -1023,6 +1055,105 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return { themeId, goalId, objectiveId };
   };
 
+  const cascadeStrategy = (payload: {
+    themeId: string;
+    goalIds: string[];
+    objectiveIds: string[];
+    kpiIds: string[];
+    initiativeIds: string[];
+  }) => {
+    const targetTheme = themes.find((t) => t.id === payload.themeId);
+    const themeTitle = targetTheme ? targetTheme.title : 'Strategic Theme';
+    const themeCode = targetTheme ? targetTheme.code : '01';
+
+    // 1. Align selected goals
+    if (payload.goalIds && payload.goalIds.length > 0) {
+      setGoals((prev) => {
+        const updated = prev.map((g) =>
+          payload.goalIds.includes(g.id) ? { ...g, themeId: payload.themeId } : g
+        );
+        sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    // 2. Align selected objectives
+    if (payload.objectiveIds && payload.objectiveIds.length > 0) {
+      setObjectives((prev) => {
+        const updated = prev.map((o) => {
+          if (payload.objectiveIds.includes(o.id)) {
+            return {
+              ...o,
+              themeId: payload.themeId,
+              themeName: themeTitle,
+              goalId: payload.goalIds[0] || o.goalId,
+            };
+          }
+          return o;
+        });
+        sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    // 3. Align selected KPIs
+    if (payload.kpiIds && payload.kpiIds.length > 0) {
+      const firstObj = objectives.find((o) => payload.objectiveIds.includes(o.id));
+      const firstInit = initiatives.find((i) => payload.initiativeIds.includes(i.id));
+
+      setKpis((prev) => {
+        const updated = prev.map((k) => {
+          if (payload.kpiIds.includes(k.id)) {
+            return {
+              ...k,
+              pillarCode: themeCode,
+              pillarTitle: themeTitle,
+              objectiveId: firstObj ? firstObj.id : k.objectiveId,
+              objectiveTitle: firstObj ? firstObj.title : k.objectiveTitle,
+              strategicInitiative: firstInit ? firstInit.title : (k.strategicInitiative || ''),
+              keyProject: firstInit?.keyProjects?.[0] || k.keyProject,
+              keyMilestone: firstInit?.milestones?.[0]?.title || k.keyMilestone,
+            };
+          }
+          return k;
+        });
+        sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    // 4. Align selected initiatives
+    if (payload.initiativeIds && payload.initiativeIds.length > 0) {
+      const firstObj = objectives.find((o) => payload.objectiveIds.includes(o.id));
+      if (firstObj) {
+        setInitiatives((prev) => {
+          const updated = prev.map((i) => {
+            if (payload.initiativeIds.includes(i.id)) {
+              return {
+                ...i,
+                objectiveId: firstObj.id,
+                objectiveTitle: firstObj.title,
+              };
+            }
+            return i;
+          });
+          sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+          return updated;
+        });
+      }
+    }
+
+    toast.success(
+      lang === 'ar' ? 'تم حفظ ومواءمة الاستراتيجية بنجاح' : 'Strategy Cascaded Successfully',
+      {
+        description:
+          lang === 'ar'
+            ? `تم ربط ${payload.goalIds.length} أهداف و ${payload.objectiveIds.length} مستهدفات و ${payload.kpiIds.length} مؤشرات و ${payload.initiativeIds.length} مبادرات`
+            : `Cascaded ${payload.goalIds.length} Goals, ${payload.objectiveIds.length} Objectives, ${payload.kpiIds.length} KPIs, ${payload.initiativeIds.length} Initiatives`,
+      }
+    );
+  };
+
   const deleteStrategyTheme = (themeId: string) => {
     setThemes((prev) => {
       const updated = prev.filter((t) => t.id !== themeId);
@@ -1260,7 +1391,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         objectives,
         initiatives,
         kpis,
+        cascadeStrategy,
         addStrategy,
+        addObjective,
         addKPI,
         addInitiative,
         deleteStrategyTheme,

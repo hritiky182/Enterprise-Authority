@@ -18,21 +18,42 @@ import {
   Shield,
   Building2,
   UserCheck,
+  Layers,
+  Flag,
+  Sparkles,
+  Network,
+  TrendingUp,
 } from 'lucide-react';
+
+interface NavItem {
+  name: string;
+  path: string;
+  icon: React.ReactNode;
+  badge?: string | undefined;
+  badgeColor?: string | undefined;
+  hidden?: boolean;
+}
 
 interface NavGroup {
   title: string;
-  items: {
-    name: string;
-    path: string;
-    icon: React.ReactNode;
-    badge?: string | undefined;
-    badgeColor?: string | undefined;
-  }[];
+  hidden?: boolean;
+  items: NavItem[];
 }
 
 export const Sidebar: React.FC = () => {
-  const { sidebarCollapsed, risks, actions, permissions, currentUser, lang, t } = useApp();
+  const {
+    sidebarCollapsed,
+    risks,
+    actions,
+    permissions,
+    currentUser,
+    lang,
+    t,
+    themes,
+    objectives,
+    kpis,
+    initiatives,
+  } = useApp();
 
   const criticalRisksCount = risks.filter(
     (r) => r.inherentScore >= 16 || r.likelihood * r.impact >= 16
@@ -40,17 +61,55 @@ export const Sidebar: React.FC = () => {
 
   const criticalActionsCount = actions.filter((a) => a.priority === 'Critical').length;
 
+  // Toggle flag: Set to true to hide the GRC options from the sidebar without deleting any code
+  const HIDE_GRC_OPTIONS = true;
+
   const allNavGroups: NavGroup[] = [
     {
       title: 'CORE COMMAND',
       items: [
         { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { name: 'Strategy', path: '/strategy', icon: <Target className="w-4 h-4" /> },
-        { name: 'Performance', path: '/performance', icon: <BarChart3 className="w-4 h-4" /> },
+        { name: 'Strategy Matrix', path: '/strategy', icon: <Target className="w-4 h-4" /> },
+        {
+          name: 'Hierarchy Tree',
+          path: '/hierarchy-tree',
+          icon: <Layers className="w-4 h-4" />,
+          badge: `${themes.length}`,
+          badgeColor: 'bg-emerald-600 text-white',
+        },
+        {
+          name: 'Objectives',
+          path: '/objectives',
+          icon: <Flag className="w-4 h-4" />,
+          badge: `${objectives.length}`,
+          badgeColor: 'bg-blue-600 text-white',
+        },
+        {
+          name: 'KPIs',
+          path: '/kpis',
+          icon: <BarChart3 className="w-4 h-4" />,
+          badge: `${kpis.length}`,
+          badgeColor: 'bg-indigo-600 text-white',
+        },
+        {
+          name: 'Initiatives',
+          path: '/initiatives',
+          icon: <Sparkles className="w-4 h-4" />,
+          badge: `${initiatives.length}`,
+          badgeColor: 'bg-amber-600 text-white',
+        },
+        {
+          name: 'Org Structure',
+          path: '/org-structure',
+          icon: <Network className="w-4 h-4" />,
+        },
+        { name: 'Performance', path: '/performance', icon: <TrendingUp className="w-4 h-4" /> },
       ],
     },
+    // RISK & COMPLIANCE (GRC) - preserved in codebase, hidden via JS flag per user request
     {
       title: 'RISK & COMPLIANCE (GRC)',
+      hidden: HIDE_GRC_OPTIONS,
       items: [
         {
           name: 'Enterprise Risk',
@@ -75,9 +134,10 @@ export const Sidebar: React.FC = () => {
           badge: criticalActionsCount > 0 ? `${criticalActionsCount}` : undefined,
           badgeColor: 'bg-amber-500 text-slate-900',
         },
-        { name: 'Tasks', path: '/tasks', icon: <CheckSquare className="w-4 h-4" /> },
-        { name: 'Documents', path: '/documents', icon: <FileText className="w-4 h-4" /> },
-        { name: 'Reports', path: '/reports', icon: <FileSpreadsheet className="w-4 h-4" /> },
+        // Tasks, Documents, and Reports preserved in codebase, hidden via JS flag per user request
+        { name: 'Tasks', path: '/tasks', icon: <CheckSquare className="w-4 h-4" />, hidden: true },
+        { name: 'Documents', path: '/documents', icon: <FileText className="w-4 h-4" />, hidden: true },
+        { name: 'Reports', path: '/reports', icon: <FileSpreadsheet className="w-4 h-4" />, hidden: true },
       ],
     },
     {
@@ -86,11 +146,14 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
-  // RBAC Filtering: Filter items based on permissions.allowedRoutes
+  // RBAC Filtering & Hidden Options Filter:
   const filteredNavGroups = allNavGroups
+    .filter((group) => !group.hidden)
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => permissions.allowedRoutes.includes(item.path)),
+      items: group.items
+        .filter((item) => !item.hidden)
+        .filter((item) => permissions.allowedRoutes.includes(item.path)),
     }))
     .filter((group) => group.items.length > 0);
 

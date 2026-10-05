@@ -54,12 +54,12 @@ export interface StrategicTheme {
   id: string;
   code: string;
   title: string;
-  titleAr?: string;
+  titleAr?: string | undefined;
   description: string;
-  descriptionAr?: string;
+  descriptionAr?: string | undefined;
   color: string;
   weight: number;
-  isCustom?: boolean;
+  isCustom?: boolean | undefined;
 }
 
 export interface StrategicGoal {
@@ -67,9 +67,9 @@ export interface StrategicGoal {
   code: string;
   themeId: string;
   title: string;
-  titleAr?: string;
+  titleAr?: string | undefined;
   description: string;
-  isCustom?: boolean;
+  isCustom?: boolean | undefined;
 }
 
 export interface StrategicObjective {
@@ -79,7 +79,7 @@ export interface StrategicObjective {
   themeId: string;
   themeName: string;
   title: string;
-  titleAr?: string;
+  titleAr?: string | undefined;
   owner: string;
   department: string;
   sectorId?: string | undefined;
@@ -88,7 +88,7 @@ export interface StrategicObjective {
   status: 'on-track' | 'at-risk' | 'behind' | 'achieved';
   targetYear: number;
   progress: number;
-  isCustom?: boolean;
+  isCustom?: boolean | undefined;
 }
 
 export interface KPI {

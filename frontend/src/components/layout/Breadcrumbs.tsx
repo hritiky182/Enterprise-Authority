@@ -6,6 +6,11 @@ import { useApp } from '../../context/AppContext';
 const routeLabels: Record<string, string> = {
   '': 'Executive Command Center',
   strategy: 'Strategic Management & Initiatives',
+  'hierarchy-tree': 'Strategy Hierarchy Tree',
+  objectives: 'Strategic Objectives',
+  kpis: 'Key Performance Indicators (KPIs)',
+  initiatives: 'Strategic Initiatives',
+  'org-structure': 'Authority Operational Structure',
   create: 'Create New Strategy',
   performance: 'Institutional & Dept Performance',
   'enterprise-risk': 'Enterprise Risk Management (ERM)',

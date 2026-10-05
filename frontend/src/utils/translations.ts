@@ -1742,6 +1742,44 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Enterprise Strategy & Governance Suite • Interactive Enterprise Demonstration',
     ar: 'منظومة الاستراتيجية والحوكمة المؤسسية • منصة العرض التفاعلية للهيئة',
   },
+
+  // Strategy Entity Navigation & Actions
+  'Strategy Matrix': {
+    en: 'Strategy Matrix',
+    ar: 'مصفوفة الاستراتيجية',
+  },
+  'Hierarchy Tree': {
+    en: 'Hierarchy Tree',
+    ar: 'شجرة الركائز',
+  },
+  'KPIs': {
+    en: 'KPIs',
+    ar: 'مؤشرات الأداء',
+  },
+  'Initiatives': {
+    en: 'Initiatives',
+    ar: 'المبادرات',
+  },
+  'Strategy Hierarchy Tree': {
+    en: 'Strategy Hierarchy Tree',
+    ar: 'شجرة الركائز والاستراتيجية',
+  },
+  'Authority Operational Structure': {
+    en: 'Authority Operational Structure',
+    ar: 'الهيكل التنظيمي للقطاعات',
+  },
+  'Create Objective': {
+    en: 'Create Objective',
+    ar: 'إضافة هدف استراتيجي',
+  },
+  'Create KPI': {
+    en: 'Create KPI',
+    ar: 'إضافة مؤشر أداء',
+  },
+  'Create Initiative': {
+    en: 'Create Initiative',
+    ar: 'إضافة مبادرة استراتيجية',
+  },
 };
 
 /**
