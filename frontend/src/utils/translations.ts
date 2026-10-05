@@ -989,10 +989,6 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Financial',
     ar: 'مالي',
   },
-  'Compliance': {
-    en: 'Compliance',
-    ar: 'الالتزام',
-  },
   'Cyber': {
     en: 'Cyber',
     ar: 'سيبراني',
@@ -1483,10 +1479,6 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Single-pane-of-glass execution tracking across Strategy, ERM Risk, Cyber, Governance, Compliance & BCM.',
     ar: 'تتبع موحد لتنفيذ خطط العمل عبر الاستراتيجية، وإدارة المخاطر، والسيبراني، والحوكمة، والالتزام، واستمرارية الأعمال.',
   },
-  'New Action Plan': {
-    en: 'New Action Plan',
-    ar: 'خطة عمل جديدة',
-  },
   'Action Code': {
     en: 'Action Code',
     ar: 'رمز الإجراء',
@@ -1503,17 +1495,9 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Not Started',
     ar: 'لم تبدأ',
   },
-  'In Progress': {
-    en: 'In Progress',
-    ar: 'قيد التنفيذ',
-  },
   'Under Review': {
     en: 'Under Review',
     ar: 'قيد المراجعة',
-  },
-  'Completed': {
-    en: 'Completed',
-    ar: 'مكتملة',
   },
 
   // Operational Tasks (Kanban)
@@ -1692,106 +1676,71 @@ export const TRANSLATIONS: TranslationDictionary = {
     ar: 'محاكاة المستخدم',
   },
 
-  // Strategy Specific
-  'Strategic Pillars': {
-    en: 'Strategic Pillars',
-    ar: 'الركائز الاستراتيجية',
-  },
-  'Alignment Goals': {
-    en: 'Alignment Goals',
-    ar: 'أهداف المواءمة',
-  },
-  'Target Objectives': {
-    en: 'Target Objectives',
-    ar: 'الأهداف المستهدفة',
-  },
-  'Tracked KPIs': {
-    en: 'Tracked KPIs',
-    ar: 'مؤشرات الأداء المتابعة',
-  },
-  'Allocated Budget': {
-    en: 'Allocated Budget',
-    ar: 'الميزانية المعتمدة',
-  },
-  'Strategic Performance Indicators': {
-    en: 'Strategic Performance Indicators',
-    ar: 'مؤشرات الأداء الاستراتيجية',
-  },
-  'Indicator Calculation Formula': {
-    en: 'Indicator Calculation Formula',
-    ar: 'معادلة حساب المؤشر',
-  },
-  'Baseline': {
-    en: 'Baseline',
-    ar: 'خط الأساس',
-  },
-  'Target 2026': {
-    en: 'Target 2026',
-    ar: 'مستهدف 2026',
-  },
-  'Target 2027': {
-    en: 'Target 2027',
-    ar: 'مستهدف 2027',
-  },
-  'Strategic Initiatives': {
-    en: 'Strategic Initiatives',
-    ar: 'المبادرات الاستراتيجية',
-  },
-  'Key Milestones': {
-    en: 'Key Milestones',
-    ar: 'المعالم الرئيسية',
-  },
-  'Key Projects': {
-    en: 'Key Projects',
-    ar: 'المشاريع الرئيسية',
-  },
-  'Search by indicator, formula, project...': {
-    en: 'Search by indicator, formula, project...',
-    ar: 'البحث بالمؤشر، المعادلة، المشروع...',
-  },
-  'All Indicators': {
-    en: 'All Indicators',
-    ar: 'كافة المؤشرات',
-  },
-  'Filter:': {
-    en: 'Filter:',
-    ar: 'تصفية:',
-  },
-  'Clear': {
-    en: 'Clear',
-    ar: 'مسح',
-  },
-  'Strategic Objectives Performance Matrix': {
-    en: 'Strategic Objectives Performance Matrix',
-    ar: 'مصفوفة أداء الأهداف الاستراتيجية',
-  },
-  'Owner, Theme alignment, target deadlines and overall achievement progress': {
-    en: 'Owner, Theme alignment, target deadlines and overall achievement progress',
-    ar: 'المالك، المواءمة مع الركائز، التواريخ المستهدفة، ومستوى الإنجاز الإجمالي',
-  },
-  'Key Performance Indicator (KPI) Management': {
-    en: 'Key Performance Indicator (KPI) Management',
-    ar: 'إدارة مؤشرات الأداء الرئيسية (KPI)',
-  },
-  'Real-time actual measurements vs strategic target metrics': {
-    en: 'Real-time actual measurements vs strategic target metrics',
-    ar: 'القياسات الفعلية في الوقت الحقيقي مقارنة بالمستهدفات الاستراتيجية',
-  },
-  'Budget Allocation': {
-    en: 'Budget Allocation',
-    ar: 'الميزانية المخصصة',
-  },
-  'Overall Completion': {
-    en: 'Overall Completion',
-    ar: 'نسبة الإنجاز الإجمالية',
-  },
-  'Key Deliverables & Milestones': {
-    en: 'Key Deliverables & Milestones',
-    ar: 'المخرجات والمعالم الرئيسية',
-  },
   'Reset Demo Strategies': {
     en: 'Reset Demo Strategies',
     ar: 'إعادة ضبط الاستراتيجيات التجريبية',
+  },
+
+  // Login & Executive Portal Authentication
+  'ISO 31000 & 27001 COMPLIANT': {
+    en: 'ISO 31000 & 27001 COMPLIANT',
+    ar: 'متوافق مع معايير ISO 31000 و 27001',
+  },
+  'V3.4 ENTERPRISE': {
+    en: 'V3.4 ENTERPRISE',
+    ar: 'الإصدار المؤسسي V3.4',
+  },
+  'EXECUTIVE DEMONSTRATION PLATFORM': {
+    en: 'EXECUTIVE DEMONSTRATION PLATFORM',
+    ar: 'منصة العرض التجريبية التنفيذية',
+  },
+  'Institutional Strategy, Risk & Governance Suite': {
+    en: 'Institutional Strategy, Risk & Governance Suite',
+    ar: 'منظومة الاستراتيجية المؤسسية وإدارة المخاطر والحوكمة',
+  },
+  'Unified SaaS control center empowering leadership with real-time OKR progress, ISO 31000 risk matrices, and regulatory compliance audit oversight.': {
+    en: 'Unified SaaS control center empowering leadership with real-time OKR progress, ISO 31000 risk matrices, and regulatory compliance audit oversight.',
+    ar: 'مركز قيادة موحد يمكن القيادة التنفيذية من متابعة تقدم الأهداف (OKRs)، ومصفوفات مخاطر ISO 31000، والرقابة على الامتثال التنظيمي في الوقت الحقيقي.',
+  },
+  'Select Role Persona to Test RBAC Permissions:': {
+    en: 'Select Role Persona to Test RBAC Permissions:',
+    ar: 'اختر صفة الدور لاختبار صلاحيات الوصول والتحكم المبني على الأدوار (RBAC):',
+  },
+  'Enterprise Sign In': {
+    en: 'Enterprise Sign In',
+    ar: 'تسجيل الدخول للمنظومة',
+  },
+  'Active Persona:': {
+    en: 'Active Persona:',
+    ar: 'الدور النشط:',
+  },
+  'Enterprise Work Email': {
+    en: 'Enterprise Work Email',
+    ar: 'البريد الإلكتروني المؤسسي',
+  },
+  'Password': {
+    en: 'Password',
+    ar: 'كلمة المرور',
+  },
+  'Forgot Password?': {
+    en: 'Forgot Password?',
+    ar: 'نسيت كلمة المرور؟',
+  },
+  'Remember session credentials': {
+    en: 'Remember session credentials',
+    ar: 'تذكر بيانات الجلسة',
+  },
+  'Sign In as': {
+    en: 'Sign In as',
+    ar: 'تسجيل الدخول بصلاحية',
+  },
+  'Active RBAC Session Authorization': {
+    en: 'Active RBAC Session Authorization',
+    ar: 'تفويض جلسة نشط وفق الصلاحيات المؤسسية',
+  },
+  'Enterprise Strategy & Governance Suite • Interactive Enterprise Demonstration': {
+    en: 'Enterprise Strategy & Governance Suite • Interactive Enterprise Demonstration',
+    ar: 'منظومة الاستراتيجية والحوكمة المؤسسية • منصة العرض التفاعلية للهيئة',
   },
 };
 

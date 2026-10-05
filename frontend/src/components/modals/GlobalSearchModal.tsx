@@ -100,8 +100,8 @@ export const GlobalSearchModal: React.FC = () => {
           {matchingRisks.length > 0 && (
             <div>
               <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <ShieldAlert className="w-3.5 h-3.5 mr-1 text-rose-500" />
-                Risks ({matchingRisks.length})
+                <ShieldAlert className="w-3.5 h-3.5 mx-1 text-rose-500" />
+                {lang === 'ar' ? 'سجل المخاطر' : 'Risks'} ({matchingRisks.length})
               </div>
               <div className="space-y-1">
                 {matchingRisks.map((r) => (
@@ -114,11 +114,13 @@ export const GlobalSearchModal: React.FC = () => {
                     className="p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
                   >
                     <div>
-                      <span className="font-mono font-semibold text-slate-900 mr-2">{r.code}</span>
-                      <span className="text-slate-700 font-medium">{r.title}</span>
+                      <span className="font-mono font-semibold text-slate-900 mx-2">{r.code}</span>
+                      <span className="text-slate-700 font-medium">
+                        {lang === 'ar' ? (r.titleAr || r.title) : r.title}
+                      </span>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-rose-50 text-rose-700">
-                      Score {r.inherentScore}
+                      {lang === 'ar' ? 'درجة الخطورة' : 'Score'} {r.inherentScore}
                     </span>
                   </div>
                 ))}
@@ -130,7 +132,7 @@ export const GlobalSearchModal: React.FC = () => {
           {matchingObjectives.length > 0 && (
             <div>
               <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <Target className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                <Target className="w-3.5 h-3.5 mx-1 text-emerald-600" />
                 {lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic Objectives'} ({matchingObjectives.length})
               </div>
               <div className="space-y-1">
@@ -144,7 +146,7 @@ export const GlobalSearchModal: React.FC = () => {
                     className="p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
                   >
                     <div>
-                      <span className="font-mono font-semibold text-slate-900 mr-2">{o.code}</span>
+                      <span className="font-mono font-semibold text-slate-900 mx-2">{o.code}</span>
                       <span className="text-slate-700 font-medium">
                         {lang === 'ar' ? (o.titleAr || o.title) : o.title}
                       </span>
@@ -162,8 +164,8 @@ export const GlobalSearchModal: React.FC = () => {
           {matchingActions.length > 0 && (
             <div>
               <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <ListTodo className="w-3.5 h-3.5 mr-1 text-amber-500" />
-                Action Plans ({matchingActions.length})
+                <ListTodo className="w-3.5 h-3.5 mx-1 text-amber-500" />
+                {lang === 'ar' ? 'خطط العمل والمعالجات' : 'Action Plans'} ({matchingActions.length})
               </div>
               <div className="space-y-1">
                 {matchingActions.map((a) => (
@@ -176,8 +178,10 @@ export const GlobalSearchModal: React.FC = () => {
                     className="p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
                   >
                     <div>
-                      <span className="font-mono font-semibold text-slate-900 mr-2">{a.code}</span>
-                      <span className="text-slate-700 font-medium">{a.title}</span>
+                      <span className="font-mono font-semibold text-slate-900 mx-2">{a.code}</span>
+                      <span className="text-slate-700 font-medium">
+                        {lang === 'ar' ? (a.titleAr || a.title) : a.title}
+                      </span>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">
                       {a.dueDate}
@@ -191,8 +195,8 @@ export const GlobalSearchModal: React.FC = () => {
 
         {/* Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-500 flex items-center justify-between font-mono">
-          <span>Press ESC or click outside to dismiss</span>
-          <span>Enterprise Global Search</span>
+          <span>{lang === 'ar' ? 'اضغط ESC أو انقر بالخارج للإغلاق' : 'Press ESC or click outside to dismiss'}</span>
+          <span>{lang === 'ar' ? 'البحث الشامل في المنظومة' : 'Enterprise Global Search'}</span>
         </div>
       </div>
     </div>

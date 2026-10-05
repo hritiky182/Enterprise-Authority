@@ -205,13 +205,13 @@ export const AdminPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
             <Settings className="w-4 h-4" />
-            <span>SYSTEM ADMINISTRATION & GOVERNANCE CONFIGURATION</span>
+            <span>{t('ENTERPRISE ACCESS CONTROL & RBAC')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
-            User Accounts, RBAC Roles & System Settings
+            {t('System Administration, Users & RBAC Simulator')}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Role-based access control (RBAC), department structures, and enterprise data import management.
+            {t('Manage organizational roles, inspect department allocations, and simulate stakeholder experiences.')}
           </p>
         </div>
 
@@ -222,7 +222,7 @@ export const AdminPage: React.FC = () => {
               activeTab === 'users' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Users ({users.length})
+            {lang === 'ar' ? 'المستخدمين' : 'Users'} ({users.length})
           </button>
           <button
             onClick={() => setActiveTab('roles')}
@@ -230,7 +230,7 @@ export const AdminPage: React.FC = () => {
               activeTab === 'roles' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            RBAC Roles ({rolesList.length})
+            {lang === 'ar' ? 'الأدوار والصلاحيات' : 'RBAC Roles'} ({rolesList.length})
           </button>
           <button
             onClick={() => setActiveTab('departments')}
@@ -238,7 +238,7 @@ export const AdminPage: React.FC = () => {
               activeTab === 'departments' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Departments ({DEPARTMENTS.length})
+            {lang === 'ar' ? 'الإدارات' : 'Departments'} ({DEPARTMENTS.length})
           </button>
           <button
             onClick={() => setActiveTab('data_import')}
@@ -247,7 +247,7 @@ export const AdminPage: React.FC = () => {
             }`}
           >
             <Upload className="w-3.5 h-3.5 text-blue-600" />
-            <span>Data Import Hub</span>
+            <span>{lang === 'ar' ? 'مركز استيراد البيانات' : 'Data Import Hub'}</span>
           </button>
         </div>
       </div>
@@ -256,20 +256,20 @@ export const AdminPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200">
             <div>
-              <h3 className="text-xs font-bold text-slate-900">User Account Management</h3>
-              <p className="text-[11px] text-slate-500">Add or import employee accounts to grant access to the suite.</p>
+              <h3 className="text-xs font-bold text-slate-900">{lang === 'ar' ? 'إدارة حسابات المستخدمين' : 'User Account Management'}</h3>
+              <p className="text-[11px] text-slate-500">{lang === 'ar' ? 'إضافة أو استيراد حسابات الموظفين لمنحهم صلاحيات الوصول.' : 'Add or import employee accounts to grant access to the suite.'}</p>
             </div>
             <button
               onClick={() => setActiveTab('data_import')}
               className="px-3.5 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-semibold hover:bg-blue-100 flex items-center space-x-1.5 cursor-pointer"
             >
               <Upload className="w-3.5 h-3.5" />
-              <span>Bulk Import Users</span>
+              <span>{lang === 'ar' ? 'استيراد مستخدمين مجمع' : 'Bulk Import Users'}</span>
             </button>
           </div>
           <DataTable
-            title="Authorized Enterprise System Users"
-            subtitle="Active directory and role assignments"
+            title={lang === 'ar' ? 'المستخدمين المصرح لهم بالدخول إلى المنظومة' : 'Authorized Enterprise System Users'}
+            subtitle={lang === 'ar' ? 'دليل المستخدمين النشط وتعيينات الأدوار' : 'Active directory and role assignments'}
             data={users}
             columns={userColumns}
           />
@@ -278,22 +278,26 @@ export const AdminPage: React.FC = () => {
 
       {activeTab === 'roles' && (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-          <h3 className="panel-title text-slate-900">Role Permissions Matrix</h3>
+          <h3 className="panel-title text-slate-900">{lang === 'ar' ? 'مصفوفة صلاحيات الأدوار المؤسسية' : 'Role Permissions Matrix'}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {rolesList.map((r) => (
               <div key={r} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-slate-900">{r}</span>
-                  {currentUser.role === r && <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono">Current</span>}
+                  <span className="font-bold text-xs text-slate-900">{t(r)}</span>
+                  {currentUser.role === r && (
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono">
+                      {lang === 'ar' ? 'الحالي' : 'Current'}
+                    </span>
+                  )}
                 </div>
                 <div className="text-[11px] text-slate-500">
-                  Full permissions configured for {r.toLowerCase()} access control.
+                  {lang === 'ar' ? `صلاحيات كاملة مهيأة للتحكم بالوصول لدور ${t(r)}.` : `Full permissions configured for ${r.toLowerCase()} access control.`}
                 </div>
                 <button
                   onClick={() => switchUserRole(r)}
                   className="w-full mt-2 py-1.5 rounded bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 cursor-pointer"
                 >
-                  Switch Role Profile
+                  {lang === 'ar' ? 'محاكاة هذا الدور' : 'Switch Role Profile'}
                 </button>
               </div>
             ))}
@@ -312,11 +316,13 @@ export const AdminPage: React.FC = () => {
               <div>
                 <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
                   <Database className="w-4 h-4" />
-                  <span>DATA INTEGRATION & MIGRATION HUB</span>
+                  <span>{lang === 'ar' ? 'مركز دمج ونقل البيانات المؤسسية' : 'DATA INTEGRATION & MIGRATION HUB'}</span>
                 </div>
-                <h2 className="text-xl font-bold">Enterprise Data Management & Bulk Ingestion</h2>
+                <h2 className="text-xl font-bold">{lang === 'ar' ? 'إدارة البيانات المؤسسية والاستيراد المجمع' : 'Enterprise Data Management & Bulk Ingestion'}</h2>
                 <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                  Import employee account rosters, departmental hierarchies, and master configuration packages from CSV and JSON spreadsheets.
+                  {lang === 'ar'
+                    ? 'استيراد قوائم الموظفين، والهيكل الإداري، وحزم الإعدادات من ملفات CSV وجداول البيانات.'
+                    : 'Import employee account rosters, departmental hierarchies, and master configuration packages from CSV and JSON spreadsheets.'}
                 </p>
               </div>
 
@@ -326,7 +332,7 @@ export const AdminPage: React.FC = () => {
                 className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shrink-0"
               >
                 <Download className="w-4 h-4" />
-                <span>Export System Snapshot (JSON)</span>
+                <span>{lang === 'ar' ? 'تصدير نسخة النظام (JSON)' : 'Export System Snapshot (JSON)'}</span>
               </button>
             </div>
           </div>

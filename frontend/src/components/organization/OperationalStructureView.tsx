@@ -138,7 +138,7 @@ export const OperationalStructureView: React.FC = () => {
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
-              {sec.name}
+              {lang === 'ar' ? (sec.nameAr || sec.name) : sec.name}
             </button>
           ))}
         </div>
@@ -153,11 +153,15 @@ export const OperationalStructureView: React.FC = () => {
               {/* Internal Audit (Dotted advisory on left) */}
               <div className="w-56 p-3.5 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 text-center shadow-2xs">
                 <span className="text-[9px] font-mono font-bold uppercase text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">
-                  Independent Oversight
+                  {lang === 'ar' ? 'الرقابة المستقلة' : 'Independent Oversight'}
                 </span>
-                <div className="font-bold text-xs text-slate-900 mt-1">Internal Audit</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">المراجعة الداخلية</div>
-                <div className="text-[10px] text-blue-700 font-mono mt-1">Head: Abdullah Al-Ghamdi</div>
+                <div className="font-bold text-xs text-slate-900 mt-1">
+                  {lang === 'ar' ? 'المراجعة الداخلية' : 'Internal Audit'}
+                </div>
+                {lang !== 'ar' && <div className="text-[10px] text-slate-500 mt-0.5">المراجعة الداخلية</div>}
+                <div className="text-[10px] text-blue-700 font-mono mt-1">
+                  {lang === 'ar' ? 'المدير: عبد الله الغامدي' : 'Head: Abdullah Al-Ghamdi'}
+                </div>
               </div>
 
               {/* Authority Board (Center Supreme Node) */}
@@ -165,21 +169,27 @@ export const OperationalStructureView: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center mx-auto mb-2 shadow-md">
                   <Crown className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm tracking-wide uppercase">Authority Board</h3>
-                <div className="text-[11px] text-amber-300 font-sans mt-0.5">مجلس الهيئة</div>
+                <h3 className="font-bold text-sm tracking-wide uppercase">
+                  {lang === 'ar' ? 'مجلس الهيئة' : 'Authority Board'}
+                </h3>
+                {lang !== 'ar' && <div className="text-[11px] text-amber-300 font-sans mt-0.5">مجلس الهيئة</div>}
                 <div className="text-[10px] text-slate-300 font-mono mt-1 border-t border-slate-800 pt-1.5">
-                  Chaired by H.R.H. Prince Saud bin Talal Al Saud
+                  {lang === 'ar' ? 'برئاسة سمو الأمير سعود بن طلال بن بدر آل سعود' : 'Chaired by H.R.H. Prince Saud bin Talal Al Saud'}
                 </div>
               </div>
 
               {/* Board Secretariat (Right Node) */}
               <div className="w-56 p-3.5 rounded-xl border border-slate-200 bg-white text-center shadow-2xs">
                 <span className="text-[9px] font-mono font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-                  Board Advisory
+                  {lang === 'ar' ? 'المكتب الاستشاري للمجلس' : 'Board Advisory'}
                 </span>
-                <div className="font-bold text-xs text-slate-900 mt-1">Authority Board Secretariat</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">أمانة مجلس الهيئة</div>
-                <div className="text-[10px] text-slate-600 font-mono mt-1">Majed Al-Mutairi</div>
+                <div className="font-bold text-xs text-slate-900 mt-1">
+                  {lang === 'ar' ? 'أمانة مجلس الهيئة' : 'Authority Board Secretariat'}
+                </div>
+                {lang !== 'ar' && <div className="text-[10px] text-slate-500 mt-0.5">أمانة مجلس الهيئة</div>}
+                <div className="text-[10px] text-slate-600 font-mono mt-1">
+                  {lang === 'ar' ? 'ماجد المطيري' : 'Majed Al-Mutairi'}
+                </div>
               </div>
             </div>
 
@@ -190,20 +200,26 @@ export const OperationalStructureView: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-64 p-4 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white text-center shadow-md border border-blue-500">
                 <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-200">
-                  Executive Leadership
+                  {lang === 'ar' ? 'القيادة التنفيذية' : 'Executive Leadership'}
                 </div>
-                <h3 className="font-bold text-sm mt-0.5">Chief Executive Officer</h3>
-                <div className="text-[11px] text-blue-200 font-sans">الرئيس التنفيذي</div>
+                <h3 className="font-bold text-sm mt-0.5">
+                  {lang === 'ar' ? 'الرئيس التنفيذي' : 'Chief Executive Officer'}
+                </h3>
+                {lang !== 'ar' && <div className="text-[11px] text-blue-200 font-sans">الرئيس التنفيذي</div>}
                 <div className="text-[10px] text-white/90 font-mono mt-1 font-semibold">
-                  Eng. Abdulaziz Al-Hassan
+                  {lang === 'ar' ? 'م. عبد العزيز بن أحمد الحسن' : 'Eng. Abdulaziz Al-Hassan'}
                 </div>
               </div>
 
               {/* CEO Office */}
               <div className="w-48 p-3 rounded-xl border border-blue-200 bg-blue-50/60 text-center shadow-2xs">
-                <div className="font-bold text-xs text-blue-950">CEO Office</div>
-                <div className="text-[10px] text-slate-500">مكتب الرئيس التنفيذي</div>
-                <div className="text-[10px] text-blue-700 font-mono mt-0.5">Fahad Al-Kaltham</div>
+                <div className="font-bold text-xs text-blue-950">
+                  {lang === 'ar' ? 'مكتب الرئيس التنفيذي' : 'CEO Office'}
+                </div>
+                {lang !== 'ar' && <div className="text-[10px] text-slate-500">مكتب الرئيس التنفيذي</div>}
+                <div className="text-[10px] text-blue-700 font-mono mt-0.5">
+                  {lang === 'ar' ? 'فهد الكلثم' : 'Fahad Al-Kaltham'}
+                </div>
               </div>
             </div>
 
@@ -214,9 +230,9 @@ export const OperationalStructureView: React.FC = () => {
             <div className="w-full max-w-4xl p-4 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs space-y-2">
               <div className="flex items-center justify-between pb-2 border-b border-slate-200 text-xs font-mono font-semibold text-slate-600">
                 <span className="uppercase text-[10px] text-blue-700 font-bold">
-                  Direct Advisory & Institutional Oversight Directorates
+                  {lang === 'ar' ? 'الإدارات الاستشارية والرقابية المؤسسية المباشرة' : 'Direct Advisory & Institutional Oversight Directorates'}
                 </span>
-                <span>Reports Directly to CEO</span>
+                <span>{lang === 'ar' ? 'ترتبط مباشرة بالرئيس التنفيذي' : 'Reports Directly to CEO'}</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
@@ -228,13 +244,13 @@ export const OperationalStructureView: React.FC = () => {
                       className="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs text-center space-y-1 hover:border-blue-400 transition-colors"
                     >
                       <div className="font-bold text-[11px] text-slate-900 leading-tight">
-                        {dept.name}
+                        {lang === 'ar' ? (dept.nameAr || dept.name) : dept.name}
                       </div>
-                      {dept.nameAr && (
+                      {lang !== 'ar' && dept.nameAr && (
                         <div className="text-[10px] text-slate-400">{dept.nameAr}</div>
                       )}
                       <div className="text-[9px] font-mono text-slate-500 pt-1 border-t border-slate-100 truncate">
-                        {dept.head}
+                        {lang === 'ar' ? dept.head : dept.head}
                       </div>
                     </div>
                   ))}
@@ -249,10 +265,10 @@ export const OperationalStructureView: React.FC = () => {
           <div className="pt-2">
             <div className="text-center mb-6">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-400 tracking-wider">
-                CORE OPERATIONAL DIVISIONS
+                {lang === 'ar' ? 'القطاعات التشغيلية الرئيسية' : 'CORE OPERATIONAL DIVISIONS'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                5 Specialized Operational Sectors
+                {lang === 'ar' ? '5 قطاعات تشغيلية متخصصة' : '5 Specialized Operational Sectors'}
               </h3>
             </div>
 
@@ -276,17 +292,17 @@ export const OperationalStructureView: React.FC = () => {
                           {sector.code}
                         </span>
                         <span className="text-[9px] font-mono text-slate-400">
-                          {subDepts.length} Units
+                          {lang === 'ar' ? `${subDepts.length} إدارات` : `${subDepts.length} Units`}
                         </span>
                       </div>
                       <h4 className="font-bold text-xs text-white leading-tight">
-                        {sector.name}
+                        {lang === 'ar' ? (sector.nameAr || sector.name) : sector.name}
                       </h4>
-                      {sector.nameAr && (
+                      {lang !== 'ar' && sector.nameAr && (
                         <div className="text-[11px] text-slate-300 font-sans">{sector.nameAr}</div>
                       )}
                       <div className="text-[10px] text-blue-300 font-mono pt-1">
-                        Head: {sector.head}
+                        {lang === 'ar' ? `الرئيس: ${sector.head}` : `Head: ${sector.head}`}
                       </div>
                     </div>
 
@@ -296,19 +312,19 @@ export const OperationalStructureView: React.FC = () => {
                         <div key={sub.id} className="pt-2 first:pt-0">
                           <div className="flex items-start justify-between gap-1">
                             <span className="font-bold text-xs text-slate-900 leading-tight">
-                              {sub.name}
+                              {lang === 'ar' ? (sub.nameAr || sub.name) : sub.name}
                             </span>
                             <span className="text-[9px] font-mono text-slate-500 shrink-0 bg-white px-1.5 py-0.2 rounded border border-slate-200">
-                              {sub.employeeCount}p
+                              {lang === 'ar' ? `${sub.employeeCount} كادر` : `${sub.employeeCount}p`}
                             </span>
                           </div>
-                          {sub.nameAr && (
+                          {lang !== 'ar' && sub.nameAr && (
                             <div className="text-[10px] text-slate-400 mt-0.5 font-sans">
                               {sub.nameAr}
                             </div>
                           )}
                           <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
-                            Dir: {sub.head}
+                            {lang === 'ar' ? `المدير: ${sub.head}` : `Dir: ${sub.head}`}
                           </div>
                         </div>
                       ))}
@@ -320,7 +336,9 @@ export const OperationalStructureView: React.FC = () => {
                         onClick={() => setSelectedSector(selectedSector === sector.id ? null : sector.id)}
                         className="text-[10px] font-mono font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
                       >
-                        {selectedSector === sector.id ? 'Clear Focus' : 'Focus Sector →'}
+                        {selectedSector === sector.id
+                          ? (lang === 'ar' ? 'إلغاء التحديد' : 'Clear Focus')
+                          : (lang === 'ar' ? 'تركيز القطاع ←' : 'Focus Sector →')}
                       </button>
                     </div>
                   </div>
@@ -336,18 +354,20 @@ export const OperationalStructureView: React.FC = () => {
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
             <div className="relative w-72">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute start-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search departments, directors..."
+                placeholder={lang === 'ar' ? 'البحث في الإدارات والمدراء...' : 'Search departments, directors...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full ps-9 pe-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
 
             <div className="text-xs text-slate-500 font-mono">
-              Showing {filteredDepartments.length} of {DEPARTMENTS.length} Organizational Units
+              {lang === 'ar'
+                ? `عرض ${filteredDepartments.length} من أصل ${DEPARTMENTS.length} وحدة تنظيمية`
+                : `Showing ${filteredDepartments.length} of ${DEPARTMENTS.length} Organizational Units`}
             </div>
           </div>
 
@@ -362,29 +382,39 @@ export const OperationalStructureView: React.FC = () => {
                     {dept.code}
                   </span>
                   <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                    {dept.employeeCount} Cadres
+                    {lang === 'ar' ? `${dept.employeeCount} كادر` : `${dept.employeeCount} Cadres`}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">{dept.name}</h3>
-                  {dept.nameAr && (
+                  <h3 className="font-bold text-sm text-slate-900">
+                    {lang === 'ar' ? (dept.nameAr || dept.name) : dept.name}
+                  </h3>
+                  {lang !== 'ar' && dept.nameAr && (
                     <div className="text-xs text-slate-400 font-sans mt-0.5">{dept.nameAr}</div>
                   )}
                   {dept.sectorName && (
                     <div className="text-[11px] font-semibold text-blue-600 mt-1 font-mono">
-                      {dept.sectorName}
+                      {lang === 'ar'
+                        ? (AUTHORITY_SECTORS.find((s) => s.id === dept.sectorId)?.nameAr || dept.sectorName)
+                        : dept.sectorName}
                     </div>
                   )}
                   {dept.category && (
                     <span className="inline-block mt-1 text-[9px] font-mono uppercase font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                      {dept.category}
+                      {lang === 'ar'
+                        ? (dept.category === 'Operational Sector'
+                            ? 'قطاع تشغيلي'
+                            : dept.category === 'Advisory & Oversight'
+                            ? 'رقابي واستشاري'
+                            : 'مجلس الهيئة والرئيس التنفيذي')
+                        : dept.category}
                     </span>
                   )}
                 </div>
 
                 <div className="text-xs text-slate-600 pt-2 border-t border-slate-100 font-mono flex items-center justify-between">
-                  <span>Unit Director:</span>
+                  <span>{lang === 'ar' ? 'مدير الوحدة:' : 'Unit Director:'}</span>
                   <span className="font-bold text-slate-900">{dept.head}</span>
                 </div>
               </div>

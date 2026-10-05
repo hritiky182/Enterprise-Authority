@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { StrategicObjective, KPI, StrategicInitiative, RiskItem } from '../../types';
+import { StrategicObjective, KPI, StrategicInitiative, RiskItem, StrategicTheme, StrategicGoal } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
 import {
   Target,
@@ -49,6 +49,8 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
     updateObjective,
     toggleMilestone,
     importKpiActuals,
+    lang,
+    t,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'kpis' | 'initiatives' | 'risks' | 'checkin'>('overview');
@@ -64,19 +66,25 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
   const [kpiNewActual, setKpiNewActual] = useState<number>(0);
 
   // Resolve hierarchy relationships
-  const parentTheme = themes.find(
+  const parentTheme: StrategicTheme = themes.find(
     (t) => t.id === item.themeId || t.title.toLowerCase() === item.themeName?.toLowerCase()
   ) || {
+    id: item.themeId || 'ST-01',
     code: 'ST-01',
     title: item.themeName || 'Enterprise Strategic Pillar',
+    titleAr: 'الركيزة الاستراتيجية المؤسسية',
     color: 'emerald',
     weight: 25,
     description: 'Core institutional strategic transformation program.',
+    descriptionAr: 'برنامج التحول الاستراتيجي المؤسسي الشامل لهيئة تطوير محافظة الأحساء.',
   };
 
-  const parentGoal = goals.find((g) => g.id === item.goalId) || {
+  const parentGoal: StrategicGoal = goals.find((g) => g.id === item.goalId) || {
+    id: item.goalId || 'SG-1.1',
+    themeId: item.themeId || 'ST-01',
     code: 'SG-1.1',
     title: `${parentTheme.title} Institutional Target Goal`,
+    titleAr: `${parentTheme.titleAr || parentTheme.title} - الهدف المؤسسي المعتمد`,
     description: 'Elevate operational resilience, visitor capacity, and digital maturity.',
   };
 
@@ -273,20 +281,26 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
 
             <div className="flex items-center space-x-2 font-mono text-xs text-slate-300">
               <Calendar className="w-3.5 h-3.5 text-blue-400" />
-              <span>Target Horizon: FY {item.targetYear}</span>
+              <span>{lang === 'ar' ? `المدى الزمني: سنة ${item.targetYear}` : `Target Horizon: FY ${item.targetYear}`}</span>
             </div>
           </div>
 
-          <h2 className="text-lg font-bold text-white mt-2 leading-snug">{item.title}</h2>
+          <h2 className="text-lg font-bold text-white mt-2 leading-snug">
+            {lang === 'ar' ? (item.titleAr || item.title) : item.title}
+          </h2>
           <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-            {parentTheme.description || 'Institutional strategic objective aligned with corporate governance benchmarks.'}
+            {lang === 'ar'
+              ? (parentTheme.descriptionAr || parentTheme.description || 'هدف استراتيجي مؤسسي معتمد متوائم مع معايير الحوكمة والتنمية الإقليمية.')
+              : (parentTheme.description || 'Institutional strategic objective aligned with corporate governance benchmarks.')}
           </p>
         </div>
 
         {/* Live Progress Index Summary Header Bar */}
         <div className="pt-2 border-t border-slate-700/80 flex items-center justify-between text-xs">
           <div className="flex items-center space-x-3">
-            <span className="text-slate-400 font-mono text-[11px] uppercase">Strategic Progress:</span>
+            <span className="text-slate-400 font-mono text-[11px] uppercase">
+              {lang === 'ar' ? 'التقدم الاستراتيجي:' : 'Strategic Progress:'}
+            </span>
             <div className="flex items-center space-x-2">
               <div className="w-32 bg-slate-700 h-2 rounded-full overflow-hidden">
                 <div
@@ -308,7 +322,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
 
           <div className="text-[11px] font-mono text-emerald-400 flex items-center space-x-1">
             <TrendingUp className="w-3.5 h-3.5" />
-            <span>Pacing: On Track (+4% vs Q3 Plan)</span>
+            <span>{lang === 'ar' ? 'المسار: على المسار المخطط' : 'Pacing: On Track (+4% vs Q3 Plan)'}</span>
           </div>
         </div>
       </div>
@@ -321,7 +335,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
             activeTab === 'overview' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Overview & Strategy
+          {lang === 'ar' ? 'نظرة عامة والاستراتيجية' : 'Overview & Strategy'}
         </button>
         <button
           onClick={() => setActiveTab('kpis')}
@@ -329,7 +343,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
             activeTab === 'kpis' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          <span>Key Results (OKRs)</span>
+          <span>{lang === 'ar' ? 'النتائج الرئيسية (OKRs)' : 'Key Results (OKRs)'}</span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700">
             {displayKpis.length}
           </span>
@@ -340,7 +354,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
             activeTab === 'initiatives' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          <span>Initiatives & Milestones</span>
+          <span>{lang === 'ar' ? 'المبادرات والمعالم' : 'Initiatives & Milestones'}</span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700">
             {displayInits.length}
           </span>
@@ -351,7 +365,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
             activeTab === 'risks' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Risks & Actions
+          {lang === 'ar' ? 'المخاطر وخطط العمل' : 'Risks & Actions'}
         </button>
         <button
           onClick={() => setActiveTab('checkin')}
@@ -359,7 +373,7 @@ export const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({ item, on
             activeTab === 'checkin' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Check-in Updates
+          {lang === 'ar' ? 'تحديثات الإنجاز' : 'Check-in Updates'}
         </button>
       </div>
 

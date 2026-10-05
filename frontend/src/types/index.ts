@@ -17,10 +17,13 @@ export type Role =
 export interface User {
   id: string;
   name: string;
+  nameAr?: string;
   title: string;
+  titleAr?: string;
   email: string;
   role: Role;
   department: string;
+  departmentAr?: string;
   avatar: string;
 }
 
@@ -53,6 +56,7 @@ export interface StrategicTheme {
   title: string;
   titleAr?: string;
   description: string;
+  descriptionAr?: string;
   color: string;
   weight: number;
   isCustom?: boolean;
@@ -158,9 +162,11 @@ export interface RiskItem {
   id: string;
   code: string;
   title: string;
+  titleAr?: string;
   category: 'Operational' | 'Strategic' | 'Financial' | 'Compliance' | 'Cyber' | 'Reputational';
   owner: string;
   department: string;
+  departmentAr?: string;
   likelihood: number; // 1-5
   impact: number; // 1-5
   inherentScore: number; // likelihood * impact
@@ -170,6 +176,7 @@ export interface RiskItem {
   treatment: 'Mitigate' | 'Transfer' | 'Avoid' | 'Accept';
   status: 'Open' | 'Mitigating' | 'Accepted' | 'Closed';
   description: string;
+  descriptionAr?: string;
   controlsCount: number;
   actionsCount: number;
   lastAssessedDate: string;
@@ -322,16 +329,20 @@ export interface ActionItem {
   id: string;
   code: string;
   title: string;
+  titleAr?: string;
   source: ActionSource;
   sourceRefId: string;
   sourceRefTitle: string;
+  sourceRefTitleAr?: string;
   owner: string;
   department: string;
+  departmentAr?: string;
   priority: 'Critical' | 'High' | 'Medium' | 'Low';
   dueDate: string;
   progress: number;
   status: 'Not Started' | 'In Progress' | 'Under Review' | 'Completed';
   description: string;
+  descriptionAr?: string;
 }
 
 export interface TaskItem {
