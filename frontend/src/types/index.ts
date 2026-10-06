@@ -8,6 +8,7 @@ export type Role =
   | 'Internal Audit'
   | 'Viewer'
   | 'Strategy Manager'
+  | 'Strategy Specialist'
   | 'Risk Manager'
   | 'Compliance Manager'
   | 'BCM Manager'
@@ -101,6 +102,8 @@ export interface StrategicObjective {
   themeName: string;
   title: string;
   titleAr?: string | undefined;
+  description?: string | undefined;
+  descriptionAr?: string | undefined;
   owner: string;
   department: string;
   sectorId?: string | undefined;
@@ -110,6 +113,22 @@ export interface StrategicObjective {
   targetYear: number;
   progress: number;
   isCustom?: boolean | undefined;
+}
+
+export interface StrategyPlan {
+  id: string;
+  name: string;
+  nameAr?: string | undefined;
+  duration: string; // e.g. "2026 – 2030 (5-Year Strategic Cycle)"
+  startYear: number;
+  endYear: number;
+  statement: string; // Strategic Statement / Executive Mandate
+  statementAr?: string | undefined;
+  status: 'Draft' | 'Active' | 'Approved';
+  version: string;
+  approvedBy?: string | undefined;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
 }
 
 export interface KPI {
@@ -136,6 +155,7 @@ export interface KPI {
   pillarTitleAr?: string | undefined;
   sectorId?: string | undefined;
   sectorName?: string | undefined;
+  department?: string | undefined;
   formula?: string | undefined;
   formulaAr?: string | undefined;
   baseline?: string | number | undefined;

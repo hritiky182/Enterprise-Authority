@@ -21,11 +21,11 @@ import {
 export const DEMO_JOURNEY_STEPS = [
   {
     step: 1,
-    title: 'Login & Role Persona',
-    titleAr: 'تسجيل الدخول ومحاكاة الأدوار',
+    title: 'Login (Strategy Specialist)',
+    titleAr: 'تسجيل الدخول (أخصائي الاستراتيجية)',
     path: '/login',
-    storyCue: 'Demonstrate executive RBAC personas (CEO, Strategy Lead, Sector Director) and instant role switching.',
-    storyCueAr: 'إبراز أدوار القيادة ومحاكاة الصلاحيات الفورية للرئيس التنفيذي ومديري القطاعات.',
+    storyCue: 'Dedicated Strategy Specialist persona (Dr. Sarah Al-Rashid) with single-click authentication and automated onboarding.',
+    storyCueAr: 'تسجيل دخول أخصائي الاستراتيجية (د. سارة الرشيد) بنقرة واحدة مع تهيئة الصلاحيات الفورية.',
   },
   {
     step: 2,
@@ -45,11 +45,11 @@ export const DEMO_JOURNEY_STEPS = [
   },
   {
     step: 4,
-    title: 'Strategy Formulation & Cascade',
-    titleAr: 'صياغة المواءمة الاستراتيجية',
+    title: 'Strategy Planning & Cascade',
+    titleAr: 'التخطيط الاستراتيجي والمواءمة',
     path: '/strategy/create',
-    storyCue: 'Demonstrate multi-entity cascading: Pillars ➔ Goals ➔ Objectives ➔ KPIs ➔ Initiatives in one flow.',
-    storyCueAr: 'إبراز المواءمة المتعددة: الركائز ← الأهداف الاستراتيجية ← المستهدفات ← المؤشرات ← المبادرات.',
+    storyCue: 'Define Strategy Name, Duration Horizon & Mandate Statement, then cascade Pillars ➔ Objectives ➔ KPIs ➔ Initiatives.',
+    storyCueAr: 'تحديد اسم الاستراتيجية والمدى الزمني ووثيقة التكليف، ثم ربط الركائز ← الأهداف ← المؤشرات ← المبادرات.',
   },
   {
     step: 5,
@@ -85,11 +85,11 @@ export const DEMO_JOURNEY_STEPS = [
   },
   {
     step: 9,
-    title: 'Performance Monitoring',
-    titleAr: 'متابعة وقياس الأداء',
+    title: 'Performance & Export Options',
+    titleAr: 'متابعة الأداء وخيارات التصدير',
     path: '/performance',
-    storyCue: 'Show Balanced Scorecard perspectives, telemetry radar, achievement heatmaps, and early warning indicators.',
-    storyCueAr: 'عرض بطاقة الأداء المتوازن، ومصفوفة الحرارة، ومؤشرات التنبيه المبكر للإنجاز.',
+    storyCue: 'Monitor KPI targets vs actuals, export instant CSV scorecards and generate the Executive Brief PDF dossier.',
+    storyCueAr: 'متابعة مستهدفات مؤشرات الأداء، وتصدير ملفات CSV التفصيلية وتوليد التقرير التنفيذي PDF.',
   },
   {
     step: 10,

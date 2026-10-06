@@ -420,7 +420,49 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
 export const CreateStrategyPage: React.FC = () => {
   const navigate = useNavigate();
-  const { themes, goals, objectives, kpis, initiatives, cascadeStrategy, currentUser, lang } = useApp();
+  const {
+    themes,
+    goals,
+    objectives,
+    kpis,
+    initiatives,
+    cascadeStrategy,
+    strategyPlan,
+    updateStrategyPlan,
+    addObjective,
+    addKPI,
+    addInitiative,
+    currentUser,
+    lang,
+  } = useApp();
+
+  // 1. Institutional Strategy Core Baseline (Name, Duration, Statement)
+  const [strategyName, setStrategyName] = useState(
+    strategyPlan?.name || 'Al-Ahsa Regional Sustainable Transformation Strategy 2026–2030'
+  );
+  const [strategyNameAr, setStrategyNameAr] = useState(
+    strategyPlan?.nameAr || 'استراتيجية هيئة تطوير الأحساء للتنمية الإقليمية المستدامة 2026–2030'
+  );
+  const [startYear, setStartYear] = useState<number>(strategyPlan?.startYear || 2026);
+  const [endYear, setEndYear] = useState<number>(strategyPlan?.endYear || 2030);
+  const [strategyDuration, setStrategyDuration] = useState(
+    strategyPlan?.duration || '2026 – 2030 (5-Year Strategic Cycle)'
+  );
+  const [strategyStatement, setStrategyStatement] = useState(
+    strategyPlan?.statement ||
+      "To lead comprehensive socio-economic, spatial, and cultural transformation in Al-Ahsa, unlocking the heritage oasis economy, enhancing residents' quality of life, and achieving sustainable regional prosperity in alignment with Saudi Vision 2030."
+  );
+  const [strategyStatementAr, setStrategyStatementAr] = useState(
+    strategyPlan?.statementAr ||
+      'قيادة التحول التنموي الشامل، والمكاني، والاقتصادي في الأحساء، وتعظيم الاستفادة من واحة التراث العالمي، والارتقاء بجودة حياة السكان، وتحقيق الازدهار المستدام بما يتماشى مع رؤية السعودية 2030.'
+  );
+
+  const handleYearChange = (start: number, end: number) => {
+    setStartYear(start);
+    setEndYear(end);
+    const cycleYears = Math.max(1, end - start + 1);
+    setStrategyDuration(`${start} – ${end} (${cycleYears}-Year Strategic Cycle)`);
+  };
 
   // Primary Strategic Pillar (Theme)
   const defaultTheme = themes.find((t) => t.code === '02') || themes[0];
@@ -450,6 +492,142 @@ export const CreateStrategyPage: React.FC = () => {
     return defaultInit ? [defaultInit.id] : [];
   });
 
+  // Quick Inline Creation States
+  const [showQuickObj, setShowQuickObj] = useState(false);
+  const [quickObjCode, setQuickObjCode] = useState(`SO-0${objectives.length + 1}`);
+  const [quickObjTitle, setQuickObjTitle] = useState('');
+  const [quickObjTitleAr, setQuickObjTitleAr] = useState('');
+  const [quickObjOwner, setQuickObjOwner] = useState(currentUser.name);
+  const [quickObjDept, setQuickObjDept] = useState(currentUser.department);
+  const [quickObjDesc, setQuickObjDesc] = useState('');
+  const [quickObjYear, setQuickObjYear] = useState(2027);
+
+  const handleQuickAddObj = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickObjTitle.trim()) {
+      toast.error(lang === 'ar' ? 'الرجاء إدخال عنوان الهدف' : 'Please enter objective title');
+      return;
+    }
+    const created = addObjective({
+      code: quickObjCode || `SO-0${objectives.length + 1}`,
+      title: quickObjTitle,
+      titleAr: quickObjTitleAr || undefined,
+      description: quickObjDesc || undefined,
+      owner: quickObjOwner,
+      department: quickObjDept,
+      themeId: selectedThemeId,
+      themeName: currentTheme?.title || '02 People and Society',
+      goalId: selectedGoalIds[0] || goals[0]?.id || 'goal-1',
+      targetYear: quickObjYear,
+      kpiCount: 0,
+      progress: 0,
+      status: 'on-track',
+    });
+    setSelectedObjectiveIds((prev) => [...prev, created.id]);
+    setShowQuickObj(false);
+    setQuickObjTitle('');
+    setQuickObjTitleAr('');
+    setQuickObjDesc('');
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء الهدف ${created.code} وربطه بالاستراتيجية`
+        : `Created & linked objective ${created.code}`
+    );
+  };
+
+  const [showQuickKpi, setShowQuickKpi] = useState(false);
+  const [quickKpiCode, setQuickKpiCode] = useState(`2.1.${kpis.length + 1}`);
+  const [quickKpiName, setQuickKpiName] = useState('');
+  const [quickKpiFormula, setQuickKpiFormula] = useState('');
+  const [quickKpiOwner, setQuickKpiOwner] = useState(currentUser.name);
+  const [quickKpiTarget2026, setQuickKpiTarget2026] = useState('100');
+  const [quickKpiTarget2027, setQuickKpiTarget2027] = useState('120');
+  const [quickKpiBaseline, setQuickKpiBaseline] = useState('80');
+  const [quickKpiUnit, setQuickKpiUnit] = useState('%');
+  const [quickKpiFreq, setQuickKpiFreq] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Quarterly');
+  const [quickKpiWeight, setQuickKpiWeight] = useState(25);
+
+  const handleQuickAddKpi = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickKpiName.trim()) {
+      toast.error(lang === 'ar' ? 'الرجاء إدخال اسم المؤشر' : 'Please enter KPI name');
+      return;
+    }
+    const targetNum = Number(quickKpiTarget2026) || 100;
+    const parentObj = objectives.find((o) => selectedObjectiveIds.includes(o.id)) || objectives[0];
+    const created = addKPI({
+      code: quickKpiCode || `2.1.${kpis.length + 1}`,
+      name: quickKpiName,
+      objectiveId: parentObj?.id || 'obj-1',
+      objectiveTitle: parentObj?.title || 'Strategic Objective',
+      unit: quickKpiUnit,
+      owner: quickKpiOwner,
+      target: targetNum,
+      actual: Number(quickKpiBaseline) || 0,
+      achievementPct: 0,
+      frequency: quickKpiFreq,
+      status: 'on-track',
+      formula: quickKpiFormula || undefined,
+      baseline: quickKpiBaseline || undefined,
+      target2026: quickKpiTarget2026 || undefined,
+      target2027: quickKpiTarget2027 || undefined,
+      weight: quickKpiWeight,
+      pillarCode: currentTheme?.code || '02',
+      pillarTitle: currentTheme?.title || '02 People and Society',
+    });
+    setSelectedKpiIds((prev) => [...prev, created.id]);
+    setShowQuickKpi(false);
+    setQuickKpiName('');
+    setQuickKpiFormula('');
+    toast.success(
+      lang === 'ar' ? `تم إنشاء المؤشر ${created.code} وربطه بالهدف` : `Created & linked KPI ${created.code}`
+    );
+  };
+
+  const [showQuickInit, setShowQuickInit] = useState(false);
+  const [quickInitCode, setQuickInitCode] = useState(`INIT-${initiatives.length + 1}`);
+  const [quickInitTitle, setQuickInitTitle] = useState('');
+  const [quickInitProject, setQuickInitProject] = useState('');
+  const [quickInitBudgetM, setQuickInitBudgetM] = useState('15.0');
+  const [quickInitOwner, setQuickInitOwner] = useState(currentUser.name);
+
+  const handleQuickAddInit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickInitTitle.trim()) {
+      toast.error(lang === 'ar' ? 'الرجاء إدخال عنوان المبادرة' : 'Please enter initiative title');
+      return;
+    }
+    const parentObj = objectives.find((o) => selectedObjectiveIds.includes(o.id)) || objectives[0];
+    const budgetSAR = (parseFloat(quickInitBudgetM) || 10) * 1000000;
+    const created = addInitiative({
+      code: quickInitCode || `INIT-${initiatives.length + 1}`,
+      title: quickInitTitle,
+      objectiveId: parentObj?.id || 'obj-1',
+      objectiveTitle: parentObj?.title || 'Strategic Objective',
+      owner: quickInitOwner,
+      department: currentUser.department,
+      budgetSAR,
+      spentSAR: 0,
+      progress: 0,
+      startDate: '2026-01-01',
+      endDate: '2027-12-31',
+      status: 'Planning',
+      milestones: [],
+      risksCount: 0,
+      actionsCount: 0,
+      keyProjects: quickInitProject ? [quickInitProject] : undefined,
+    });
+    setSelectedInitiativeIds((prev) => [...prev, created.id]);
+    setShowQuickInit(false);
+    setQuickInitTitle('');
+    setQuickInitProject('');
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء المبادرة ${created.code} وربطها بالهدف`
+        : `Created & linked initiative ${created.code}`
+    );
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Resolve currently selected theme object
@@ -471,6 +649,11 @@ export const CreateStrategyPage: React.FC = () => {
   // Form submit handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!strategyName.trim()) {
+      toast.error(lang === 'ar' ? 'الرجاء إدخال اسم الاستراتيجية' : 'Please enter strategy name');
+      return;
+    }
+
     if (!selectedThemeId) {
       toast.error(lang === 'ar' ? 'الرجاء اختيار الركيزة الاستراتيجية' : 'Please select a Strategic Pillar');
       return;
@@ -493,6 +676,19 @@ export const CreateStrategyPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // 1. Update Strategy Plan (Name, Duration, Statement)
+      updateStrategyPlan({
+        name: strategyName,
+        nameAr: strategyNameAr || undefined,
+        duration: strategyDuration,
+        startYear,
+        endYear,
+        statement: strategyStatement,
+        statementAr: strategyStatementAr || undefined,
+        status: 'Active',
+      });
+
+      // 2. Cascade Components (Pillars, Objectives, KPIs, Initiatives)
       cascadeStrategy({
         themeId: selectedThemeId,
         goalIds: selectedGoalIds,
@@ -501,7 +697,19 @@ export const CreateStrategyPage: React.FC = () => {
         initiativeIds: selectedInitiativeIds,
       });
 
-      // Redirect back to strategy view
+      toast.success(
+        lang === 'ar'
+          ? `تم حفظ مواءمة "${strategyNameAr || strategyName}" بنجاح!`
+          : `Strategy "${strategyName}" successfully saved and cascaded!`,
+        {
+          description:
+            lang === 'ar'
+              ? `تم ربط ${selectedObjectives.length} أهداف و ${selectedKPIs.length} مؤشرات و ${selectedInits.length} مبادرات بالاستراتيجية.`
+              : `Bound ${selectedObjectives.length} objectives, ${selectedKPIs.length} KPIs, and ${selectedInits.length} initiatives into the strategy architecture.`,
+        }
+      );
+
+      // Redirect back to strategy matrix view
       navigate('/strategy');
     } catch (err) {
       console.error('Error cascading strategy:', err);
@@ -641,21 +849,153 @@ export const CreateStrategyPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Form Area */}
         <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6">
-          {/* Card 1: Strategic Pillar / Theme Dropdown */}
+          {/* Card 1: Master Institutional Strategy Foundation (Name, Duration, Statement) */}
+          <div className="bg-white rounded-2xl border border-blue-200/80 shadow-xs p-6 space-y-4 ring-1 ring-blue-500/10">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  1
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900">
+                      {lang === 'ar' ? 'تعريف الاستراتيجية المؤسسية والمدى الزمني' : 'Institutional Strategy Mandate & Horizon'}
+                    </h3>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                      {lang === 'ar' ? 'الأساس المؤسسي' : 'CORE BASELINE'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {lang === 'ar'
+                      ? 'حدد اسم الاستراتيجية، المدى الزمني، وبيان التكليف الاستراتيجي المعتمد'
+                      : 'Define the Strategy Name, Time Horizon Duration, and Executive Mandate Statement'}
+                  </p>
+                </div>
+              </div>
+
+              <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>{lang === 'ar' ? 'معتمد رسمياً' : 'Active Horizon'}</span>
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {/* Strategy Name (EN & AR) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'اسم الاستراتيجية (بالإنجليزية)' : 'Strategy Name (English)'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={strategyName}
+                    onChange={(e) => setStrategyName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-2xs"
+                    placeholder="e.g. Al-Ahsa Regional Sustainable Transformation Strategy 2026–2030"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'اسم الاستراتيجية (بالعربية)' : 'Strategy Name (Arabic)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={strategyNameAr}
+                    onChange={(e) => setStrategyNameAr(e.target.value)}
+                    dir="rtl"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-sans font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-2xs"
+                    placeholder="مثال: استراتيجية هيئة تطوير الأحساء للتنمية الإقليمية المستدامة 2026–2030"
+                  />
+                </div>
+              </div>
+
+              {/* Duration & Cycle Horizon */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'سنة البدء' : 'Cycle Start Year'}
+                  </label>
+                  <input
+                    type="number"
+                    min="2020"
+                    max="2035"
+                    value={startYear}
+                    onChange={(e) => handleYearChange(Number(e.target.value), endYear)}
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'سنة الانتهاء' : 'Cycle Horizon Year'}
+                  </label>
+                  <input
+                    type="number"
+                    min="2024"
+                    max="2040"
+                    value={endYear}
+                    onChange={(e) => handleYearChange(startYear, Number(e.target.value))}
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المدى الزمني للاستراتيجية' : 'Strategy Duration Label'}
+                  </label>
+                  <div className="px-3 py-1.5 bg-blue-50/70 border border-blue-200 rounded-lg text-xs font-mono font-bold text-blue-900 truncate">
+                    {strategyDuration}
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategic Statement / Executive Mandate */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'بيان الاستراتيجية / التكليف التنفيذي (EN)' : 'Strategic Statement / Executive Mandate'}
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={strategyStatement}
+                    onChange={(e) => setStrategyStatement(e.target.value)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-2xs leading-relaxed"
+                    placeholder="Overarching strategic mandate and institutional commitment..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'بيان الاستراتيجية / التكليف التنفيذي (AR)' : 'Strategic Statement (Arabic)'}
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={strategyStatementAr}
+                    onChange={(e) => setStrategyStatementAr(e.target.value)}
+                    dir="rtl"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-sans text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-2xs leading-relaxed"
+                    placeholder="التكليف الاستراتيجي والهدف الأسمى للمنظومة..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Strategic Pillar / Theme Dropdown */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-xs">
-                  1
+                  2
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    {lang === 'ar' ? 'الركيزة الاستراتيجية (المحور)' : 'Strategic Pillar (Theme)'}
+                    {lang === 'ar' ? 'ربط الركيزة الاستراتيجية (المحور)' : 'Link Strategic Pillar (Theme)'}
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     {lang === 'ar'
-                      ? 'اختر الركيزة الاستراتيجية المعتمدة للمواءمة'
-                      : 'Choose the primary organizational pillar from the register'}
+                      ? 'اختر الركيزة الاستراتيجية المعتمدة لربطها بالاستراتيجية'
+                      : 'Choose the primary organizational pillar to anchor the cascade'}
                   </p>
                 </div>
               </div>
@@ -711,12 +1051,12 @@ export const CreateStrategyPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 2: Strategic Goals Multi-Select Dropdown */}
+          {/* Card 3: Strategic Goals Multi-Select Dropdown */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs">
-                  2
+                  3
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
@@ -777,49 +1117,160 @@ export const CreateStrategyPage: React.FC = () => {
             />
           </div>
 
-          {/* Card 3: Strategic Objectives Multi-Select Dropdown */}
+          {/* Card 4: Strategic Objectives Multi-Select & Quick Create */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-xs">
-                  3
+                  4
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    {lang === 'ar' ? 'الأهداف التشغيلية التكتيكية (OKR)' : 'Strategic Objectives (OKR Targets)'}
+                    {lang === 'ar' ? 'الأهداف التشغيلية والتكتيكية (OKR)' : 'Strategic Objectives (Tactical OKRs)'}
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     {lang === 'ar'
-                      ? 'حدد مستهدفات تكتيكية فردية من السجل أو تم إنشاؤها مؤخراً'
-                      : 'Select multiple tactical objectives created in the Objectives Register'}
+                      ? 'حدد مستهدفات تكتيكية واربطها بالركيزة، مع تفاصيل المسؤول والوصف من ملف الهيئة'
+                      : 'Select or quickly create objectives with Owner & Description attributes'}
                   </p>
                 </div>
               </div>
 
-              <Link
-                to="/objectives"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>{lang === 'ar' ? 'سجل المستهدفات ↗' : 'Objectives Register ↗'}</span>
-                <ExternalLink className="w-3 h-3" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowQuickObj(!showQuickObj)}
+                  className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-semibold border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? 'إضافة هدف سريع' : '+ Quick Add Objective'}</span>
+                </button>
+                <Link
+                  to="/objectives"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>{lang === 'ar' ? 'السجل ↗' : 'Register ↗'}</span>
+                </Link>
+              </div>
             </div>
+
+            {/* Quick Add Objective Collapsible Form */}
+            {showQuickObj && (
+              <div className="p-4 bg-indigo-50/50 border border-indigo-200 rounded-xl space-y-3 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-indigo-900">
+                    {lang === 'ar' ? 'إنشاء هدف استراتيجي جديد وربطه فوراً' : 'Quick Create & Link Strategic Objective'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickObj(false)}
+                    className="text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'رمز الهدف' : 'Code'}</label>
+                    <input
+                      type="text"
+                      value={quickObjCode}
+                      onChange={(e) => setQuickObjCode(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                      placeholder="e.g. 2.3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'سنة الاستهداف' : 'Target Year'}</label>
+                    <input
+                      type="number"
+                      value={quickObjYear}
+                      onChange={(e) => setQuickObjYear(Number(e.target.value))}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'عنوان الهدف (EN)' : 'Objective Title (EN)'} *</label>
+                  <input
+                    type="text"
+                    value={quickObjTitle}
+                    onChange={(e) => setQuickObjTitle(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    placeholder="e.g. Expand Cultural Tourism Footfall in Historic Oasis"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'المسؤول' : 'Owner'}</label>
+                    <input
+                      type="text"
+                      value={quickObjOwner}
+                      onChange={(e) => setQuickObjOwner(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'الإدارة' : 'Department'}</label>
+                    <input
+                      type="text"
+                      value={quickObjDept}
+                      onChange={(e) => setQuickObjDept(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'الوصف الاستراتيجي' : 'Objective Strategic Description'}</label>
+                  <textarea
+                    rows={2}
+                    value={quickObjDesc}
+                    onChange={(e) => setQuickObjDesc(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    placeholder="Detailed strategic description matching client Excel attributes..."
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickObj(false)}
+                    className="px-3 py-1 text-[11px] text-slate-600 hover:bg-slate-100 rounded-lg"
+                  >
+                    {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickAddObj}
+                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-semibold"
+                  >
+                    {lang === 'ar' ? 'إنشاء وربط' : 'Create & Link'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <MultiSelectDropdown
               label={lang === 'ar' ? 'اختر الأهداف التكتيكية (مستهدفات الإدارات)' : 'Select Strategic Objectives'}
               sublabel={
                 lang === 'ar'
-                  ? 'تشمل المستهدفات المنشأة فردياً وسجلات الإدارات'
-                  : 'Includes individually created objectives and departmental OKRs'
+                  ? 'تشمل المستهدفات مع المالك والوصف المعتمد في ملف الهيئة'
+                  : 'Includes objectives with Owner and Description attributes'
               }
               items={objectives.map((o) => ({
                 id: o.id,
                 code: o.code,
                 title: o.title,
                 titleAr: o.titleAr,
-                description: `${o.owner} • ${o.department} • FY ${o.targetYear}`,
+                description: `${o.owner} • ${o.department} • FY ${o.targetYear}${
+                  o.description ? ` — ${o.description}` : ''
+                }`,
                 badge: `${o.progress}% Progress`,
                 extra: `Status: ${o.status}`,
               }))}
@@ -828,16 +1279,16 @@ export const CreateStrategyPage: React.FC = () => {
               accentColor="indigo"
               placeholder={lang === 'ar' ? 'اختر أهدافاً تكتيكية...' : 'Select Strategic Objectives...'}
               lang={lang}
-              manageLink={{ to: '/objectives', text: lang === 'ar' ? '+ إنشاء هدف في السجل ↗' : '+ Create in Objectives ↗' }}
+              manageLink={{ to: '/objectives', text: lang === 'ar' ? 'فتح سجل المستهدفات ↗' : 'Objectives Register ↗' }}
             />
           </div>
 
-          {/* Card 4: Key Performance Indicators Multi-Select Dropdown */}
+          {/* Card 5: Key Performance Indicators Multi-Select & Quick Create */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs">
-                  4
+                  5
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
@@ -845,29 +1296,148 @@ export const CreateStrategyPage: React.FC = () => {
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     {lang === 'ar'
-                      ? 'اختر مؤشرات الأداء المعتمدة مع معادلاتها ومستهدفاتها القياسية'
-                      : 'Select multiple verified KPIs with formulas and baseline/targets'}
+                      ? 'مؤشرات الأداء مع معادلة الحساب، المستهدفات (2026/2027)، والوزن النسبي'
+                      : 'KPIs with calculation formula, 2026/2027 targets, and weighting'}
                   </p>
                 </div>
               </div>
 
-              <Link
-                to="/kpis"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-800 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>{lang === 'ar' ? 'سجل المؤشرات ↗' : 'KPIs Register ↗'}</span>
-                <ExternalLink className="w-3 h-3" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowQuickKpi(!showQuickKpi)}
+                  className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[11px] font-semibold border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? 'إضافة مؤشر سريع' : '+ Quick Add KPI'}</span>
+                </button>
+                <Link
+                  to="/kpis"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-800 hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>{lang === 'ar' ? 'السجل ↗' : 'Register ↗'}</span>
+                </Link>
+              </div>
             </div>
+
+            {/* Quick Add KPI Collapsible Form */}
+            {showQuickKpi && (
+              <div className="p-4 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-3 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-900">
+                    {lang === 'ar' ? 'إنشاء مؤشر أداء جديد وربطه بالمستهدف' : 'Quick Create & Link KPI'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickKpi(false)}
+                    className="text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'رمز المؤشر' : 'Code'}</label>
+                    <input
+                      type="text"
+                      value={quickKpiCode}
+                      onChange={(e) => setQuickKpiCode(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                      placeholder="e.g. 2.1.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'الوحدة' : 'Unit'}</label>
+                    <input
+                      type="text"
+                      value={quickKpiUnit}
+                      onChange={(e) => setQuickKpiUnit(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                      placeholder="%"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'اسم المؤشر' : 'KPI Name'} *</label>
+                  <input
+                    type="text"
+                    value={quickKpiName}
+                    onChange={(e) => setQuickKpiName(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    placeholder="e.g. Cultural Tourism Satisfaction Index"
+                  />
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'معادلة الحساب القياسية' : 'Calculation Formula'}</label>
+                  <input
+                    type="text"
+                    value={quickKpiFormula}
+                    onChange={(e) => setQuickKpiFormula(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                    placeholder="∑ (Satisfied Survey Responses) / (Total Sample Size) * 100"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'خط الأساس' : 'Baseline'}</label>
+                    <input
+                      type="text"
+                      value={quickKpiBaseline}
+                      onChange={(e) => setQuickKpiBaseline(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'مستهدف 2026' : 'Target 2026'}</label>
+                    <input
+                      type="text"
+                      value={quickKpiTarget2026}
+                      onChange={(e) => setQuickKpiTarget2026(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'مستهدف 2027' : 'Target 2027'}</label>
+                    <input
+                      type="text"
+                      value={quickKpiTarget2027}
+                      onChange={(e) => setQuickKpiTarget2027(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickKpi(false)}
+                    className="px-3 py-1 text-[11px] text-slate-600 hover:bg-slate-100 rounded-lg"
+                  >
+                    {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickAddKpi}
+                    className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-semibold"
+                  >
+                    {lang === 'ar' ? 'إنشاء وربط' : 'Create & Link'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <MultiSelectDropdown
               label={lang === 'ar' ? 'اختر مؤشرات الأداء من السجل' : 'Select Key Performance Indicators'}
               sublabel={
                 lang === 'ar'
-                  ? 'يمكنك ربط مؤشرات متعددة بالمصفوفة دفعة واحدة'
-                  : 'You can link multiple indicators into this strategy cascade'
+                  ? 'يمكنك ربط مؤشرات متعددة بالمصفوفة مع الحفاظ على خصائص المعادلة والمستهدفات'
+                  : 'Link indicators with formulas, baseline & 2026/2027 targets'
               }
               items={kpis.map((k) => ({
                 id: k.id,
@@ -876,53 +1446,143 @@ export const CreateStrategyPage: React.FC = () => {
                 titleAr: k.nameAr,
                 description: k.formula ? `Formula: ${k.formula}` : undefined,
                 badge: `${k.actual} / ${k.target} ${k.unit}`,
-                extra: `Freq: ${k.frequency} • ${k.status}`,
+                extra: `Target 2026: ${k.target2026 || '-'} • Target 2027: ${k.target2027 || '-'} • Owner: ${k.owner}`,
               }))}
               selectedIds={selectedKpiIds}
               onChange={setSelectedKpiIds}
               accentColor="emerald"
               placeholder={lang === 'ar' ? 'اختر مؤشرات أداء...' : 'Select KPIs...'}
               lang={lang}
-              manageLink={{ to: '/kpis', text: lang === 'ar' ? '+ إنشاء مؤشر في السجل ↗' : '+ Create in KPIs ↗' }}
+              manageLink={{ to: '/kpis', text: lang === 'ar' ? 'فتح سجل المؤشرات ↗' : 'KPIs Register ↗' }}
             />
           </div>
 
-          {/* Card 5: Strategic Initiatives Multi-Select Dropdown */}
+          {/* Card 6: Strategic Initiatives Multi-Select & Quick Create */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
-                  5
+                  6
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع' : 'Strategic Initiatives & Programs'}
+                    {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع الريادية' : 'Strategic Initiatives & Flagship Projects'}
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     {lang === 'ar'
-                      ? 'حدد المبادرات والمشاريع الممولة لتحقيق هذه الأهداف'
-                      : 'Select multiple implementation initiatives and funding packages'}
+                      ? 'حدد المبادرات والمشاريع الممولة (SAR M) لتحقيق هذه الأهداف'
+                      : 'Select implementation initiatives, milestones, and funding packages (SAR M)'}
                   </p>
                 </div>
               </div>
 
-              <Link
-                to="/initiatives"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 hover:text-amber-800 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>{lang === 'ar' ? 'سجل المبادرات ↗' : 'Initiatives Register ↗'}</span>
-                <ExternalLink className="w-3 h-3" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowQuickInit(!showQuickInit)}
+                  className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-[11px] font-semibold border border-amber-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? 'إضافة مبادرة سريعة' : '+ Quick Add Initiative'}</span>
+                </button>
+                <Link
+                  to="/initiatives"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 hover:text-amber-800 hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>{lang === 'ar' ? 'السجل ↗' : 'Register ↗'}</span>
+                </Link>
+              </div>
             </div>
+
+            {/* Quick Add Initiative Collapsible Form */}
+            {showQuickInit && (
+              <div className="p-4 bg-amber-50/50 border border-amber-200 rounded-xl space-y-3 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-900">
+                    {lang === 'ar' ? 'إنشاء مبادرة جديدة وربطها بالمستهدف' : 'Quick Create & Link Initiative'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickInit(false)}
+                    className="text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'رمز المبادرة' : 'Code'}</label>
+                    <input
+                      type="text"
+                      value={quickInitCode}
+                      onChange={(e) => setQuickInitCode(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                      placeholder="e.g. INIT-9"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'الميزانية (مليون ر.س)' : 'Budget (SAR Millions)'}</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={quickInitBudgetM}
+                      onChange={(e) => setQuickInitBudgetM(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-mono text-xs"
+                      placeholder="15.0"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'عنوان المبادرة' : 'Initiative Title'} *</label>
+                  <input
+                    type="text"
+                    value={quickInitTitle}
+                    onChange={(e) => setQuickInitTitle(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    placeholder="e.g. Al-Ahsa Sustainable Oasis Ecotourism Corridor"
+                  />
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">{lang === 'ar' ? 'المشروع الريادي الرئيسي' : 'Flagship Project'}</label>
+                  <input
+                    type="text"
+                    value={quickInitProject}
+                    onChange={(e) => setQuickInitProject(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    placeholder="e.g. Oasis Palm Date Heritage Infrastructure Project"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickInit(false)}
+                    className="px-3 py-1 text-[11px] text-slate-600 hover:bg-slate-100 rounded-lg"
+                  >
+                    {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickAddInit}
+                    className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[11px] font-semibold"
+                  >
+                    {lang === 'ar' ? 'إنشاء وربط' : 'Create & Link'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <MultiSelectDropdown
               label={lang === 'ar' ? 'اختر المبادرات الاستراتيجية' : 'Select Strategic Initiatives'}
               sublabel={
                 lang === 'ar'
-                  ? 'تشمل المبادرات المنشأة فردياً مع ميزانياتها ومحطاتها التنفيذية'
-                  : 'Includes all initiatives created individually with budgets and milestones'
+                  ? 'تشمل المبادرات المنشأة مع الميزانيات المعتمدة والمشاريع الريادية'
+                  : 'Includes initiatives with approved budget (SAR M) and flagship projects'
               }
               items={initiatives.map((i) => ({
                 id: i.id,
@@ -931,14 +1591,14 @@ export const CreateStrategyPage: React.FC = () => {
                 titleAr: i.titleAr,
                 description: i.description,
                 badge: `SAR ${(i.budgetSAR / 1000000).toFixed(1)}M`,
-                extra: `Owner: ${i.owner} • ${i.milestones?.length || 0} Milestones`,
+                extra: `Flagship: ${i.keyProjects?.[0] || 'Strategic Project'} • Owner: ${i.owner}`,
               }))}
               selectedIds={selectedInitiativeIds}
               onChange={setSelectedInitiativeIds}
               accentColor="amber"
               placeholder={lang === 'ar' ? 'اختر مبادرات استراتيجية...' : 'Select Strategic Initiatives...'}
               lang={lang}
-              manageLink={{ to: '/initiatives', text: lang === 'ar' ? '+ إنشاء مبادرة في السجل ↗' : '+ Create in Initiatives ↗' }}
+              manageLink={{ to: '/initiatives', text: lang === 'ar' ? 'فتح سجل المبادرات ↗' : 'Initiatives Register ↗' }}
             />
           </div>
 
@@ -962,8 +1622,8 @@ export const CreateStrategyPage: React.FC = () => {
                     ? 'جاري الاعتماد...'
                     : 'Cascading...'
                   : lang === 'ar'
-                  ? 'حفظ ومواءمة الاستراتيجية'
-                  : 'Save & Cascade Strategy'}
+                  ? 'حفظ واعتماد مواءمة الاستراتيجية'
+                  : 'Save & Deploy Strategy Cascade'}
               </span>
             </button>
           </div>
@@ -983,6 +1643,24 @@ export const CreateStrategyPage: React.FC = () => {
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 {lang === 'ar' ? 'مواءمة متتالية' : 'Cascading Ready'}
               </span>
+            </div>
+
+            {/* Master Strategy Foundation Preview Card */}
+            <div className="p-4 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-700/50">
+                  {lang === 'ar' ? 'الاستراتيجية المؤسسية المعتمدة' : 'INSTITUTIONAL STRATEGY PLAN'}
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                  {strategyDuration}
+                </span>
+              </div>
+              <h4 className="text-sm font-bold text-white leading-snug">
+                {lang === 'ar' ? strategyNameAr || strategyName : strategyName}
+              </h4>
+              <p className="text-[11px] text-slate-300 line-clamp-2 italic">
+                "{lang === 'ar' ? strategyStatementAr || strategyStatement : strategyStatement}"
+              </p>
             </div>
 
             {/* Strategic Theme Box */}
@@ -1062,19 +1740,27 @@ export const CreateStrategyPage: React.FC = () => {
                     {selectedObjectives.map((o) => (
                       <div
                         key={o.id}
-                        className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs text-xs space-y-1"
+                        className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs text-xs space-y-1.5"
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-mono font-bold text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-mono font-bold text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200 shrink-0">
                               {o.code}
                             </span>
-                            <span className="font-semibold text-slate-900 truncate max-w-[200px]">
+                            <span className="font-semibold text-slate-900 truncate">
                               {lang === 'ar' ? o.titleAr || o.title : o.title}
                             </span>
                           </div>
-                          <span className="font-mono font-bold text-[10px] text-indigo-700">{o.progress}%</span>
+                          <span className="font-mono font-bold text-[10px] text-indigo-700 shrink-0">{o.progress}%</span>
                         </div>
+                        <div className="text-[10px] text-slate-500 font-mono">
+                          {o.owner} • {o.department} • FY {o.targetYear}
+                        </div>
+                        {o.description && (
+                          <p className="text-[10px] text-slate-600 line-clamp-1 italic bg-slate-50 p-1 rounded border border-slate-100">
+                            {lang === 'ar' ? o.descriptionAr || o.description : o.description}
+                          </p>
+                        )}
                         <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                           <div
                             className="bg-indigo-600 h-full transition-all"
@@ -1107,19 +1793,30 @@ export const CreateStrategyPage: React.FC = () => {
                     {selectedKPIs.map((k) => (
                       <div
                         key={k.id}
-                        className="p-2 bg-white rounded-lg border border-slate-200 text-xs flex items-center justify-between gap-2"
+                        className="p-2.5 bg-white rounded-lg border border-slate-200 text-xs space-y-1"
                       >
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="font-mono text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 shrink-0">
-                            {k.code}
-                          </span>
-                          <span className="truncate font-medium text-slate-800">
-                            {lang === 'ar' ? k.nameAr || k.name : k.name}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-mono text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 shrink-0">
+                              {k.code}
+                            </span>
+                            <span className="truncate font-semibold text-slate-800">
+                              {lang === 'ar' ? k.nameAr || k.name : k.name}
+                            </span>
+                          </div>
+                          <span className="font-mono text-[11px] font-bold text-slate-900 shrink-0">
+                            {k.actual} / {k.target} {k.unit}
                           </span>
                         </div>
-                        <span className="font-mono text-[11px] font-bold text-slate-900 shrink-0">
-                          {k.actual} / {k.target} {k.unit}
-                        </span>
+                        {k.formula && (
+                          <div className="text-[9px] text-slate-500 font-mono truncate">
+                            fx: {k.formula}
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono">
+                          <span>Target 2026: {k.target2026 || '-'}</span>
+                          <span>Owner: {k.owner}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1131,7 +1828,7 @@ export const CreateStrategyPage: React.FC = () => {
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800">
                   <span className="flex items-center gap-1.5 text-amber-800">
                     <FolderGit2 className="w-3.5 h-3.5 text-amber-600" />
-                    <span>{lang === 'ar' ? 'المبادرات الاستراتيجية' : 'Strategic Initiatives'}</span>
+                    <span>{lang === 'ar' ? 'المبادرات والمشاريع الريادية' : 'Strategic Initiatives'}</span>
                   </span>
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
                     {selectedInits.length}
@@ -1146,19 +1843,29 @@ export const CreateStrategyPage: React.FC = () => {
                     {selectedInits.map((i) => (
                       <div
                         key={i.id}
-                        className="p-2.5 bg-white rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2"
+                        className="p-2.5 bg-white rounded-xl border border-slate-200 text-xs space-y-1"
                       >
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 shrink-0">
-                            {i.code}
-                          </span>
-                          <span className="truncate font-medium text-slate-800">
-                            {lang === 'ar' ? i.titleAr || i.title : i.title}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 shrink-0">
+                              {i.code}
+                            </span>
+                            <span className="truncate font-semibold text-slate-800">
+                              {lang === 'ar' ? i.titleAr || i.title : i.title}
+                            </span>
+                          </div>
+                          <span className="font-mono text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded shrink-0">
+                            SAR {(i.budgetSAR / 1000000).toFixed(1)}M
                           </span>
                         </div>
-                        <span className="font-mono text-[10px] font-bold text-amber-800 shrink-0">
-                          SAR {(i.budgetSAR / 1000000).toFixed(1)}M
-                        </span>
+                        {i.keyProjects && i.keyProjects[0] && (
+                          <div className="text-[10px] text-slate-500 font-medium truncate">
+                            ★ {i.keyProjects[0]}
+                          </div>
+                        )}
+                        <div className="text-[9px] text-slate-400 font-mono">
+                          Owner: {i.owner} • {i.milestones?.length || 0} Milestones
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -9,6 +9,7 @@ import {
   StrategicTheme,
   StrategicGoal,
   StrategicObjective,
+  StrategyPlan,
   StrategicInitiative,
   KPI,
   ActionItem,
@@ -24,6 +25,7 @@ import {
   DEPARTMENTS as initialDepartments,
   CURRENT_USER,
   MOCK_USERS,
+  DEFAULT_STRATEGY_PLAN,
   RISKS as initialRisks,
   STRATEGIC_THEMES as initialThemes,
   STRATEGIC_GOALS as initialGoals,
@@ -146,6 +148,8 @@ interface AppContextType {
   objectives: StrategicObjective[];
   initiatives: StrategicInitiative[];
   kpis: KPI[];
+  strategyPlan: StrategyPlan;
+  updateStrategyPlan: (updates: Partial<StrategyPlan>) => void;
   cascadeStrategy: (payload: {
     themeId: string;
     goalIds: string[];
@@ -339,6 +343,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     return initialKpis;
   });
+
+  const [strategyPlan, setStrategyPlan] = useState<StrategyPlan>(() => {
+    const saved = sessionStorage.getItem('eda_strategy_plan');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        /* fallback */
+      }
+    }
+    return DEFAULT_STRATEGY_PLAN;
+  });
+
+  const updateStrategyPlan = (updates: Partial<StrategyPlan>) => {
+    setStrategyPlan((prev) => {
+      const updated = { ...prev, ...updates, updatedAt: new Date().toISOString() };
+      sessionStorage.setItem('eda_strategy_plan', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const [actions, setActions] = useState<ActionItem[]>(initialActions);
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
@@ -1518,6 +1542,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         objectives,
         initiatives,
         kpis,
+        strategyPlan,
+        updateStrategyPlan,
         cascadeStrategy,
         addStrategy,
         addObjective,

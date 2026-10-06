@@ -33,6 +33,8 @@ export const ObjectivesPage: React.FC = () => {
   const [formCode, setFormCode] = useState(`SO-0${objectives.length + 1}`);
   const [formTitle, setFormTitle] = useState('');
   const [formTitleAr, setFormTitleAr] = useState('');
+  const [formDescription, setFormDescription] = useState('');
+  const [formDescriptionAr, setFormDescriptionAr] = useState('');
   const [formThemeId, setFormThemeId] = useState(themes[0]?.id || 'theme-1');
   const [formGoalId, setFormGoalId] = useState(goals[0]?.id || 'goal-1');
   const [formOwner, setFormOwner] = useState('Eng. Fahad Al-Subaie');
@@ -54,6 +56,8 @@ export const ObjectivesPage: React.FC = () => {
     const matchesSearch =
       obj.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (obj.titleAr && obj.titleAr.includes(searchTerm)) ||
+      (obj.description && obj.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (obj.descriptionAr && obj.descriptionAr.includes(searchTerm)) ||
       obj.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
       obj.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
       obj.department.toLowerCase().includes(searchTerm.toLowerCase());
@@ -75,6 +79,8 @@ export const ObjectivesPage: React.FC = () => {
       code: formCode.trim() || `SO-0${objectives.length + 1}`,
       title: formTitle.trim(),
       titleAr: formTitleAr.trim() || undefined,
+      description: formDescription.trim() || undefined,
+      descriptionAr: formDescriptionAr.trim() || undefined,
       themeId: formThemeId,
       themeName: matchedTheme ? matchedTheme.title : 'Strategic Theme',
       goalId: formGoalId,
@@ -91,6 +97,8 @@ export const ObjectivesPage: React.FC = () => {
     setIsCreateModalOpen(false);
     setFormTitle('');
     setFormTitleAr('');
+    setFormDescription('');
+    setFormDescriptionAr('');
     setFormCode(`SO-0${objectives.length + 2}`);
   };
 
@@ -116,14 +124,19 @@ export const ObjectivesPage: React.FC = () => {
       accessorKey: 'title',
       sortable: true,
       cell: (o) => (
-        <div>
+        <div className="space-y-1">
           <div className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
             {lang === 'ar' ? (o.titleAr || o.title) : o.title}
           </div>
           {lang !== 'ar' && o.titleAr && (
-            <div className="text-[11px] text-slate-400 font-sans mt-0.5">{o.titleAr}</div>
+            <div className="text-[11px] text-slate-400 font-sans">{o.titleAr}</div>
           )}
-          <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1 font-mono">
+          {(o.description || o.descriptionAr) && (
+            <p className="text-[11px] text-slate-600 line-clamp-2 italic bg-slate-50/90 px-2 py-1 rounded border border-slate-200/60 leading-relaxed">
+              {lang === 'ar' ? (o.descriptionAr || o.description) : (o.description || o.descriptionAr)}
+            </p>
+          )}
+          <div className="text-[10px] text-slate-400 flex items-center gap-1 font-mono pt-0.5">
             <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">
               {o.themeName}
             </span>
@@ -419,6 +432,33 @@ export const ObjectivesPage: React.FC = () => {
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-blue-600"
                   placeholder="مثال: رفع القدرة الاستيعابية للسياحة الزراعية والتراث المستدام"
                   dir="rtl"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق الاستراتيجي (بالإنجليزية)' : 'Strategic Description & Scope (English)'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={formDescription}
+                  onChange={(e) => setFormDescription(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
+                  placeholder="Detailed strategic statement, scope, target audience, and expected outcome..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق الاستراتيجي (بالعربية)' : 'Strategic Description & Scope (Arabic)'}
+                </label>
+                <textarea
+                  rows={2}
+                  dir="rtl"
+                  value={formDescriptionAr}
+                  onChange={(e) => setFormDescriptionAr(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-blue-600"
+                  placeholder="النطاق الاستراتيجي للهدف، والجهات المستهدفة، والمخرجات المرجوة..."
                 />
               </div>
 

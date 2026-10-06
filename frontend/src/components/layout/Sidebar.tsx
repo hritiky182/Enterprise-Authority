@@ -72,7 +72,9 @@ export const Sidebar: React.FC = () => {
       items: [
         { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
         { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" /> },
-        { name: 'Strategy Matrix', path: '/strategy', icon: <Target className="w-4 h-4" /> },
+        { name: 'Org Structure', path: '/org-structure', icon: <Network className="w-4 h-4" /> },
+        { name: 'Strategy Planning', path: '/strategy/create', icon: <Target className="w-4 h-4" /> },
+        { name: 'Strategy Matrix', path: '/strategy', icon: <Layers className="w-4 h-4" /> },
         {
           name: 'Hierarchy Tree',
           path: '/hierarchy-tree',
@@ -100,11 +102,6 @@ export const Sidebar: React.FC = () => {
           icon: <Sparkles className="w-4 h-4" />,
           badge: `${initiatives.length}`,
           badgeColor: 'bg-amber-600 text-white',
-        },
-        {
-          name: 'Org Structure',
-          path: '/org-structure',
-          icon: <Network className="w-4 h-4" />,
         },
         { name: 'Performance', path: '/performance', icon: <TrendingUp className="w-4 h-4" /> },
       ],

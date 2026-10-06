@@ -189,6 +189,18 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Viewer',
     ar: 'مستعرض',
   },
+  'Strategy Manager': {
+    en: 'Strategy Manager',
+    ar: 'مدير إدارة الاستراتيجية',
+  },
+  'Strategy Specialist': {
+    en: 'Strategy Specialist',
+    ar: 'أخصائي أول الاستراتيجية',
+  },
+  'Strategy Planning': {
+    en: 'Strategy Planning',
+    ar: 'التخطيط الاستراتيجي',
+  },
 
   // Breadcrumbs & Common Routes
   'Executive Command Center': {

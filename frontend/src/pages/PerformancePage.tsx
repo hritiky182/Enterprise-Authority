@@ -17,8 +17,20 @@ import {
   LineChart,
   Line,
 } from 'recharts';
-import { BarChart3, Filter, Calendar, Building, Target, TrendingUp, Upload } from 'lucide-react';
+import {
+  BarChart3,
+  Filter,
+  Calendar,
+  Building,
+  Target,
+  TrendingUp,
+  Upload,
+  Download,
+  FileText,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { ImportKpiModal } from '../components/modals/ImportKpiModal';
+import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
 
 export const PerformancePage: React.FC = () => {
   const { kpis, objectives, themes, lang, t } = useApp();
@@ -28,6 +40,58 @@ export const PerformancePage: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState('all');
   const [selectedTheme, setSelectedTheme] = useState('all');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
+
+  const handleExportKpiCSV = () => {
+    const headers = [
+      'Code',
+      'KPI Name (EN)',
+      'KPI Name (AR)',
+      'Strategic Objective',
+      'Owner / Lead',
+      'Department',
+      'Target Horizon',
+      'Unit',
+      'Actual Value',
+      'Achievement %',
+      'Status',
+      'Frequency',
+      'Calculation Method',
+    ];
+
+    const rows = filteredKpis.map((k) => [
+      `"${k.code}"`,
+      `"${k.name.replace(/"/g, '""')}"`,
+      `"${(k.nameAr || '').replace(/"/g, '""')}"`,
+      `"${(k.objectiveTitle || '').replace(/"/g, '""')}"`,
+      `"${k.owner.replace(/"/g, '""')}"`,
+      `"${(k.department || '').replace(/"/g, '""')}"`,
+      `"${k.target}"`,
+      `"${k.unit || '%'}"`,
+      `"${k.actual}"`,
+      `"${k.achievementPct}%"`,
+      `"${k.status}"`,
+      `"${k.frequency || 'Annual'}"`,
+      `"${(k.formula || '').replace(/"/g, '""')}"`,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `AHDA_Performance_Scorecard_${selectedYear}_${selectedQuarter}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success(
+      lang === 'ar'
+        ? 'تم تصدير تقرير الأداء بنجاح (ملف CSV تفصيلي)'
+        : 'Performance report exported successfully (CSV scorecard)'
+    );
+  };
 
   const deptPerformanceData = [
     { department: 'Strategic Dev (SDO)', score: 94.2, target: 90 },
@@ -108,14 +172,34 @@ export const PerformancePage: React.FC = () => {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsImportModalOpen(true)}
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
-          >
-            <Upload className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>{lang === 'ar' ? 'استيراد بيانات المؤشرات' : 'Import KPI Data'}</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsExecutiveBriefOpen(true)}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-gradient-to-r from-slate-900 to-blue-950 hover:from-slate-800 hover:to-blue-900 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            >
+              <FileText className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span>{lang === 'ar' ? 'تقرير الإدارة التنفيذية (PDF)' : 'Executive Brief (PDF)'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportKpiCSV}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
+            >
+              <Download className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+              <span>{lang === 'ar' ? 'تصدير بيانات الأداء (CSV)' : 'Export Report (CSV)'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsImportModalOpen(true)}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            >
+              <Upload className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span>{lang === 'ar' ? 'استيراد بيانات المؤشرات' : 'Import KPI Data'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Global Filter Bar */}
@@ -249,6 +333,12 @@ export const PerformancePage: React.FC = () => {
       <ImportKpiModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
+      />
+
+      {/* Executive Brief Dossier Modal */}
+      <ExecutiveBriefModal
+        isOpen={isExecutiveBriefOpen}
+        onClose={() => setIsExecutiveBriefOpen(false)}
       />
     </div>
   );
