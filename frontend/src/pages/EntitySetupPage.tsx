@@ -21,6 +21,7 @@ import {
   Award,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { BrandLogo } from '../components/common/BrandLogo';
 
 const COLOR_THEMES = [
   { id: 'blue', name: 'Executive Navy', hex: '#1e40af', bg: 'bg-blue-600', border: 'border-blue-600', ring: 'ring-blue-500' },
@@ -98,6 +99,7 @@ export const EntitySetupPage: React.FC = () => {
       name,
       nameAr,
       shortName,
+      shortCode: shortName,
       logo,
       themeColor,
       vision,
@@ -105,6 +107,7 @@ export const EntitySetupPage: React.FC = () => {
       mission,
       missionAr,
       values,
+      coreValues: values,
       boardChair,
       ceo,
     });
@@ -115,6 +118,7 @@ export const EntitySetupPage: React.FC = () => {
       name,
       nameAr,
       shortName,
+      shortCode: shortName,
       logo,
       themeColor,
       vision,
@@ -122,6 +126,7 @@ export const EntitySetupPage: React.FC = () => {
       mission,
       missionAr,
       values,
+      coreValues: values,
       boardChair,
       ceo,
     });
@@ -463,8 +468,8 @@ export const EntitySetupPage: React.FC = () => {
               {/* Emblem Header */}
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-xs ${selectedLogoObj.color}`}>
-                    <LogoIcon className="w-6 h-6" />
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-slate-200 shadow-xs overflow-hidden bg-white p-1">
+                    <BrandLogo size="md" variant="emblem" />
                   </div>
                   <div>
                     <h4 className="font-bold text-sm text-slate-900 leading-tight">

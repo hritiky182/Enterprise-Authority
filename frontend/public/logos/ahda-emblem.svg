@@ -1,0 +1,29 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="47" fill="url(#ahdaBg)" stroke="url(#goldRing)" stroke-width="3" />
+  <circle cx="50" cy="50" r="43" fill="none" stroke="#D97706" stroke-width="1" stroke-dasharray="2 2" opacity="0.6" />
+  <path d="M50 20L50 26M50 74L50 80M20 50L26 50M74 50L80 50" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round" opacity="0.7" />
+  <path d="M30 68H70V73C70 74 69 75 68 75H32C31 75 30 74 30 73V68Z" fill="#B45309" opacity="0.8" />
+  <path d="M34 68V64H38V68H42V64H46V68H54V64H58V68H62V64H66V68" stroke="#FDE68A" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M47.5 68L48.5 45H51.5L52.5 68H47.5Z" fill="#F59E0B" />
+  <path d="M46 54H54M47 60H53" stroke="#92400E" stroke-width="1" />
+  <path d="M50 45C45 38 35 37 26 40C34 44 42 46 49 46" fill="#10B981" />
+  <path d="M50 45C55 38 65 37 74 40C66 44 58 46 51 46" fill="#10B981" />
+  <path d="M50 44C43 33 32 30 22 31C30 36 40 40 48 44" fill="#059669" />
+  <path d="M50 44C57 33 68 30 78 31C70 36 60 40 52 44" fill="#059669" />
+  <path d="M50 43C47 30 39 23 29 21C36 28 44 35 49 43" fill="#34D399" />
+  <path d="M50 43C53 30 61 23 71 21C64 28 56 35 51 43" fill="#34D399" />
+  <path d="M50 42C50 28 47 19 50 16C53 19 50 28 50 42" fill="#FDE68A" />
+  <path d="M38 72Q50 78 62 72" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+  <defs>
+    <linearGradient id="ahdaBg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#064E3B" />
+      <stop offset="0.6" stop-color="#042F2E" />
+      <stop offset="1" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="goldRing" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A" />
+      <stop offset="0.5" stop-color="#D97706" />
+      <stop offset="1" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+</svg>

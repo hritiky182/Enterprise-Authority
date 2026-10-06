@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import { MOCK_USERS } from '../data/mockData';
 import { Building2, ShieldCheck, Lock, Mail, Key, ArrowRight, Eye, EyeOff, Sparkles, CheckCircle2, UserCheck } from 'lucide-react';
 import { Role, User } from '../types';
+import { BrandLogo } from '../components/common/BrandLogo';
 
 export const LoginPage: React.FC = () => {
   const { login, lang, setLanguage, t } = useApp();
@@ -51,19 +52,7 @@ export const LoginPage: React.FC = () => {
 
       {/* Top Header */}
       <header className="relative z-10 max-w-7xl w-full mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-900 via-slate-900 to-indigo-950 flex items-center justify-center text-white shadow-md border border-slate-700/50">
-            <Building2 className="w-5 h-5 text-blue-300" />
-          </div>
-          <div>
-            <h1 className="text-sm font-bold tracking-wider text-white uppercase leading-none font-sans">
-              {t('Enterprise Authority', 'Enterprise Authority')}
-            </h1>
-            <span className="text-[10px] text-blue-300/80 font-mono tracking-widest block uppercase mt-0.5">
-              {t('GRC & Strategy Suite', 'GRC & Strategy Suite')}
-            </span>
-          </div>
-        </div>
+        <BrandLogo size="lg" inverted={true} />
 
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center space-x-6 text-xs text-slate-400 font-mono">
