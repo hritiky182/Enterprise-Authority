@@ -18,6 +18,7 @@ import {
   Shield,
   Building2,
   UserCheck,
+  Users,
   Layers,
   Flag,
   Sparkles,
@@ -55,6 +56,7 @@ export const Sidebar: React.FC = () => {
     kpis,
     initiatives,
     organization,
+    users,
   } = useApp();
 
   const criticalRisksCount = risks.filter(
@@ -73,6 +75,13 @@ export const Sidebar: React.FC = () => {
         { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
         { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" /> },
         { name: 'Org Structure', path: '/org-structure', icon: <Network className="w-4 h-4" /> },
+        {
+          name: 'Users',
+          path: '/users',
+          icon: <Users className="w-4 h-4" />,
+          badge: `${users.length}`,
+          badgeColor: 'bg-purple-600 text-white',
+        },
         { name: 'Strategy Planning', path: '/strategy/create', icon: <Target className="w-4 h-4" /> },
         { name: 'Strategy Matrix', path: '/strategy', icon: <Layers className="w-4 h-4" /> },
         {

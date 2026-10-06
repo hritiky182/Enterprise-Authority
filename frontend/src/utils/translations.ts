@@ -309,6 +309,10 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Org Structure',
     ar: 'الهيكل التنظيمي',
   },
+  'Users': {
+    en: 'Users',
+    ar: 'المستخدمون والكوادر',
+  },
   'Export Spreadsheet': {
     en: 'Export Spreadsheet',
     ar: 'تصدير جدول البيانات',

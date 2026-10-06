@@ -29,6 +29,9 @@ import {
   ExternalLink,
   ListTree,
   Filter,
+  Flag,
+  Zap,
+  Cpu,
 } from 'lucide-react';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { toast } from 'sonner';
@@ -125,6 +128,111 @@ const PRESETS: PresetItem[] = [
     initId: 'init-aha-3',
     keyProject: 'Regional Heritage and Urban Landscape Activation',
     keyProjectAr: 'تطوير المشهد الحضري والخدمات البلدية المتكاملة',
+  },
+];
+
+const AI_KPI_SUGGESTIONS = [
+  {
+    code: 'KPI-2.1.1',
+    name: 'Event Visitor Engagement Indicator',
+    nameAr: 'مؤشر تفاعل وحضور زوار الفعاليات الإقليمية',
+    formula: '(Total Actual Event Visitors - Target Visitors) / Target * 100%',
+    unit: '%',
+    target: 75,
+    actual: 74,
+    baseline: '-',
+    target2026: '75%',
+    target2027: '80%',
+    frequency: 'Annual' as const,
+    type: 'Lagging' as const,
+    weight: 35,
+    initiative: 'Initiative 6: Raise awareness of Al-Ahsa Strategy & Digital Engagement',
+    project: 'Al-Ahsa Regional Event Storytelling Project',
+  },
+  {
+    code: 'KPI-2.1.2',
+    name: 'Digital Civic Dialogue Index',
+    nameAr: 'مؤشر التفاعل الرقمي والحوار المجتمعي مع الهيئة',
+    formula: "Average Results of Engagement Analysis Reports across Authority's Digital Platforms",
+    unit: '%',
+    target: 3.5,
+    actual: 3.2,
+    baseline: '2.00%',
+    target2026: '3.50%',
+    target2027: '4.00%',
+    frequency: 'Quarterly' as const,
+    type: 'Leading' as const,
+    weight: 30,
+    initiative: 'Initiative 7: Increase community participation in development planning',
+    project: 'Digital Platforms & Technical Integration for Civic Co-Creation',
+  },
+  {
+    code: 'KPI-2.2.1',
+    name: 'Oasis Residents Satisfaction Score',
+    nameAr: 'مؤشر رضا سكان الواحة وجودة الخدمات البلدية',
+    formula: 'Comprehensive Standardized Municipal & Living Condition Survey Score (Scale 1-100)',
+    unit: 'Score',
+    target: 85,
+    actual: 82,
+    baseline: '72',
+    target2026: '80',
+    target2027: '85',
+    frequency: 'Annual' as const,
+    type: 'Lagging' as const,
+    weight: 35,
+    initiative: 'Initiative 8: Enhance urban living standards and oasis environmental services',
+    project: 'Urban Observatory Quality of Life Index Project',
+  },
+];
+
+const AI_INITIATIVE_SUGGESTIONS = [
+  {
+    code: 'INIT-06',
+    title: 'Initiative 6: Raise awareness of Al-Ahsa Strategy & Digital Civic Engagement',
+    titleAr: 'المبادرة 6: رفع الوعي باستراتيجية تطوير الأحساء وتعزيز التفاعل الرقمي',
+    description: 'Comprehensive public awareness campaigns, multi-media storytelling of oasis heritage, and unified digital communication channels.',
+    budget: 8500000,
+    spent: 5200000,
+    owner: 'Tourism Destination Management Office',
+    department: 'Marketing & Public Relations',
+    milestones: [
+      { title: 'Develop community awareness framework & brand guide', dueDate: '2026-06-30' },
+      { title: 'Launch multimedia digital engagement portal', dueDate: '2026-10-15' },
+      { title: 'Execute regional oasis festival campaigns', dueDate: '2027-02-28' },
+    ],
+    keyProject: 'Al-Ahsa Strategy Awareness Project',
+  },
+  {
+    code: 'INIT-07',
+    title: 'Initiative 7: Increase community participation in regional development planning',
+    titleAr: 'المبادرة 7: تعزيز المشاركة المجتمعية في تخطيط مسارات التنمية الإقليمية',
+    description: 'Unified civic engagement digital portal enabling citizens to vote on regional ideas, participate in municipal surveys, and empower local community economy.',
+    budget: 12000000,
+    spent: 7800000,
+    owner: 'Strategy & Sector Development Sector',
+    department: 'Strategy Development',
+    milestones: [
+      { title: 'Digital Platforms and Technical Integration Framework', dueDate: '2026-05-15' },
+      { title: 'Unified digital civic voting & consultation portal', dueDate: '2026-12-15' },
+      { title: 'Local initiatives incubator & community impact dashboard', dueDate: '2027-03-31' },
+    ],
+    keyProject: 'Digital Platforms & Technical Integration for Community Engagement',
+  },
+  {
+    code: 'INIT-08',
+    title: 'Initiative 8: Enhance urban living standards & oasis environmental services',
+    titleAr: 'المبادرة 8: تحسين جودة الحياة الحضرية والخدمات البيئية لواحة الأحساء',
+    description: 'Upgrading recreational spaces, developing continuous green corridors, expanding pedestrian network, and monitoring living satisfaction.',
+    budget: 16500000,
+    spent: 6200000,
+    owner: 'Spatial & Urban Development Sector',
+    department: 'Urban & Rural Planning',
+    milestones: [
+      { title: 'Regional green corridor environmental baseline audit', dueDate: '2026-07-31' },
+      { title: 'Municipal park revitalizations & community sports track', dueDate: '2026-12-31' },
+      { title: 'Comprehensive civic satisfaction measurement benchmark', dueDate: '2027-04-30' },
+    ],
+    keyProject: 'Quality of Life & Oasis Civic Satisfaction Project',
   },
 ];
 
@@ -429,11 +537,15 @@ export const CreateStrategyPage: React.FC = () => {
     cascadeStrategy,
     strategyPlan,
     updateStrategyPlan,
+    addStrategyTheme,
+    addGoal,
     addObjective,
     addKPI,
     addInitiative,
     currentUser,
+    sectors,
     lang,
+    t,
   } = useApp();
 
   // 1. Institutional Strategy Core Baseline (Name, Duration, Statement)
@@ -625,6 +737,320 @@ export const CreateStrategyPage: React.FC = () => {
       lang === 'ar'
         ? `تم إنشاء المبادرة ${created.code} وربطها بالهدف`
         : `Created & linked initiative ${created.code}`
+    );
+  };
+
+  // Modals for Cards 2, 3, 4, 5, 6
+  const [isCreatePillarModalOpen, setIsCreatePillarModalOpen] = useState(false);
+  const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
+  const [isCreateObjModalOpen, setIsCreateObjModalOpen] = useState(false);
+  const [isCreateKpiModalOpen, setIsCreateKpiModalOpen] = useState(false);
+  const [isCreateInitModalOpen, setIsCreateInitModalOpen] = useState(false);
+  const [isAiKpiDrawerOpen, setIsAiKpiDrawerOpen] = useState(false);
+  const [isAiInitDrawerOpen, setIsAiInitDrawerOpen] = useState(false);
+
+  // Card 2: Pillar Modal Form States
+  const [pillarCode, setPillarCode] = useState(`ST-0${themes.length + 1}`);
+  const [pillarTitle, setPillarTitle] = useState('');
+  const [pillarTitleAr, setPillarTitleAr] = useState('');
+  const [pillarDesc, setPillarDesc] = useState('');
+  const [pillarDescAr, setPillarDescAr] = useState('');
+  const [pillarWeight, setPillarWeight] = useState(20);
+  const [pillarColor, setPillarColor] = useState('blue');
+
+  // Card 3: Goal Modal Form States
+  const [goalCode, setGoalCode] = useState(`SG-0${goals.length + 1}`);
+  const [goalTitle, setGoalTitle] = useState('');
+  const [goalTitleAr, setGoalTitleAr] = useState('');
+  const [goalDesc, setGoalDesc] = useState('');
+  const [goalThemeId, setGoalThemeId] = useState('');
+
+  // Card 4: Objective Modal Form States (matches ObjectivesPage)
+  const [formObjCode, setFormObjCode] = useState(`SO-0${objectives.length + 1}`);
+  const [formObjTitle, setFormObjTitle] = useState('');
+  const [formObjTitleAr, setFormObjTitleAr] = useState('');
+  const [formObjDesc, setFormObjDesc] = useState('');
+  const [formObjDescAr, setFormObjDescAr] = useState('');
+  const [formObjThemeId, setFormObjThemeId] = useState('');
+  const [formObjSectorId, setFormObjSectorId] = useState('');
+  const [formObjOwner, setFormObjOwner] = useState('Strategy Specialist');
+  const [formObjDept, setFormObjDept] = useState('Strategic Planning & PMO');
+  const [formObjTargetYear, setFormObjTargetYear] = useState(2026);
+  const [formObjProgress, setFormObjProgress] = useState(0);
+  const [formObjStatus, setFormObjStatus] = useState<'on-track' | 'at-risk' | 'behind' | 'achieved'>('on-track');
+
+  // Card 5: KPI Modal Form States (matches KPIsPage)
+  const [formKpiCode, setFormKpiCode] = useState(`KPI-0${kpis.length + 1}`);
+  const [formKpiName, setFormKpiName] = useState('');
+  const [formKpiNameAr, setFormKpiNameAr] = useState('');
+  const [formKpiObjId, setFormKpiObjId] = useState('');
+  const [formKpiFormula, setFormKpiFormula] = useState('');
+  const [formKpiUnit, setFormKpiUnit] = useState('%');
+  const [formKpiTarget, setFormKpiTarget] = useState(100);
+  const [formKpiActual, setFormKpiActual] = useState(0);
+  const [formKpiBaseline, setFormKpiBaseline] = useState('0%');
+  const [formKpiTarget2026, setFormKpiTarget2026] = useState('100%');
+  const [formKpiTarget2027, setFormKpiTarget2027] = useState('100%');
+  const [formKpiFrequency, setFormKpiFrequency] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Quarterly');
+  const [formKpiStatus, setFormKpiStatus] = useState<'on-track' | 'warning' | 'critical' | 'achieved'>('on-track');
+  const [formKpiType, setFormKpiType] = useState<'Leading' | 'Lagging'>('Lagging');
+  const [formKpiWeight, setFormKpiWeight] = useState(25);
+  const [formKpiStrategicInit, setFormKpiStrategicInit] = useState('');
+  const [formKpiKeyProject, setFormKpiKeyProject] = useState('');
+
+  // Card 6: Initiative Modal Form States (matches InitiativesPage)
+  const [formInitCode, setFormInitCode] = useState(`INIT-0${initiatives.length + 1}`);
+  const [formInitTitle, setFormInitTitle] = useState('');
+  const [formInitTitleAr, setFormInitTitleAr] = useState('');
+  const [formInitObjId, setFormInitObjId] = useState('');
+  const [formInitDesc, setFormInitDesc] = useState('');
+  const [formInitOwner, setFormInitOwner] = useState('Strategy Specialist');
+  const [formInitDept, setFormInitDept] = useState('Regional Transformation & Urban Planning');
+  const [formInitBudget, setFormInitBudget] = useState(12000000);
+  const [formInitSpent, setFormInitSpent] = useState(2500000);
+  const [formInitProgress, setFormInitProgress] = useState(20);
+  const [formInitStart, setFormInitStart] = useState('2026-01-01');
+  const [formInitEnd, setFormInitEnd] = useState('2027-12-31');
+  const [formInitStatus, setFormInitStatus] = useState<'Planning' | 'In Progress' | 'At Risk' | 'Completed'>('In Progress');
+  const [formInitKeyProject, setFormInitKeyProject] = useState('Al-Ahsa Strategy Awareness Project');
+  const [formInitMilestoneTitle, setFormInitMilestoneTitle] = useState('Phase 1 Detailed Master Scope Sign-off');
+  const [formInitMilestoneDate, setFormInitMilestoneDate] = useState('2026-11-30');
+
+  // AI Copilot handlers
+  const handleApplyAiKpiSuggestion = (sug: typeof AI_KPI_SUGGESTIONS[0]) => {
+    setFormKpiCode(sug.code);
+    setFormKpiName(sug.name);
+    setFormKpiNameAr(sug.nameAr);
+    setFormKpiFormula(sug.formula);
+    setFormKpiUnit(sug.unit);
+    setFormKpiTarget(sug.target);
+    setFormKpiActual(sug.actual);
+    setFormKpiBaseline(sug.baseline);
+    setFormKpiTarget2026(sug.target2026);
+    setFormKpiTarget2027(sug.target2027);
+    setFormKpiFrequency(sug.frequency);
+    setFormKpiType(sug.type);
+    setFormKpiWeight(sug.weight);
+    setFormKpiStrategicInit(sug.initiative);
+    setFormKpiKeyProject(sug.project);
+    setIsAiKpiDrawerOpen(false);
+    toast.success(
+      lang === 'ar' ? 'تم تطبيق مقترح المؤشر بالذكاء الاصطناعي بنجاح' : 'AI Copilot KPI Recommendation Applied!',
+      { description: `${sug.code}: ${sug.name}` }
+    );
+  };
+
+  const handleApplyAiInitSuggestion = (sug: typeof AI_INITIATIVE_SUGGESTIONS[0]) => {
+    setFormInitCode(sug.code);
+    setFormInitTitle(sug.title);
+    setFormInitTitleAr(sug.titleAr);
+    setFormInitDesc(sug.description);
+    setFormInitBudget(sug.budget);
+    setFormInitSpent(sug.spent);
+    setFormInitOwner(sug.owner);
+    setFormInitDept(sug.department);
+    setFormInitKeyProject(sug.keyProject);
+    setFormInitMilestoneTitle(sug.milestones[0]?.title || 'Master Scope Sign-off');
+    setFormInitMilestoneDate(sug.milestones[0]?.dueDate || '2026-11-30');
+    setIsAiInitDrawerOpen(false);
+    toast.success(
+      lang === 'ar' ? 'تم تطبيق مقترح المبادرة بالذكاء الاصطناعي بنجاح' : 'AI Copilot Initiative Recommendation Applied!',
+      { description: `${sug.code}: ${sug.title}` }
+    );
+  };
+
+  // Handlers for modal submissions
+  const handleCreatePillarSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pillarTitle.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال عنوان الركيزة' : 'Pillar title is required');
+      return;
+    }
+    const newTheme = addStrategyTheme({
+      code: pillarCode.trim() || `ST-0${themes.length + 1}`,
+      title: pillarTitle.trim(),
+      titleAr: pillarTitleAr.trim() || undefined,
+      description: pillarDesc.trim() || pillarTitle.trim(),
+      descriptionAr: pillarDescAr.trim() || undefined,
+      weight: Number(pillarWeight) || 20,
+      color: pillarColor,
+    });
+    setSelectedThemeId(newTheme.id);
+    setIsCreatePillarModalOpen(false);
+    setPillarTitle('');
+    setPillarTitleAr('');
+    setPillarDesc('');
+    setPillarDescAr('');
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء الركيزة "${newTheme.titleAr || newTheme.title}" واختيارها بنجاح`
+        : `Created Strategic Pillar "${newTheme.title}" and selected`
+    );
+  };
+
+  const handleCreateGoalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!goalTitle.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال عنوان الهدف' : 'Goal title is required');
+      return;
+    }
+    const targetThemeId = goalThemeId || selectedThemeId;
+    const newGoal = addGoal({
+      code: goalCode.trim() || `SG-0${goals.length + 1}`,
+      title: goalTitle.trim(),
+      titleAr: goalTitleAr.trim() || undefined,
+      description: goalDesc.trim() || goalTitle.trim(),
+      themeId: targetThemeId,
+    });
+    setSelectedGoalIds((prev) => Array.from(new Set([...prev, newGoal.id])));
+    setIsCreateGoalModalOpen(false);
+    setGoalTitle('');
+    setGoalTitleAr('');
+    setGoalDesc('');
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء الهدف الاستراتيجي "${newGoal.titleAr || newGoal.title}" وربطه بنجاح`
+        : `Created Strategic Goal "${newGoal.title}" and linked`
+    );
+  };
+
+  const handleCreateObjectiveSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formObjTitle.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال عنوان الهدف' : 'Objective title is required');
+      return;
+    }
+    const targetThemeId = formObjThemeId || selectedThemeId;
+    const matchedTheme = themes.find((t) => t.id === targetThemeId);
+    const matchedSector = sectors.find((s) => s.id === formObjSectorId);
+
+    const created = addObjective({
+      code: formObjCode.trim() || `SO-0${objectives.length + 1}`,
+      title: formObjTitle.trim(),
+      titleAr: formObjTitleAr.trim() || undefined,
+      description: formObjDesc.trim() || undefined,
+      descriptionAr: formObjDescAr.trim() || undefined,
+      themeId: targetThemeId,
+      themeName: matchedTheme ? matchedTheme.title : 'Strategic Theme',
+      goalId: selectedGoalIds[0] || goals[0]?.id || 'goal-1',
+      owner: formObjOwner.trim() || 'Strategy Specialist',
+      department: formObjDept.trim() || 'Strategic Planning & PMO',
+      sectorId: formObjSectorId || undefined,
+      sectorName: matchedSector ? matchedSector.name : undefined,
+      targetYear: Number(formObjTargetYear) || 2026,
+      progress: Number(formObjProgress) || 0,
+      status: formObjStatus,
+      kpiCount: 0,
+    });
+
+    setSelectedObjectiveIds((prev) => Array.from(new Set([...prev, created.id])));
+    setIsCreateObjModalOpen(false);
+    setFormObjTitle('');
+    setFormObjTitleAr('');
+    setFormObjDesc('');
+    setFormObjDescAr('');
+    toast.success(
+      lang === 'ar'
+        ? `تم حفظ ونشر الهدف الاستراتيجي "${created.titleAr || created.title}" وربطه بنجاح`
+        : `Saved and linked Strategic Objective "${created.title}"`
+    );
+  };
+
+  const handleCreateKpiSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formKpiName.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال اسم المؤشر' : 'KPI Name is required');
+      return;
+    }
+    const targetObjId = formKpiObjId || (selectedObjectiveIds[0] || objectives[0]?.id || 'obj-1');
+    const matchedObj = objectives.find((o) => o.id === targetObjId);
+    const targetVal = Number(formKpiTarget) || 100;
+    const actualVal = Number(formKpiActual) || 0;
+    const achievementPct = targetVal > 0 ? Math.min(100, Math.round((actualVal / targetVal) * 100)) : 0;
+
+    const created = addKPI({
+      code: formKpiCode.trim() || `KPI-0${kpis.length + 1}`,
+      name: formKpiName.trim(),
+      nameAr: formKpiNameAr.trim() || undefined,
+      objectiveId: targetObjId,
+      objectiveTitle: matchedObj ? matchedObj.title : 'Strategic Objective',
+      target: targetVal,
+      actual: actualVal,
+      achievementPct,
+      owner: matchedObj?.owner || 'Strategy Specialist',
+      unit: formKpiUnit || '%',
+      frequency: formKpiFrequency,
+      status: formKpiStatus,
+      formula: formKpiFormula.trim() || undefined,
+      baseline: formKpiBaseline.trim() || undefined,
+      target2026: formKpiTarget2026.trim() || undefined,
+      target2027: formKpiTarget2027.trim() || undefined,
+      type: formKpiType,
+      weight: Number(formKpiWeight) || 25,
+      strategicInitiative: formKpiStrategicInit.trim() || undefined,
+      keyProject: formKpiKeyProject.trim() || undefined,
+      pillarCode: currentTheme?.code,
+      pillarTitle: currentTheme?.title,
+    });
+
+    setSelectedKpiIds((prev) => Array.from(new Set([...prev, created.id])));
+    setIsCreateKpiModalOpen(false);
+    setFormKpiName('');
+    setFormKpiNameAr('');
+    setFormKpiFormula('');
+    toast.success(
+      lang === 'ar'
+        ? `تم حفظ ونشر المؤشر "${created.nameAr || created.name}" وربطه بنجاح`
+        : `Saved and linked KPI "${created.name}"`
+    );
+  };
+
+  const handleCreateInitSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formInitTitle.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال عنوان المبادرة' : 'Initiative Title is required');
+      return;
+    }
+    const targetObjId = formInitObjId || (selectedObjectiveIds[0] || objectives[0]?.id || 'obj-1');
+    const matchedObj = objectives.find((o) => o.id === targetObjId);
+
+    const created = addInitiative({
+      code: formInitCode.trim() || `INIT-0${initiatives.length + 1}`,
+      title: formInitTitle.trim(),
+      titleAr: formInitTitleAr.trim() || undefined,
+      objectiveId: targetObjId,
+      objectiveTitle: matchedObj ? matchedObj.title : 'Strategic Objective',
+      description: formInitDesc.trim() || undefined,
+      owner: formInitOwner.trim() || 'Strategy Specialist',
+      department: formInitDept.trim() || 'Strategic Planning & PMO',
+      budgetSAR: Number(formInitBudget) || 12000000,
+      spentSAR: Number(formInitSpent) || 0,
+      progress: Number(formInitProgress) || 20,
+      startDate: formInitStart || '2026-01-01',
+      endDate: formInitEnd || '2027-12-31',
+      status: formInitStatus,
+      risksCount: 0,
+      actionsCount: 0,
+      keyProjects: formInitKeyProject.trim() ? [formInitKeyProject.trim()] : undefined,
+      milestones: [
+        {
+          id: `ms-${Date.now()}`,
+          title: formInitMilestoneTitle.trim() || 'Phase 1 Master Scope Sign-off',
+          dueDate: formInitMilestoneDate || '2026-11-30',
+          status: 'In Progress',
+        },
+      ],
+    });
+
+    setSelectedInitiativeIds((prev) => Array.from(new Set([...prev, created.id])));
+    setIsCreateInitModalOpen(false);
+    setFormInitTitle('');
+    setFormInitTitleAr('');
+    setFormInitDesc('');
+    toast.success(
+      lang === 'ar'
+        ? `تم حفظ ونشر المبادرة "${created.titleAr || created.title}" وربطها بنجاح`
+        : `Saved and linked Initiative "${created.title}"`
     );
   };
 
@@ -996,14 +1422,27 @@ export const CreateStrategyPage: React.FC = () => {
                 </div>
               </div>
 
-              <Link
-                to="/hierarchy-tree"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>{lang === 'ar' ? 'شجرة المحاور ↗' : 'Hierarchy Tree ↗'}</span>
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPillarCode(`ST-0${themes.length + 1}`);
+                    setIsCreatePillarModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? '+ إنشاء ركيزة' : '+ Create Pillar'}</span>
+                </button>
+                <Link
+                  to="/hierarchy-tree"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>{lang === 'ar' ? 'شجرة المحاور ↗' : 'Hierarchy Tree ↗'}</span>
+                </Link>
+              </div>
             </div>
 
             <div className="space-y-3">
@@ -1067,6 +1506,18 @@ export const CreateStrategyPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGoalCode(`SG-0${goals.length + 1}`);
+                    setGoalThemeId(selectedThemeId);
+                    setIsCreateGoalModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? '+ إنشاء هدف' : '+ Create Goal'}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setOnlyShowThemeGoals(!onlyShowThemeGoals)}
@@ -1135,11 +1586,22 @@ export const CreateStrategyPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowQuickObj(!showQuickObj)}
-                  className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-semibold border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                  onClick={() => {
+                    setFormObjCode(`SO-0${objectives.length + 1}`);
+                    setFormObjThemeId(selectedThemeId);
+                    setIsCreateObjModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? 'إضافة هدف سريع' : '+ Quick Add Objective'}</span>
+                  <span>{lang === 'ar' ? '+ إنشاء هدف' : '+ Create Objective'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowQuickObj(!showQuickObj)}
+                  className="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-semibold border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{lang === 'ar' ? 'إضافة سريعة' : 'Quick Add'}</span>
                 </button>
                 <Link
                   to="/objectives"
@@ -1301,11 +1763,22 @@ export const CreateStrategyPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowQuickKpi(!showQuickKpi)}
-                  className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[11px] font-semibold border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                  onClick={() => {
+                    setFormKpiCode(`KPI-0${kpis.length + 1}`);
+                    setFormKpiObjId(selectedObjectiveIds[0] || objectives[0]?.id || 'obj-1');
+                    setIsCreateKpiModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? 'إضافة مؤشر سريع' : '+ Quick Add KPI'}</span>
+                  <span>{lang === 'ar' ? '+ إنشاء مؤشر' : '+ Create KPI'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowQuickKpi(!showQuickKpi)}
+                  className="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-semibold border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{lang === 'ar' ? 'إضافة سريعة' : 'Quick Add'}</span>
                 </button>
                 <Link
                   to="/kpis"
@@ -1475,11 +1948,22 @@ export const CreateStrategyPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowQuickInit(!showQuickInit)}
-                  className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-[11px] font-semibold border border-amber-200 transition-colors flex items-center gap-1 cursor-pointer"
+                  onClick={() => {
+                    setFormInitCode(`INIT-0${initiatives.length + 1}`);
+                    setFormInitObjId(selectedObjectiveIds[0] || objectives[0]?.id || 'obj-1');
+                    setIsCreateInitModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? 'إضافة مبادرة سريعة' : '+ Quick Add Initiative'}</span>
+                  <span>{lang === 'ar' ? '+ إنشاء مبادرة' : '+ Create Initiative'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowQuickInit(!showQuickInit)}
+                  className="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-[10px] font-semibold border border-amber-200 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{lang === 'ar' ? 'إضافة سريعة' : 'Quick Add'}</span>
                 </button>
                 <Link
                   to="/initiatives"
@@ -1910,6 +2394,985 @@ export const CreateStrategyPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ======================================================== */}
+      {/* MODAL 2: Create Strategic Pillar (Theme)                 */}
+      {/* ======================================================== */}
+      {isCreatePillarModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {lang === 'ar' ? 'إنشاء ركيزة استراتيجية جديدة' : 'Create Strategic Pillar (Theme)'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ar'
+                      ? 'حدد رمز الركيزة، الوزن والوصف، وسيتم ربطها فوراً بهذه الاستراتيجية'
+                      : 'Define pillar code, weighting, titles, and auto-link to this strategy cascade'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreatePillarModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePillarSubmit} className="p-5 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز الركيزة' : 'Pillar Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={pillarCode}
+                    onChange={(e) => setPillarCode(e.target.value)}
+                    placeholder="e.g. 06 or ST-06"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الوزن النسبي (%)' : 'Weight (%)'}
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={pillarWeight}
+                    onChange={(e) => setPillarWeight(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الركيزة (EN)' : 'Pillar Title (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={pillarTitle}
+                  onChange={(e) => setPillarTitle(e.target.value)}
+                  placeholder="e.g. Sustainable Digital Innovation & AI"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الركيزة (AR)' : 'Pillar Title (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={pillarTitleAr}
+                  onChange={(e) => setPillarTitleAr(e.target.value)}
+                  placeholder="مثال: الابتكار الرقمي والذكاء الاصطناعي المستدام"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-sans focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف الاستراتيجي (EN)' : 'Description (English)'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={pillarDesc}
+                  onChange={(e) => setPillarDesc(e.target.value)}
+                  placeholder="Strategic description and primary institutional focus..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'اللون المميز' : 'Theme Accent Color'}
+                </label>
+                <select
+                  value={pillarColor}
+                  onChange={(e) => setPillarColor(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+                >
+                  <option value="blue">Blue (أزرق)</option>
+                  <option value="emerald">Emerald (زمردي)</option>
+                  <option value="teal">Teal (سماوي مائي)</option>
+                  <option value="indigo">Indigo (نيلي)</option>
+                  <option value="purple">Purple (بنفسجي)</option>
+                  <option value="amber">Amber (كهرماني)</option>
+                  <option value="rose">Rose (وردي)</option>
+                </select>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreatePillarModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ وربط الركيزة' : 'Save & Link Pillar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 3: Create Strategic Goal                           */}
+      {/* ======================================================== */}
+      {isCreateGoalModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
+                  <Target className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {lang === 'ar' ? 'إنشاء هدف استراتيجي جديد' : 'Create Strategic Goal'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ar'
+                      ? 'حدد الهدف الاستراتيجي ومواءمته مع الركيزة المختارة'
+                      : 'Define strategic goal and align under active organizational pillar'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreateGoalModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateGoalSubmit} className="p-5 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز الهدف' : 'Goal Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={goalCode}
+                    onChange={(e) => setGoalCode(e.target.value)}
+                    placeholder="e.g. 2.1 or SG-06"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الركيزة التابعة' : 'Strategic Pillar'}
+                  </label>
+                  <select
+                    value={goalThemeId || selectedThemeId}
+                    onChange={(e) => setGoalThemeId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+                  >
+                    {themes.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.code} - {t.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الهدف الاستراتيجي (EN)' : 'Goal Title (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={goalTitle}
+                  onChange={(e) => setGoalTitle(e.target.value)}
+                  placeholder="e.g. Enrich Community Engagement & Heritage Culture"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الهدف الاستراتيجي (AR)' : 'Goal Title (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={goalTitleAr}
+                  onChange={(e) => setGoalTitleAr(e.target.value)}
+                  placeholder="مثال: إثراء التفاعل المجتمعي وثقافة التراث"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-sans focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'وصف الهدف الاستراتيجي' : 'Goal Description'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={goalDesc}
+                  onChange={(e) => setGoalDesc(e.target.value)}
+                  placeholder="Strategic purpose and high-level outcome..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateGoalModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ وربط الهدف' : 'Save & Link Goal'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 4: Create Strategic Objective (Full Modal)         */}
+      {/* ======================================================== */}
+      {isCreateObjModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                  <Flag className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {lang === 'ar' ? 'إنشاء هدف استراتيجي وتكتيكي جديد (OKR)' : 'Create Strategic Objective (Tactical OKR)'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ar'
+                      ? 'نفس النموذج المعتمد بسجل الأهداف مع تفاصيل المالك والوصف والسنة المستهدفة'
+                      : 'Comprehensive objective form matching Objectives Register'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreateObjModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateObjectiveSubmit} className="p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز الهدف' : 'Objective Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formObjCode}
+                    onChange={(e) => setFormObjCode(e.target.value)}
+                    placeholder="SO-06 or 2.1"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-indigo-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'سنة الاستهداف' : 'Target Year'} *
+                  </label>
+                  <input
+                    type="number"
+                    value={formObjTargetYear}
+                    onChange={(e) => setFormObjTargetYear(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-indigo-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الهدف بالإنجليزية' : 'Objective Title (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formObjTitle}
+                  onChange={(e) => setFormObjTitle(e.target.value)}
+                  placeholder="e.g. Elevate Sustainable Heritage & Agri-Tourism Capacity"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان الهدف بالعربية' : 'Objective Title (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={formObjTitleAr}
+                  onChange={(e) => setFormObjTitleAr(e.target.value)}
+                  placeholder="مثال: رفع القدرة الاستيعابية للسياحة الزراعية والتراث المستدام"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق الاستراتيجي (EN)' : 'Strategic Description (EN)'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={formObjDesc}
+                  onChange={(e) => setFormObjDesc(e.target.value)}
+                  placeholder="Detailed strategic statement, scope, target audience, and expected outcome..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق الاستراتيجي (AR)' : 'Strategic Description (AR)'}
+                </label>
+                <textarea
+                  rows={2}
+                  dir="rtl"
+                  value={formObjDescAr}
+                  onChange={(e) => setFormObjDescAr(e.target.value)}
+                  placeholder="النطاق الاستراتيجي للهدف، والجهات المستهدفة، والمخرجات المرجوة..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الركيزة الاستراتيجية' : 'Strategic Pillar'} *
+                  </label>
+                  <select
+                    value={formObjThemeId || selectedThemeId}
+                    onChange={(e) => setFormObjThemeId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600 cursor-pointer"
+                  >
+                    {themes.map((th) => (
+                      <option key={th.id} value={th.id}>
+                        {th.code} - {th.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'القطاع المؤسسي' : 'Sector Alignment'}
+                  </label>
+                  <select
+                    value={formObjSectorId}
+                    onChange={(e) => setFormObjSectorId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600 cursor-pointer"
+                  >
+                    <option value="">{lang === 'ar' ? 'عام / غير محدد' : 'General / Central'}</option>
+                    {sectors.map((sec) => (
+                      <option key={sec.id} value={sec.id}>
+                        {sec.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسؤول' : 'Owner'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formObjOwner}
+                    onChange={(e) => setFormObjOwner(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الإدارة' : 'Department'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formObjDept}
+                    onChange={(e) => setFormObjDept(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الحالة الأولية' : 'Initial Status'}
+                  </label>
+                  <select
+                    value={formObjStatus}
+                    onChange={(e) => setFormObjStatus(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-600 cursor-pointer"
+                  >
+                    <option value="on-track">{lang === 'ar' ? 'على المسار' : 'On Track'}</option>
+                    <option value="at-risk">{lang === 'ar' ? 'معرض للخطر' : 'At Risk'}</option>
+                    <option value="behind">{lang === 'ar' ? 'متأخر' : 'Behind'}</option>
+                    <option value="achieved">{lang === 'ar' ? 'مكتمل' : 'Achieved'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'نسبة الإنجاز الحالية (%)' : 'Current Progress (%)'}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formObjProgress}
+                    onChange={(e) => setFormObjProgress(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-indigo-600"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateObjModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ ونشر الهدف' : 'Save & Publish Objective'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 5: Create KPI (Full Modal with AI Copilot)         */}
+      {/* ======================================================== */}
+      {isCreateKpiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {lang === 'ar' ? 'إنشاء مؤشر أداء رئيسي جديد (KPI)' : 'Create Key Performance Indicator (KPI)'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ar'
+                      ? 'نموذج المؤشرات المتكامل مع معادلة الحساب والمستهدفات ودعم الذكاء الاصطناعي'
+                      : 'Comprehensive KPI modal matching KPIs Register with AI Copilot support'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreateKpiModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* AI Copilot Suggestion Banner */}
+            <div className="p-4 bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border-b border-indigo-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-purple-900">
+                  <Sparkles className="w-4 h-4 text-purple-600 animate-pulse" />
+                  <span>{lang === 'ar' ? 'مساعد الذكاء الاصطناعي لاقتراح المؤشرات' : 'AI Copilot KPI Recommender'}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAiKpiDrawerOpen(!isAiKpiDrawerOpen)}
+                  className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                >
+                  <Cpu className="w-3 h-3" />
+                  <span>{isAiKpiDrawerOpen ? (lang === 'ar' ? 'إغلاق المقترحات' : 'Hide Suggestions') : (lang === 'ar' ? 'عرض مقترحات الهيئة' : 'View AI Recommendations')}</span>
+                </button>
+              </div>
+
+              {isAiKpiDrawerOpen && (
+                <div className="mt-3 space-y-2 animate-in fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {AI_KPI_SUGGESTIONS.map((sug) => (
+                      <div
+                        key={sug.code}
+                        className="p-2.5 bg-white rounded-xl border border-purple-200/80 shadow-2xs flex flex-col justify-between text-left"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono font-bold text-[10px] text-purple-700">{sug.code}</span>
+                            <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-indigo-50 text-indigo-700">
+                              {sug.type}
+                            </span>
+                          </div>
+                          <div className="font-bold text-[11px] text-slate-900 line-clamp-1">
+                            {lang === 'ar' ? sug.nameAr : sug.name}
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
+                            Target: {sug.target2026}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyAiKpiSuggestion(sug)}
+                          className="mt-2 w-full py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 rounded-lg text-[10px] font-semibold cursor-pointer text-center"
+                        >
+                          {lang === 'ar' ? 'تطبيق هذا المؤشر' : 'Apply Preset'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleCreateKpiSubmit} className="p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز المؤشر' : 'KPI Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formKpiCode}
+                    onChange={(e) => setFormKpiCode(e.target.value)}
+                    placeholder="KPI-2.1.1"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-emerald-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الهدف الاستراتيجي المرتبط' : 'Linked Objective'} *
+                  </label>
+                  <select
+                    value={formKpiObjId || (selectedObjectiveIds[0] || objectives[0]?.id || '')}
+                    onChange={(e) => setFormKpiObjId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-emerald-600 cursor-pointer"
+                  >
+                    {objectives.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.code} - {o.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'اسم المؤشر بالإنجليزية' : 'Indicator Name (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formKpiName}
+                  onChange={(e) => setFormKpiName(e.target.value)}
+                  placeholder="e.g. Cultural Event Visitor Indicator"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'اسم المؤشر بالعربية' : 'Indicator Name (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={formKpiNameAr}
+                  onChange={(e) => setFormKpiNameAr(e.target.value)}
+                  placeholder="مثال: مؤشر زوار الفعاليات الثقافية الإقليمية"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-emerald-600 text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'معادلة حساب المؤشر الرياضية' : 'Indicator Calculation Formula'}
+                </label>
+                <input
+                  type="text"
+                  value={formKpiFormula}
+                  onChange={(e) => setFormKpiFormula(e.target.value)}
+                  placeholder="(Total Actual Event Visitors - Target Visitors) / Target * 100%"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-700 mb-1 uppercase font-mono">
+                    {lang === 'ar' ? 'نوع المؤشر' : 'KPI Type'}
+                  </label>
+                  <select
+                    value={formKpiType}
+                    onChange={(e) => setFormKpiType(e.target.value as any)}
+                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-md font-semibold text-slate-800"
+                  >
+                    <option value="Lagging">{lang === 'ar' ? 'أثر (Lagging)' : 'Lagging'}</option>
+                    <option value="Leading">{lang === 'ar' ? 'استباقي (Leading)' : 'Leading'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-700 mb-1 uppercase font-mono">
+                    {lang === 'ar' ? 'الوزن النسبي (%)' : 'Weight (%)'}
+                  </label>
+                  <input
+                    type="number"
+                    value={formKpiWeight}
+                    onChange={(e) => setFormKpiWeight(Number(e.target.value))}
+                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-md font-mono font-bold text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-700 mb-1 uppercase font-mono">
+                    {lang === 'ar' ? 'وحدة القياس' : 'Unit'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formKpiUnit}
+                    onChange={(e) => setFormKpiUnit(e.target.value)}
+                    placeholder="%, Score, SAR"
+                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-md font-mono text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-700 mb-1 uppercase font-mono">
+                    {lang === 'ar' ? 'دورية القياس' : 'Frequency'}
+                  </label>
+                  <select
+                    value={formKpiFrequency}
+                    onChange={(e) => setFormKpiFrequency(e.target.value as any)}
+                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-md text-slate-800"
+                  >
+                    <option value="Annual">{lang === 'ar' ? 'سنوي' : 'Annual'}</option>
+                    <option value="Quarterly">{lang === 'ar' ? 'ربع سنوي' : 'Quarterly'}</option>
+                    <option value="Monthly">{lang === 'ar' ? 'شهري' : 'Monthly'}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'خط الأساس' : 'Baseline'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formKpiBaseline}
+                    onChange={(e) => setFormKpiBaseline(e.target.value)}
+                    placeholder="e.g. 50%"
+                    className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-blue-700 mb-1">
+                    {lang === 'ar' ? 'مستهدف 2026' : 'Target 2026'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formKpiTarget2026}
+                    onChange={(e) => setFormKpiTarget2026(e.target.value)}
+                    placeholder="e.g. 75%"
+                    className="w-full px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-indigo-700 mb-1">
+                    {lang === 'ar' ? 'مستهدف 2027' : 'Target 2027'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formKpiTarget2027}
+                    onChange={(e) => setFormKpiTarget2027(e.target.value)}
+                    placeholder="e.g. 85%"
+                    className="w-full px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-900 font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateKpiModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ ونشر المؤشر' : 'Save & Publish KPI'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 6: Create Initiative (Full Modal with AI Copilot)  */}
+      {/* ======================================================== */}
+      {isCreateInitModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {lang === 'ar' ? 'إنشاء مبادرة استراتيجية ومشروع ريادي' : 'Create Strategic Initiative & Flagship Project'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ar'
+                      ? 'نموذج المبادرات المتكامل مع الميزانية (SAR M) والمخرجات ودعم الذكاء الاصطناعي'
+                      : 'Comprehensive initiative form matching Initiatives Register with AI Copilot support'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCreateInitModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* AI Copilot Suggestion Banner */}
+            <div className="p-4 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-100/50 border-b border-amber-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
+                  <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
+                  <span>{lang === 'ar' ? 'مساعد الذكاء الاصطناعي لاقتراح حزم المبادرات' : 'AI Copilot Initiative Generator'}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAiInitDrawerOpen(!isAiInitDrawerOpen)}
+                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                >
+                  <Cpu className="w-3 h-3" />
+                  <span>{isAiInitDrawerOpen ? (lang === 'ar' ? 'إغلاق المقترحات' : 'Hide Suggestions') : (lang === 'ar' ? 'عرض مبادرات الهيئة الريادية' : 'View Flagship Packages')}</span>
+                </button>
+              </div>
+
+              {isAiInitDrawerOpen && (
+                <div className="mt-3 space-y-2 animate-in fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {AI_INITIATIVE_SUGGESTIONS.map((sug) => (
+                      <div
+                        key={sug.code}
+                        className="p-2.5 bg-white rounded-xl border border-amber-200 shadow-2xs flex flex-col justify-between text-left"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono font-bold text-[10px] text-amber-700">{sug.code}</span>
+                            <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-50 text-amber-800">
+                              SAR {(sug.budget / 1000000).toFixed(1)}M
+                            </span>
+                          </div>
+                          <div className="font-bold text-[11px] text-slate-900 line-clamp-1">
+                            {lang === 'ar' ? sug.titleAr : sug.title}
+                          </div>
+                          <div className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                            {sug.description}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyAiInitSuggestion(sug)}
+                          className="mt-2 w-full py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg text-[10px] font-semibold cursor-pointer text-center"
+                        >
+                          {lang === 'ar' ? 'تطبيق هذه المبادرة' : 'Apply Package'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleCreateInitSubmit} className="p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز المبادرة' : 'Initiative Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formInitCode}
+                    onChange={(e) => setFormInitCode(e.target.value)}
+                    placeholder="INIT-06"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الهدف الاستراتيجي المرتبط' : 'Linked Objective'} *
+                  </label>
+                  <select
+                    value={formInitObjId || (selectedObjectiveIds[0] || objectives[0]?.id || '')}
+                    onChange={(e) => setFormInitObjId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer"
+                  >
+                    {objectives.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.code} - {o.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان المبادرة بالإنجليزية' : 'Initiative Title (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formInitTitle}
+                  onChange={(e) => setFormInitTitle(e.target.value)}
+                  placeholder="e.g. Raise Awareness of Al-Ahsa Regional Strategy"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'عنوان المبادرة بالعربية' : 'Initiative Title (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={formInitTitleAr}
+                  onChange={(e) => setFormInitTitleAr(e.target.value)}
+                  placeholder="مثال: رفع الوعي باستراتيجية تطوير الأحساء والمشاركة المجتمعية"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-amber-600 text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'المشروع الريادي الرئيسي (Flagship Project)' : 'Flagship Project Name'}
+                </label>
+                <input
+                  type="text"
+                  value={formInitKeyProject}
+                  onChange={(e) => setFormInitKeyProject(e.target.value)}
+                  placeholder="e.g. Al-Ahsa Regional Event Storytelling Project"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الميزانية المعتمدة (SAR)' : 'Total Budget (SAR)'}
+                  </label>
+                  <input
+                    type="number"
+                    value={formInitBudget}
+                    onChange={(e) => setFormInitBudget(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسؤول' : 'Owner'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formInitOwner}
+                    onChange={(e) => setFormInitOwner(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الإدارة المنفذة' : 'Department'}
+                </label>
+                <input
+                  type="text"
+                  value={formInitDept}
+                  onChange={(e) => setFormInitDept(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateInitModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ ونشر المبادرة' : 'Save & Publish Initiative'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -145,6 +145,8 @@ interface AppContextType {
 
   themes: StrategicTheme[];
   goals: StrategicGoal[];
+  addStrategyTheme: (theme: Omit<StrategicTheme, 'id'>) => StrategicTheme;
+  addGoal: (goal: Omit<StrategicGoal, 'id'>) => StrategicGoal;
   objectives: StrategicObjective[];
   initiatives: StrategicInitiative[];
   kpis: KPI[];
@@ -190,6 +192,7 @@ interface AppContextType {
 
   users: User[];
   addUser: (user: Omit<User, 'id'>) => User;
+  updateUser: (userId: string, updates: Partial<User>) => void;
   updateUserRole: (userId: string, newRole: Role) => void;
   deleteUser: (userId: string) => void;
   importUsers: (newUsers: Partial<User>[]) => number;
@@ -917,6 +920,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return newUser;
   };
 
+  const updateUser = (userId: string, updates: Partial<User>) => {
+    setUsers((prev) => {
+      const updated = prev.map((u) => (u.id === userId ? { ...u, ...updates } : u));
+      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(
+      lang === 'ar'
+        ? 'تم تحديث بيانات المستخدم بنجاح'
+        : 'User updated successfully'
+    );
+  };
+
   const updateUserRole = (userId: string, newRole: Role) => {
     setUsers((prev) => {
       const updated = prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
@@ -1349,6 +1365,44 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
+  const addStrategyTheme = (themeData: Omit<StrategicTheme, 'id'>): StrategicTheme => {
+    const newTheme: StrategicTheme = {
+      ...themeData,
+      id: `theme-${Date.now()}`,
+      isCustom: true,
+    };
+    setThemes((prev) => {
+      const updated = [...prev, newTheme];
+      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء الركيزة الاستراتيجية "${newTheme.titleAr || newTheme.title}"`
+        : `Created Strategic Pillar "${newTheme.title}"`
+    );
+    return newTheme;
+  };
+
+  const addGoal = (goalData: Omit<StrategicGoal, 'id'>): StrategicGoal => {
+    const newGoal: StrategicGoal = {
+      ...goalData,
+      id: `goal-${Date.now()}`,
+      isCustom: true,
+    };
+    setGoals((prev) => {
+      const updated = [...prev, newGoal];
+      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(
+      lang === 'ar'
+        ? `تم إنشاء الهدف الاستراتيجي "${newGoal.titleAr || newGoal.title}"`
+        : `Created Strategic Goal "${newGoal.title}"`
+    );
+    return newGoal;
+  };
+
   const deleteStrategyTheme = (themeId: string) => {
     setThemes((prev) => {
       const updated = prev.filter((t) => t.id !== themeId);
@@ -1582,7 +1636,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateRiskStatus,
         importRisks,
         themes,
+        addStrategyTheme,
         goals,
+        addGoal,
         objectives,
         initiatives,
         kpis,
@@ -1610,6 +1666,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         importDocuments,
         users,
         addUser,
+        updateUser,
         updateUserRole,
         deleteUser,
         importUsers,

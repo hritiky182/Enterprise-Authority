@@ -18,6 +18,7 @@ import { ObjectivesPage } from './pages/ObjectivesPage';
 import { KPIsPage } from './pages/KPIsPage';
 import { InitiativesPage } from './pages/InitiativesPage';
 import { OrgStructurePage } from './pages/OrgStructurePage';
+import { UsersPage } from './pages/UsersPage';
 import { PerformancePage } from './pages/PerformancePage';
 import { EnterpriseRiskPage } from './pages/EnterpriseRiskPage';
 import { CyberRiskPage } from './pages/CyberRiskPage';
@@ -122,6 +123,7 @@ const AppLayout: React.FC = () => {
             <Route path="/kpis" element={<ProtectedRoute path="/kpis" element={<KPIsPage />} />} />
             <Route path="/initiatives" element={<ProtectedRoute path="/initiatives" element={<InitiativesPage />} />} />
             <Route path="/org-structure" element={<ProtectedRoute path="/org-structure" element={<OrgStructurePage />} />} />
+            <Route path="/users" element={<ProtectedRoute path="/users" element={<UsersPage />} />} />
             <Route path="/performance" element={<ProtectedRoute path="/performance" element={<PerformancePage />} />} />
             <Route path="/enterprise-risk" element={<ProtectedRoute path="/enterprise-risk" element={<EnterpriseRiskPage />} />} />
             <Route path="/cyber-risk" element={<ProtectedRoute path="/cyber-risk" element={<CyberRiskPage />} />} />
