@@ -302,7 +302,7 @@ export const ImportRiskModal: React.FC<ImportRiskModalProps> = ({ isOpen, onClos
               onClick={() => {
                 setActiveTab('preset');
                 setParsedRisks(DEMO_PRESET_RISKS);
-                setFileName('Demo Preset: Cybersecurity & Supply Chain Risks');
+                setFileName('Standard Preset: Cybersecurity & Supply Chain Risks');
                 setParseError(null);
               }}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer ${
@@ -310,7 +310,7 @@ export const ImportRiskModal: React.FC<ImportRiskModalProps> = ({ isOpen, onClos
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Demo Sample Preset</span>
+              <span>Standard Risk Preset</span>
             </button>
           </div>
 

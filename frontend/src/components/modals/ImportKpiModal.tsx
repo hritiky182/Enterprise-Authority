@@ -154,7 +154,7 @@ export const ImportKpiModal: React.FC<ImportKpiModalProps> = ({ isOpen, onClose 
       };
     });
     setParsedRows(updates);
-    setFileName('Demo Preset: Q3 Enterprise Actuals');
+    setFileName('Standard Preset: Q3 Enterprise Actuals');
     setParseError(null);
   };
 
@@ -270,7 +270,7 @@ export const ImportKpiModal: React.FC<ImportKpiModalProps> = ({ isOpen, onClose 
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Demo Q3 Preset</span>
+              <span>Standard Q3 Preset</span>
             </button>
           </div>
 

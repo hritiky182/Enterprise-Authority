@@ -135,7 +135,10 @@ export const DashboardPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
-              <Sparkles className="w-4 h-4" />
+              <span className="font-bold uppercase text-emerald-400">
+                {lang === 'ar' ? 'المرحلة 9 • مسار الاستراتيجية' : 'STEP 9 • STRATEGY JOURNEY'}
+              </span>
+              <span className="text-slate-500">/</span>
               <span>{t('ENTERPRISE EXECUTIVE COMMAND CENTER')}</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-sans">

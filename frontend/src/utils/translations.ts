@@ -1689,8 +1689,12 @@ export const TRANSLATIONS: TranslationDictionary = {
   },
 
   'Reset Demo Strategies': {
-    en: 'Reset Demo Strategies',
-    ar: 'إعادة ضبط الاستراتيجيات التجريبية',
+    en: 'Reset Baseline Strategy',
+    ar: 'إعادة ضبط الاستراتيجية الأساسية',
+  },
+  'Reset Baseline Strategy': {
+    en: 'Reset Baseline Strategy',
+    ar: 'إعادة ضبط الاستراتيجية الأساسية',
   },
 
   // Login & Executive Portal Authentication
@@ -1703,8 +1707,8 @@ export const TRANSLATIONS: TranslationDictionary = {
     ar: 'الإصدار المؤسسي V3.4',
   },
   'EXECUTIVE DEMONSTRATION PLATFORM': {
-    en: 'EXECUTIVE DEMONSTRATION PLATFORM',
-    ar: 'منصة العرض التجريبية التنفيذية',
+    en: 'EXECUTIVE STRATEGY SUITE',
+    ar: 'المنصة التنفيذية لإدارة الاستراتيجية',
   },
   'Institutional Strategy, Risk & Governance Suite': {
     en: 'Institutional Strategy, Risk & Governance Suite',

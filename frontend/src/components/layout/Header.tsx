@@ -38,6 +38,8 @@ export const Header: React.FC = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const rolesList: Role[] = [
+    'Strategy Specialist',
+    'Strategy Manager',
     'Authority Board & CEO',
     'Sector Director General',
     'Department Manager',
@@ -185,17 +187,23 @@ export const Header: React.FC = () => {
             onClick={() => setShowRoleDropdown(!showRoleDropdown)}
             className="flex items-center gap-2 pl-2 pr-1.5 py-1 rounded-lg border border-slate-200/80 hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="w-7 h-7 rounded-full object-cover border border-blue-500/50"
-            />
+            {currentUser.avatar ? (
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="w-7 h-7 rounded-full object-cover border border-blue-500/50"
+              />
+            ) : (
+              <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center border border-blue-200">
+                <Shield className="w-3.5 h-3.5 text-blue-700" />
+              </div>
+            )}
             <div className="hidden lg:block text-start">
-              <div className="text-xs font-semibold text-slate-900 leading-tight">
-                {currentUser.name}
+              <div className="text-xs font-bold text-slate-900 leading-tight">
+                {t(currentUser.role)}
               </div>
               <div className="text-[10px] text-blue-700 font-medium leading-tight">
-                {t(currentUser.role)}
+                {currentUser.department}
               </div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -204,7 +212,7 @@ export const Header: React.FC = () => {
           {showRoleDropdown && (
             <div className={`absolute ${lang === 'ar' ? 'left-0' : 'right-0'} mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-50 animate-in fade-in slide-in-from-top-2`}>
               <div className="p-2.5 border-b border-slate-100 mb-2 bg-slate-50/70 rounded-lg">
-                <div className="text-xs font-bold text-slate-900">{currentUser.name}</div>
+                <div className="text-xs font-bold text-slate-900">{t(currentUser.role)}</div>
                 <div className="text-[11px] text-slate-500 truncate">{currentUser.email}</div>
                 <div className="mt-1.5 flex items-center justify-between">
                   <div className="flex items-center gap-1 text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded font-mono font-medium border border-blue-200/60">

@@ -21,30 +21,22 @@ import {
 export const DEMO_JOURNEY_STEPS = [
   {
     step: 1,
-    title: 'Login (Strategy Specialist)',
-    titleAr: 'تسجيل الدخول (أخصائي الاستراتيجية)',
-    path: '/login',
-    storyCue: 'Dedicated Strategy Specialist persona (Dr. Sarah Al-Rashid) with single-click authentication and automated onboarding.',
-    storyCueAr: 'تسجيل دخول أخصائي الاستراتيجية (د. سارة الرشيد) بنقرة واحدة مع تهيئة الصلاحيات الفورية.',
+    title: 'Entity Identity & Branding',
+    titleAr: 'إعداد وهوية المنظومة',
+    path: '/organization/setup',
+    storyCue: 'Configure corporate identity: official branding, emblem, palette, vision, mission & core values.',
+    storyCueAr: 'تخصيص الهوية المؤسسية الكاملة للهيئة: الشعار، الألوان، الرؤية، الرسالة، والقيم الاستراتيجية.',
   },
   {
     step: 2,
-    title: 'Entity Branding & Setup',
-    titleAr: 'إعداد وهوية المنظومة',
-    path: '/organization/setup',
-    storyCue: 'Demonstrate white-label customization, corporate emblem, brand palette, vision, mission & core values.',
-    storyCueAr: 'إظهار التخصيص الكامل لشعار المنظومة، وهوية الألوان، والرؤية، والرسالة، والقيم الاستراتيجية.',
+    title: 'Org Hierarchy & Personnel Roles',
+    titleAr: 'الهيكل التنظيمي وأدوار الموظفين',
+    path: '/org-structure',
+    storyCue: 'Manage organizational hierarchy: CEO → Sectors → Units → Personnel, add people and assign roles.',
+    storyCueAr: 'استعراض وإدارة الهيكل التنظيمي المتسلسل: الرئيس التنفيذي ← القطاعات ← الوحدات، وإضافة الموظفين وتعيين الأدوار.',
   },
   {
     step: 3,
-    title: 'Org Hierarchy & Permissions',
-    titleAr: 'الهيكل التنظيمي والصلاحيات',
-    path: '/org-structure',
-    storyCue: 'Show live hierarchy from CEO → 5 Sectors → Units → Users with interactive editable units & RBAC matrix.',
-    storyCueAr: 'استعراض الهيكل التنفيذي المتسلسل: الرئيس التنفيذي ← 5 قطاعات ← الإدارات والموظفون مع تعديل الصلاحيات.',
-  },
-  {
-    step: 4,
     title: 'Strategy Planning & Cascade',
     titleAr: 'التخطيط الاستراتيجي والمواءمة',
     path: '/strategy/create',
@@ -52,39 +44,39 @@ export const DEMO_JOURNEY_STEPS = [
     storyCueAr: 'تحديد اسم الاستراتيجية والمدى الزمني ووثيقة التكليف، ثم ربط الركائز ← الأهداف ← المؤشرات ← المبادرات.',
   },
   {
-    step: 5,
+    step: 4,
     title: 'Objectives Management',
     titleAr: 'سجل المستهدفات التكتيكية',
     path: '/objectives',
-    storyCue: 'Demonstrate objective ownership, target horizons (2026/2027), department alignment, and progress tracking.',
-    storyCueAr: 'إبراز ملكية المستهدفات، والمدى الزمني، ومسؤولية الإدارات، ومتابعة نسب الإنجاز الفعلي.',
+    storyCue: 'Manage objective ownership, strategic scope descriptions, target horizons, and progress tracking.',
+    storyCueAr: 'إبراز ملكية المستهدفات، والوصف التفصيلي للنطاق، والمدى الزمني، ومتابعة نسب الإنجاز الفعلي.',
   },
   {
-    step: 6,
+    step: 5,
     title: 'KPIs (+ AI Copilot)',
     titleAr: 'مؤشرات الأداء (+ الذكاء الاصطناعي)',
     path: '/kpis',
-    storyCue: 'Highlight KPI attributes (Leading/Lagging, Formula, Weight) + ✨ Embedded AI Copilot for KPI recommendations.',
+    storyCue: 'Configure KPI attributes (Leading/Lagging, Formula, Weight) and benchmark targets.',
     storyCueAr: 'إظهار خصائص المؤشرات (المعادلة الرياضية، الوزن النسبي) + ✨ مساعد الذكاء الاصطناعي لاقتراح المؤشرات.',
   },
   {
-    step: 7,
+    step: 6,
     title: 'Initiatives (+ AI Copilot)',
     titleAr: 'المبادرات الاستراتيجية (+ AI)',
     path: '/initiatives',
-    storyCue: 'Show project portfolios, budgets (SAR M), deliverables + ✨ AI Copilot recommending roadmap milestones.',
+    storyCue: 'Track project portfolios, budgets (SAR M), flagship deliverables, and roadmaps.',
     storyCueAr: 'استعراض محافظ المشاريع، والميزانيات المعتمدة + ✨ مساعد الذكاء الاصطناعي لاقتراح معالم خارطة الطريق.',
   },
   {
-    step: 8,
+    step: 7,
     title: 'Cascading Strategy Matrix',
     titleAr: 'مصفوفة المواءمة الاستراتيجية',
     path: '/strategy',
-    storyCue: 'Show the unified Strategy Matrix connecting Pillars to Projects with live Excel & PDF export.',
+    storyCue: 'Unified Strategy Matrix connecting Pillars to Projects with live Excel and dossier exports.',
     storyCueAr: 'عرض مصفوفة المواءمة الشاملة التي تربط الرؤية بالمشاريع مع التصدير المباشر لـ Excel و PDF.',
   },
   {
-    step: 9,
+    step: 8,
     title: 'Performance & Export Options',
     titleAr: 'متابعة الأداء وخيارات التصدير',
     path: '/performance',
@@ -92,12 +84,12 @@ export const DEMO_JOURNEY_STEPS = [
     storyCueAr: 'متابعة مستهدفات مؤشرات الأداء، وتصدير ملفات CSV التفصيلية وتوليد التقرير التنفيذي PDF.',
   },
   {
-    step: 10,
+    step: 9,
     title: 'Executive Dashboard & Reports',
     titleAr: 'لوحة القيادة التنفيذية والتقارير',
     path: '/',
-    storyCue: 'Deliver the final punch: CEO Strategy Health Scorecard, budget execution gauge & executive board reporting.',
-    storyCueAr: 'ختام رحلة العرض: لوحة القيادة للرئيس التنفيذي، وكفاءة الصرف المالي، وتوليد التقارير التنفيذية.',
+    storyCue: 'CEO Strategy Health Scorecard, budget execution gauge, and executive board reporting.',
+    storyCueAr: 'لوحة القيادة للرئيس التنفيذي، ومتابعة كفاءة الصرف المالي، وتوليد التقارير التنفيذية.',
   },
 ];
 
@@ -143,7 +135,7 @@ export const DemoJourneyBar: React.FC = () => {
           className="px-3.5 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white rounded-full text-xs font-semibold shadow-lg flex items-center gap-2 cursor-pointer transition-all border border-blue-400/30 hover:scale-105"
         >
           <Compass className="w-3.5 h-3.5 animate-spin-slow" />
-          <span>{lang === 'ar' ? 'تشغيل مرشد رحلة العرض التجريبي' : 'Start Demo Journey Flow'}</span>
+          <span>{lang === 'ar' ? 'تشغيل المسار الاستراتيجي التفاعلي' : 'Start Strategy Journey'}</span>
         </button>
       </div>
     );
@@ -158,7 +150,7 @@ export const DemoJourneyBar: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
           <span className="font-mono font-bold text-blue-300 text-[11px]">
-            {lang === 'ar' ? `المحطة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}:` : `DEMO JOURNEY • STEP ${currentStep}/${DEMO_JOURNEY_STEPS.length}:`}
+            {lang === 'ar' ? `المرحلة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}:` : `STRATEGY JOURNEY • STAGE ${currentStep}/${DEMO_JOURNEY_STEPS.length}:`}
           </span>
           <span className="font-semibold text-white truncate max-w-xs sm:max-w-md">
             {lang === 'ar' ? currentStepObj.titleAr : currentStepObj.title}
@@ -190,7 +182,7 @@ export const DemoJourneyBar: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono font-bold text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/50">
-                {lang === 'ar' ? `المحطة ${currentStep} من 10` : `CLIENT DEMO JOURNEY • ${currentStep}/10`}
+                {lang === 'ar' ? `المرحلة ${currentStep} من 9` : `STRATEGY WORKFLOW GUIDE • ${currentStep}/9`}
               </span>
               <h3 className="font-bold text-xs sm:text-sm text-white">
                 {lang === 'ar' ? currentStepObj.titleAr : currentStepObj.title}
@@ -198,7 +190,7 @@ export const DemoJourneyBar: React.FC = () => {
             </div>
             <p className="text-[11px] text-blue-200/90 mt-0.5 line-clamp-1">
               <span className="text-amber-300 font-medium">
-                {lang === 'ar' ? 'حديث العرض:' : 'Story Cue:'}
+                {lang === 'ar' ? 'مسار العمل:' : 'Workflow Guide:'}
               </span>{' '}
               {lang === 'ar' ? currentStepObj.storyCueAr : currentStepObj.storyCue}
             </p>
@@ -225,7 +217,7 @@ export const DemoJourneyBar: React.FC = () => {
             onClick={handlePrev}
             disabled={currentStep === 1}
             className="p-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-            title={lang === 'ar' ? 'المحطة السابقة' : 'Previous Step'}
+            title={lang === 'ar' ? 'المرحلة السابقة' : 'Previous Step'}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -236,7 +228,7 @@ export const DemoJourneyBar: React.FC = () => {
             disabled={currentStep === DEMO_JOURNEY_STEPS.length}
             className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
           >
-            <span>{lang === 'ar' ? 'المحطة التالية' : 'Next Step'}</span>
+            <span>{lang === 'ar' ? 'المرحلة التالية' : 'Next Step'}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
 

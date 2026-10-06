@@ -189,6 +189,9 @@ interface AppContextType {
   importKpiActuals: (updates: { code: string; actual: number; target?: number; status?: KPI['status'] }[]) => number;
 
   users: User[];
+  addUser: (user: Omit<User, 'id'>) => User;
+  updateUserRole: (userId: string, newRole: Role) => void;
+  deleteUser: (userId: string) => void;
   importUsers: (newUsers: Partial<User>[]) => number;
 
   bcmProcesses: BCMProcess[];
@@ -522,8 +525,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setIsAuthenticated(true);
     sessionStorage.setItem('eda_auth', 'true');
     sessionStorage.setItem('eda_user', JSON.stringify(userToSet));
-    toast.success('Signed in successfully', {
-      description: `Welcome back, ${userToSet.name}`,
+    toast.success(lang === 'ar' ? 'تم تسجيل الدخول بنجاح' : 'Signed in successfully', {
+      description: lang === 'ar' ? `الدور النشط: ${userToSet.role}` : `Active Role: ${userToSet.role}`,
     });
   };
 
@@ -893,6 +896,47 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
     toast.success(`Imported ${formatted.length} User Accounts into System`);
     return formatted.length;
+  };
+
+  const addUser = (userData: Omit<User, 'id'>): User => {
+    const newUser: User = {
+      ...userData,
+      id: `usr-${Date.now()}`,
+      avatar: userData.avatar || '',
+    };
+    setUsers((prev) => {
+      const updated = [newUser, ...prev];
+      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(
+      lang === 'ar'
+        ? `تمت إضافة "${newUser.nameAr || newUser.name}" وتعيين دور: ${newUser.role}`
+        : `Added "${newUser.name}" and assigned role: ${newUser.role}`
+    );
+    return newUser;
+  };
+
+  const updateUserRole = (userId: string, newRole: Role) => {
+    setUsers((prev) => {
+      const updated = prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
+      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(
+      lang === 'ar'
+        ? `تم تحديث الدور بنجاح إلى: ${newRole}`
+        : `Role updated successfully to: ${newRole}`
+    );
+  };
+
+  const deleteUser = (userId: string) => {
+    setUsers((prev) => {
+      const updated = prev.filter((u) => u.id !== userId);
+      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      return updated;
+    });
+    toast.success(lang === 'ar' ? 'تم حذف المستخدم من المنظومة' : 'User removed from system');
   };
 
   const addObjective = (newObjData: Omit<StrategicObjective, 'id'>) => {
@@ -1565,6 +1609,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addDocument,
         importDocuments,
         users,
+        addUser,
+        updateUserRole,
+        deleteUser,
         importUsers,
         bcmProcesses,
         bcmPlans,

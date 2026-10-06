@@ -39,15 +39,15 @@ export const ORGANIZATION_INFO = {
 
 export const STRATEGY_SPECIALIST_USER: User = {
   id: 'usr-111',
-  name: 'Dr. Sarah Al-Rashid',
-  nameAr: 'د. سارة الراشد',
-  title: 'Lead Strategy Specialist',
-  titleAr: 'أخصائي استراتيجية أول',
-  email: 's.rashid@ahda.gov.sa',
+  name: 'Strategy Specialist',
+  nameAr: 'أخصائي الاستراتيجية',
+  title: 'Strategy Specialist',
+  titleAr: 'أخصائي الاستراتيجية',
+  email: 'strategy.specialist@ahda.gov.sa',
   role: 'Strategy Specialist',
-  department: 'Strategy & Sector Development Sector',
+  department: 'Strategy & Sector Development',
   departmentAr: 'قطاع الاستراتيجية وتطوير القطاعات',
-  avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+  avatar: '',
 };
 
 export const DEFAULT_STRATEGY_PLAN: StrategyPlan = {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ClientStrategyMatrix } from '../components/strategy/ClientStrategyMatrix';
 import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
@@ -19,7 +19,8 @@ import {
 } from 'lucide-react';
 
 export const StrategyPage: React.FC = () => {
-  const { themes, goals, objectives, initiatives, kpis, organization, lang, t } = useApp();
+  const navigate = useNavigate();
+  const { themes, goals, objectives, initiatives, kpis, organization, setDemoJourneyStep, lang, t } = useApp();
   const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
@@ -30,9 +31,12 @@ export const StrategyPage: React.FC = () => {
       {/* Title Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
-            <Target className="w-4 h-4" />
-            <span>{organization.name} • {t('STRATEGY & GOVERNANCE')}</span>
+          <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
+            <span className="font-bold uppercase">
+              {lang === 'ar' ? 'المرحلة 7 • مسار الاستراتيجية' : 'STEP 7 • STRATEGY JOURNEY'}
+            </span>
+            <span className="text-slate-300">/</span>
+            <span>{t('Strategy Architecture & Cascading Matrix')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
             {t('Strategy Architecture & Cascading Matrix')}
@@ -240,6 +244,34 @@ export const StrategyPage: React.FC = () => {
 
       {/* Primary View: Al-Ahsa Client Strategy Matrix */}
       <ClientStrategyMatrix />
+
+      {/* Step Navigation Banner: Proceed to Step 8 */}
+      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+            7/9
+          </div>
+          <div>
+            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
+              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
+            </span>
+            <h4 className="font-bold text-xs text-slate-900">
+              {lang === 'ar' ? 'المرحلة 8: متابعة الأداء والتصدير التنفيذي' : 'Step 8: Performance Monitoring & Export Dossier'}
+            </h4>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setDemoJourneyStep(8);
+            navigate('/performance');
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <span>{lang === 'ar' ? 'المتابعة إلى لوحة الأداء' : 'Proceed to Step 8: Performance ➔'}</span>
+        </button>
+      </div>
 
       {/* Executive Strategic Dossier & PDF Modal */}
       <ExecutiveBriefModal

@@ -18,13 +18,13 @@ export type Role =
 export interface User {
   id: string;
   name: string;
-  nameAr?: string;
+  nameAr?: string | undefined;
   title: string;
-  titleAr?: string;
+  titleAr?: string | undefined;
   email: string;
   role: Role;
   department: string;
-  departmentAr?: string;
+  departmentAr?: string | undefined;
   avatar: string;
 }
 

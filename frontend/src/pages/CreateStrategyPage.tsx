@@ -759,16 +759,12 @@ export const CreateStrategyPage: React.FC = () => {
       <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-            <Link
-              to="/strategy"
-              className="inline-flex items-center space-x-1 text-slate-500 hover:text-blue-600 transition-colors"
-            >
-              <ArrowLeft className={`w-3.5 h-3.5 ${lang === 'ar' ? 'rotate-180 ml-0.5' : 'mr-0.5'}`} />
-              <span>{lang === 'ar' ? 'مصفوفة الاستراتيجية' : 'Strategy Matrix'}</span>
-            </Link>
-            <span className="text-slate-300">/</span>
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'صياغة المواءمة الاستراتيجية المتعددة' : 'Multi-Entity Cascade Formulation'}
+              {lang === 'ar' ? 'المرحلة 3 • مسار الاستراتيجية' : 'STEP 3 • STRATEGY JOURNEY'}
+            </span>
+            <span className="text-slate-300">/</span>
+            <span>
+              {lang === 'ar' ? 'التخطيط الاستراتيجي وصياغة المواءمة' : 'Strategy Planning & Cascade Formulation'}
             </span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">

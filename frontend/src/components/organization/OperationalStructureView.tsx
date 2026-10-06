@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { AUTHORITY_SECTORS } from '../../data/mockData';
-import { Department, Sector, Role } from '../../types';
+import { Department, Sector, Role, User } from '../../types';
 import {
   Building2,
   Users,
@@ -10,6 +10,10 @@ import {
   Layers,
   ChevronRight,
   UserCheck,
+  UserPlus,
+  Trash2,
+  Edit3,
+  Mail,
   Search,
   ExternalLink,
   Crown,
@@ -32,6 +36,23 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+export const ALL_ASSIGNABLE_ROLES: Role[] = [
+  'Strategy Specialist',
+  'Strategy Manager',
+  'Authority Board & CEO',
+  'Sector Director General',
+  'Department Manager',
+  'GRC & Enterprise Risk',
+  'Cybersecurity Officer',
+  'Internal Audit',
+  'Risk Manager',
+  'Compliance Manager',
+  'BCM Manager',
+  'Executive',
+  'Viewer',
+  'Administrator',
+];
+
 export const OperationalStructureView: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -39,6 +60,9 @@ export const OperationalStructureView: React.FC = () => {
     addDepartment,
     updateDepartment,
     users,
+    addUser,
+    updateUserRole,
+    deleteUser,
     switchUserRole,
     setDemoJourneyStep,
     lang,
@@ -47,7 +71,7 @@ export const OperationalStructureView: React.FC = () => {
 
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeViewMode, setActiveViewMode] = useState<'hierarchy' | 'grid'>('hierarchy');
+  const [activeViewMode, setActiveViewMode] = useState<'hierarchy' | 'grid' | 'personnel'>('hierarchy');
 
   // Selected Department for Details & Permissions Drawer/Modal
   const [selectedDeptForModal, setSelectedDeptForModal] = useState<Department | null>(null);
@@ -62,6 +86,55 @@ export const OperationalStructureView: React.FC = () => {
   const [newDeptSectorId, setNewDeptSectorId] = useState(AUTHORITY_SECTORS[0]?.id || 'sec-ssd');
   const [newDeptEmployeeCount, setNewDeptEmployeeCount] = useState(15);
 
+  // Personnel & Role Management State
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [selectedUserForRoleEdit, setSelectedUserForRoleEdit] = useState<User | null>(null);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [selectedRoleFilter, setSelectedRoleFilter] = useState<string>('all');
+
+  // Form State for Adding Personnel
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserNameAr, setNewUserNameAr] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserTitle, setNewUserTitle] = useState('');
+  const [newUserTitleAr, setNewUserTitleAr] = useState('');
+  const [newUserDept, setNewUserDept] = useState(departments[0]?.name || 'Strategy & Sector Development');
+  const [newUserRole, setNewUserRole] = useState<Role>('Strategy Specialist');
+
+  const handleCreateUserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserName.trim() || !newUserEmail.trim()) {
+      toast.error(lang === 'ar' ? 'يرجى إدخال الاسم والبريد الإلكتروني' : 'Please provide full name and work email');
+      return;
+    }
+
+    addUser({
+      name: newUserName.trim(),
+      nameAr: newUserNameAr.trim() || undefined,
+      title: newUserTitle.trim() || `${newUserRole} Officer`,
+      titleAr: newUserTitleAr.trim() || undefined,
+      email: newUserEmail.trim(),
+      role: newUserRole,
+      department: newUserDept,
+      departmentAr: departments.find((d) => d.name === newUserDept)?.nameAr,
+      avatar: '',
+    });
+
+    setIsAddUserModalOpen(false);
+    setNewUserName('');
+    setNewUserNameAr('');
+    setNewUserEmail('');
+    setNewUserTitle('');
+    setNewUserTitleAr('');
+  };
+
+  const handleUpdateRoleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserForRoleEdit) return;
+    updateUserRole(selectedUserForRoleEdit.id, selectedUserForRoleEdit.role);
+    setSelectedUserForRoleEdit(null);
+  };
+
   const advisoryOffices = departments.filter((d) => d.category === 'Advisory & Oversight');
 
   const filteredDepartments = departments.filter((d) => {
@@ -73,6 +146,20 @@ export const OperationalStructureView: React.FC = () => {
       const matchCode = d.code.toLowerCase().includes(q);
       const matchHead = d.head.toLowerCase().includes(q);
       return matchName || matchNameAr || matchCode || matchHead;
+    }
+    return true;
+  });
+
+  const filteredPersonnel = users.filter((u) => {
+    if (selectedRoleFilter !== 'all' && u.role !== selectedRoleFilter) return false;
+    if (userSearchTerm.trim()) {
+      const q = userSearchTerm.toLowerCase();
+      const matchName = u.name.toLowerCase().includes(q);
+      const matchNameAr = (u.nameAr || '').toLowerCase().includes(q);
+      const matchEmail = u.email.toLowerCase().includes(q);
+      const matchTitle = u.title.toLowerCase().includes(q);
+      const matchDept = u.department.toLowerCase().includes(q);
+      return matchName || matchNameAr || matchEmail || matchTitle || matchDept;
     }
     return true;
   });
@@ -196,6 +283,14 @@ export const OperationalStructureView: React.FC = () => {
           {/* Action buttons */}
           <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <button
+              onClick={() => setIsAddUserModalOpen(true)}
+              className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer transition-all"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? '+ إضافة موظف وتعيين الدور' : '+ Add Person & Assign Role'}</span>
+            </button>
+
+            <button
               onClick={() => setIsAddDeptModalOpen(true)}
               className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer transition-all"
             >
@@ -223,7 +318,18 @@ export const OperationalStructureView: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                {lang === 'ar' ? `الدليل (${departments.length})` : `Directory (${departments.length})`}
+                {lang === 'ar' ? `الوحدات (${departments.length})` : `Units (${departments.length})`}
+              </button>
+              <button
+                onClick={() => setActiveViewMode('personnel')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeViewMode === 'personnel'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Users className="w-3 h-3" />
+                <span>{lang === 'ar' ? `الموظفون والأدوار (${users.length})` : `Personnel & Roles (${users.length})`}</span>
               </button>
             </div>
           </div>
@@ -540,18 +646,218 @@ export const OperationalStructureView: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation Banner: Proceed to Step 4 */}
+      {/* VIEW 3: PERSONNEL & ROLE ASSIGNMENTS DIRECTORY */}
+      {activeViewMode === 'personnel' && (
+        <div className="space-y-4">
+          {/* Personnel Stat Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+              <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
+                {lang === 'ar' ? 'إجمالي الكوادر المسجلة' : 'Total Assigned Personnel'}
+              </div>
+              <div className="text-xl font-bold font-mono text-slate-900 mt-1">{users.length}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                {lang === 'ar' ? 'مستخدمون نشطون بالمنظومة' : 'Active system users'}
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+              <div className="text-[10px] font-mono text-blue-600 uppercase font-semibold">
+                {lang === 'ar' ? 'أخصائيو الاستراتيجية' : 'Strategy Specialists'}
+              </div>
+              <div className="text-xl font-bold font-mono text-blue-700 mt-1">
+                {users.filter((u) => u.role === 'Strategy Specialist' || u.role === 'Strategy Manager').length}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                {lang === 'ar' ? 'صلاحيات صياغة الخطة ومواءمتها' : 'Architecture & cascade authority'}
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+              <div className="text-[10px] font-mono text-emerald-600 uppercase font-semibold">
+                {lang === 'ar' ? 'مديرو الإدارات والقطاعات' : 'Sector & Dept Managers'}
+              </div>
+              <div className="text-xl font-bold font-mono text-emerald-700 mt-1">
+                {users.filter((u) => u.role === 'Department Manager' || u.role === 'Sector Director General').length}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                {lang === 'ar' ? 'مسؤولو الأهداف ومؤشرات الأداء' : 'OKR & KPI operational leads'}
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+              <div className="text-[10px] font-mono text-purple-600 uppercase font-semibold">
+                {lang === 'ar' ? 'القيادة التنفيذية والمجلس' : 'Executive Leadership'}
+              </div>
+              <div className="text-xl font-bold font-mono text-purple-700 mt-1">
+                {users.filter((u) => u.role === 'Authority Board & CEO' || u.role === 'Executive').length}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                {lang === 'ar' ? 'مجلس الهيئة ومكتب الرئيس' : 'Board & CEO governance'}
+              </div>
+            </div>
+          </div>
+
+          {/* Personnel Filter & Search Bar */}
+          <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[280px]">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className={`w-3.5 h-3.5 absolute ${lang === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-slate-400`} />
+                <input
+                  type="text"
+                  value={userSearchTerm}
+                  onChange={(e) => setUserSearchTerm(e.target.value)}
+                  placeholder={lang === 'ar' ? 'بحث بالاسم، البريد الإلكتروني، المسمى، أو الإدارة...' : 'Search by name, email, title, or department...'}
+                  className={`w-full ${lang === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600`}
+                />
+              </div>
+
+              {/* Role Filter */}
+              <select
+                value={selectedRoleFilter}
+                onChange={(e) => setSelectedRoleFilter(e.target.value)}
+                className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-blue-600"
+              >
+                <option value="all">{lang === 'ar' ? 'جميع الأدوار المؤسسية' : 'All Assigned Roles'}</option>
+                {ALL_ASSIGNABLE_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {t(r)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={() => setIsAddUserModalOpen(true)}
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? '+ إضافة موظف وتعيين دور' : '+ Add Person & Assign Role'}</span>
+            </button>
+          </div>
+
+          {/* Personnel Data Table */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-sm text-slate-900">
+                  {lang === 'ar' ? 'دليل الكوادر وتوزيع الأدوار والصلاحيات' : 'Personnel Directory & Role Assignments'}
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  {lang === 'ar'
+                    ? 'إمكانية إضافة كوادر جديدة وتعيين أدوارهم المؤسسية، أو تعديل الصلاحيات الممنوحة.'
+                    : 'Manage active personnel, assign system roles, and configure governance responsibilities.'}
+                </p>
+              </div>
+              <span className="text-xs font-mono text-slate-400">
+                {lang === 'ar' ? `العدد: ${filteredPersonnel.length}` : `Count: ${filteredPersonnel.length}`}
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-start">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-3 px-4 text-start">{lang === 'ar' ? 'الموظف / البريد' : 'Person & Email'}</th>
+                    <th className="py-3 px-4 text-start">{lang === 'ar' ? 'المسمى الوظيفي' : 'Job Title'}</th>
+                    <th className="py-3 px-4 text-start">{lang === 'ar' ? 'الإدارة / الوحدة' : 'Department'}</th>
+                    <th className="py-3 px-4 text-start">{lang === 'ar' ? 'الدور المعتمد' : 'Assigned Role'}</th>
+                    <th className="py-3 px-4 text-end">{lang === 'ar' ? 'الإجراءات' : 'Actions'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredPersonnel.map((u) => {
+                    const initials = u.name
+                      .split(' ')
+                      .map((w) => w[0])
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .join('')
+                      .toUpperCase();
+
+                    return (
+                      <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold font-mono text-xs flex items-center justify-center shrink-0 border border-blue-200">
+                              {initials || 'SS'}
+                            </div>
+                            <div>
+                              <div className="font-semibold text-slate-900">
+                                {lang === 'ar' ? u.nameAr || u.name : u.name}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-mono flex items-center gap-1">
+                                <Mail className="w-3 h-3 text-slate-400" />
+                                <span>{u.email}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-medium text-slate-700">
+                          {lang === 'ar' ? u.titleAr || u.title : u.title}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-[11px] text-slate-600">
+                          {lang === 'ar' ? u.departmentAr || u.department : u.department}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${
+                              u.role === 'Strategy Specialist'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : u.role === 'Strategy Manager'
+                                ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                                : u.role === 'Authority Board & CEO'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                : u.role === 'Department Manager'
+                                ? 'bg-cyan-50 text-cyan-700 border-cyan-200'
+                                : 'bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            <Shield className="w-3 h-3" />
+                            <span>{t(u.role)}</span>
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-end">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setSelectedUserForRoleEdit(u)}
+                              className="px-2 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer border border-slate-200"
+                              title={lang === 'ar' ? 'تعديل الدور' : 'Change Role'}
+                            >
+                              <Edit3 className="w-3 h-3" />
+                              <span>{lang === 'ar' ? 'تعديل الدور' : 'Assign Role'}</span>
+                            </button>
+                            <button
+                              onClick={() => deleteUser(u.id)}
+                              className="p-1 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition-colors cursor-pointer"
+                              title={lang === 'ar' ? 'حذف' : 'Remove'}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Banner: Proceed to Step 3 */}
       <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            3/10
+            2/9
           </div>
           <div>
             <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المحطة التالية في رحلة العرض' : 'NEXT STEP IN DEMO JOURNEY'}
+              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STAGE • STRATEGY JOURNEY'}
             </span>
             <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'صياغة المواءمة الاستراتيجية متعددة الكيانات' : 'Step 4: Strategy Formulation & Multi-Entity Cascade'}
+              {lang === 'ar' ? 'المرحلة 3: التخطيط الاستراتيجي وصياغة المواءمة' : 'Step 3: Strategy Planning & Horizon Mandate'}
             </h4>
           </div>
         </div>
@@ -559,12 +865,12 @@ export const OperationalStructureView: React.FC = () => {
         <button
           type="button"
           onClick={() => {
-            setDemoJourneyStep(4);
+            setDemoJourneyStep(3);
             navigate('/strategy/create');
           }}
           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
         >
-          <span>{lang === 'ar' ? 'الانتقال لصياغة الاستراتيجية' : 'Proceed to Step 4 ➔'}</span>
+          <span>{lang === 'ar' ? 'الانتقال للتخطيط الاستراتيجي' : 'Proceed to Step 3 ➔'}</span>
         </button>
       </div>
 
@@ -830,6 +1136,249 @@ export const OperationalStructureView: React.FC = () => {
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   {lang === 'ar' ? 'إضافة الوحدة' : 'Create Unit'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: ADD PERSON & ASSIGN ROLE */}
+      {isAddUserModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in slide-in-from-bottom-2">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-blue-100 text-blue-700">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">
+                    {lang === 'ar' ? 'إضافة شخص جديد وتعيين دوره المؤسسي' : 'Add Person & Assign Role'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-mono">
+                    {lang === 'ar' ? 'منح الصلاحيات ضمن الهيكل التنظيمي للهيئة' : 'Enroll authority staff and configure role-based access'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddUserModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUserSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الاسم بالإنجليزية' : 'Full Name (English)'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    placeholder="e.g. Faisal Al-Otaibi"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الاسم بالعربية' : 'Full Name (Arabic)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newUserNameAr}
+                    onChange={(e) => setNewUserNameAr(e.target.value)}
+                    dir="rtl"
+                    placeholder="مثال: فيصل العتيبي"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 text-right"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'البريد الإلكتروني المهني' : 'Work Email Address'} *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={newUserEmail}
+                  onChange={(e) => setNewUserEmail(e.target.value)}
+                  placeholder="name@ahda.gov.sa"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسمى الوظيفي (بالإنجليزية)' : 'Job Title (English)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newUserTitle}
+                    onChange={(e) => setNewUserTitle(e.target.value)}
+                    placeholder="e.g. Senior Strategy Analyst"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسمى الوظيفي (بالعربية)' : 'Job Title (Arabic)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newUserTitleAr}
+                    onChange={(e) => setNewUserTitleAr(e.target.value)}
+                    dir="rtl"
+                    placeholder="مثال: محلل استراتيجية أول"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 text-right"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الإدارة / القسم التابع له' : 'Department'} *
+                  </label>
+                  <select
+                    value={newUserDept}
+                    onChange={(e) => setNewUserDept(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  >
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.name}>
+                        {lang === 'ar' ? d.nameAr || d.name : d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الدور المسند (Role Assignment)' : 'Assigned Role'} *
+                  </label>
+                  <select
+                    value={newUserRole}
+                    onChange={(e) => setNewUserRole(e.target.value as Role)}
+                    className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-xs font-semibold text-blue-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  >
+                    {ALL_ASSIGNABLE_ROLES.map((r) => (
+                      <option key={r} value={r}>
+                        {t(r)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsAddUserModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>{lang === 'ar' ? 'إضافة وتعيين الدور' : 'Add Person & Assign Role'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: EDIT / CHANGE ASSIGNED ROLE */}
+      {selectedUserForRoleEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in slide-in-from-bottom-2">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">
+                    {lang === 'ar' ? 'تعديل الدور المؤسسي المسند' : 'Modify Role Assignment'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-mono">
+                    {selectedUserForRoleEdit.email}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedUserForRoleEdit(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateRoleSubmit} className="p-6 space-y-4">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <div className="text-xs font-bold text-slate-900">
+                  {lang === 'ar' ? selectedUserForRoleEdit.nameAr || selectedUserForRoleEdit.name : selectedUserForRoleEdit.name}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  {selectedUserForRoleEdit.title} • {selectedUserForRoleEdit.department}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الدور الجديد المسند' : 'Select New Assigned Role'} *
+                </label>
+                <select
+                  value={selectedUserForRoleEdit.role}
+                  onChange={(e) =>
+                    setSelectedUserForRoleEdit({
+                      ...selectedUserForRoleEdit,
+                      role: e.target.value as Role,
+                    })
+                  }
+                  className="w-full px-3 py-2.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs font-semibold text-blue-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  {ALL_ASSIGNABLE_ROLES.map((r) => (
+                    <option key={r} value={r}>
+                      {t(r)}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  {lang === 'ar'
+                    ? 'سيتم منح هذا المستخدم كافة صلاحيات وأذونات هذا الدور فوراً.'
+                    : 'This user will immediately inherit access permissions and strategic delegation granted to this role.'}
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setSelectedUserForRoleEdit(null)}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{lang === 'ar' ? 'حفظ التعديل' : 'Update Assigned Role'}</span>
                 </button>
               </div>
             </form>

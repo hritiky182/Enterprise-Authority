@@ -343,7 +343,7 @@ export const KPIsPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المحطة 6 من رحلة العرض' : 'STEP 6 OF DEMO JOURNEY'}
+              {lang === 'ar' ? 'المرحلة 5 • مسار الاستراتيجية' : 'STEP 5 • STRATEGY JOURNEY'}
             </span>
             <span className="text-slate-300">/</span>
             <span>{lang === 'ar' ? 'سجل المؤشرات والذكاء الاصطناعي' : 'KPI Telemetry & AI Copilot'}</span>
@@ -479,14 +479,14 @@ export const KPIsPage: React.FC = () => {
       <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            6/10
+            5/9
           </div>
           <div>
             <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المحطة التالية في رحلة العرض' : 'NEXT STEP IN DEMO JOURNEY'}
+              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
             </span>
             <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع (+ AI Copilot)' : 'Step 7: Strategic Initiatives & Projects (+ AI Copilot)'}
+              {lang === 'ar' ? 'المرحلة 6: المبادرات الاستراتيجية والمشاريع (+ AI Copilot)' : 'Step 6: Strategic Initiatives & Projects (+ AI Copilot)'}
             </h4>
           </div>
         </div>
@@ -494,12 +494,12 @@ export const KPIsPage: React.FC = () => {
         <button
           type="button"
           onClick={() => {
-            setDemoJourneyStep(7);
+            setDemoJourneyStep(6);
             navigate('/initiatives');
           }}
           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
         >
-          <span>{lang === 'ar' ? 'المتابعة إلى المبادرات' : 'Proceed to Step 7 ➔'}</span>
+          <span>{lang === 'ar' ? 'المتابعة إلى المبادرات' : 'Proceed to Step 6 ➔'}</span>
         </button>
       </div>
 

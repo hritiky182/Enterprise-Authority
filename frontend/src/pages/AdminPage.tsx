@@ -44,6 +44,8 @@ export const AdminPage: React.FC = () => {
   const userFileInputRef = useRef<HTMLInputElement>(null);
 
   const rolesList: Role[] = [
+    'Strategy Specialist',
+    'Strategy Manager',
     'Authority Board & CEO',
     'Sector Director General',
     'Department Manager',

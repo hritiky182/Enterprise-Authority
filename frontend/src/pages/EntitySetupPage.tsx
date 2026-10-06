@@ -151,7 +151,7 @@ export const EntitySetupPage: React.FC = () => {
       boardChair,
       ceo,
     });
-    setDemoJourneyStep(3);
+    setDemoJourneyStep(2);
     navigate('/org-structure');
   };
 
@@ -166,7 +166,7 @@ export const EntitySetupPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المحطة 2 من رحلة العرض' : 'STEP 2 OF DEMO JOURNEY'}
+              {lang === 'ar' ? 'المرحلة 1 • مسار الاستراتيجية' : 'STEP 1 • STRATEGY JOURNEY'}
             </span>
             <span className="text-slate-300">/</span>
             <span>{lang === 'ar' ? 'إعداد وهوية المنظومة' : 'Entity Identity & Branding'}</span>
@@ -176,8 +176,8 @@ export const EntitySetupPage: React.FC = () => {
           </h1>
           <p className="text-xs text-slate-500 mt-1 max-w-3xl leading-relaxed">
             {lang === 'ar'
-              ? 'تخصيص الهوية المؤسسية الكاملة للهيئة: الشعار، الألوان، الرؤية، الرسالة، والقيم الاستراتيجية. إبراز مرونة المنظومة والتملك البرمجي مقارنة بالاشتراكات الجاهزة.'
-              : 'Customize full corporate identity: Official branding, emblem, palette, vision, mission, and core values. Demonstrates white-label source-code ownership vs rigid subscription platforms.'}
+              ? 'تخصيص الهوية المؤسسية الكاملة للهيئة: الشعار، الألوان، الرؤية، الرسالة، والقيم الاستراتيجية.'
+              : 'Configure full corporate identity: Official branding, emblem, palette, vision, mission, and core values.'}
           </p>
         </div>
 
@@ -629,7 +629,7 @@ export const EntitySetupPage: React.FC = () => {
               onClick={handleContinue}
               className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center space-x-2 cursor-pointer transition-all"
             >
-              <span>{lang === 'ar' ? 'اعتماد الهوية والانتقال للهيكل التنظيمي' : 'Apply Branding & Proceed to Step 3'}</span>
+              <span>{lang === 'ar' ? 'اعتماد الهوية والانتقال للمرحلة 2: الهيكل والأدوار' : 'Apply Branding & Proceed to Step 2: Org Structure & Roles'}</span>
               <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180 mr-1' : 'ml-1'}`} />
             </button>
           </div>

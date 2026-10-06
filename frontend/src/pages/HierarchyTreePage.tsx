@@ -98,7 +98,7 @@ export const HierarchyTreePage: React.FC = () => {
             className="inline-flex items-center space-x-1.5 px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-medium transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t('Reset Demo Strategies')}</span>
+            <span>{t('Reset Baseline Strategy')}</span>
           </button>
         </div>
       </div>
@@ -302,7 +302,7 @@ export const HierarchyTreePage: React.FC = () => {
             className="inline-flex items-center space-x-1.5 px-3 py-2 border border-slate-200 hover:bg-white text-slate-600 rounded-xl text-xs font-medium transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t('Reset Demo Strategies')}</span>
+            <span>{t('Reset Baseline Strategy')}</span>
           </button>
         </div>
       </div>

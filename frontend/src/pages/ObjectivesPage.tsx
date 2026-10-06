@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
@@ -22,7 +23,8 @@ import {
 } from 'lucide-react';
 
 export const ObjectivesPage: React.FC = () => {
-  const { objectives, themes, goals, sectors, addObjective, openModal, lang, t } = useApp();
+  const navigate = useNavigate();
+  const { objectives, themes, goals, sectors, addObjective, openModal, setDemoJourneyStep, lang, t } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedThemeId, setSelectedThemeId] = useState<string>('all');
@@ -213,8 +215,11 @@ export const ObjectivesPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-            <Target className="w-4 h-4" />
-            <span>{t('AL AHSA DEVELOPMENT AUTHORITY • STRATEGIC PORTFOLIO')}</span>
+            <span className="font-bold uppercase">
+              {lang === 'ar' ? 'المرحلة 4 • مسار الاستراتيجية' : 'STEP 4 • STRATEGY JOURNEY'}
+            </span>
+            <span className="text-slate-300">/</span>
+            <span>{lang === 'ar' ? 'الأهداف الاستراتيجية (OKRs)' : 'Strategic Objectives'}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'الأهداف الاستراتيجية (OKRs)' : 'Strategic Objectives (OKRs)'}
@@ -347,6 +352,34 @@ export const ObjectivesPage: React.FC = () => {
         columns={columns}
         onRowClick={(obj) => openModal('objective', obj)}
       />
+
+      {/* Step Navigation Banner: Proceed to Step 5 */}
+      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+            4/9
+          </div>
+          <div>
+            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
+              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
+            </span>
+            <h4 className="font-bold text-xs text-slate-900">
+              {lang === 'ar' ? 'المرحلة 5: مؤشرات الأداء الرئيسية (KPIs Telemetry)' : 'Step 5: Key Performance Indicators (KPIs & Formulas)'}
+            </h4>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setDemoJourneyStep(5);
+            navigate('/kpis');
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <span>{lang === 'ar' ? 'الانتقال إلى المؤشرات' : 'Proceed to Step 5: KPIs ➔'}</span>
+        </button>
+      </div>
 
       {/* Create Objective Modal */}
       {isCreateModalOpen && (

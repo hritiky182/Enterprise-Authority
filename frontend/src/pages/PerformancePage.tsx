@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { StatCard } from '../components/common/StatCard';
 import { DataTable, Column } from '../components/common/DataTable';
@@ -33,7 +34,8 @@ import { ImportKpiModal } from '../components/modals/ImportKpiModal';
 import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
 
 export const PerformancePage: React.FC = () => {
-  const { kpis, objectives, themes, lang, t } = useApp();
+  const navigate = useNavigate();
+  const { kpis, objectives, themes, setDemoJourneyStep, lang, t } = useApp();
 
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedQuarter, setSelectedQuarter] = useState('Q3');
@@ -106,7 +108,7 @@ export const PerformancePage: React.FC = () => {
     if (selectedDept !== 'all') {
       const matchedDept = DEPARTMENTS.find((d) => d.id === selectedDept);
       if (matchedDept && !k.owner.includes(matchedDept.head.split(' ')[1] || '')) {
-        // filter loosely for mock demo
+        // filter loosely for matching department
       }
     }
     return true;
@@ -158,9 +160,12 @@ export const PerformancePage: React.FC = () => {
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
-              <BarChart3 className="w-4 h-4" />
-              <span>{lang === 'ar' ? 'مراقبة الأداء المؤسسي' : 'INSTITUTIONAL PERFORMANCE MONITORING'}</span>
+            <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
+              <span className="font-bold uppercase">
+                {lang === 'ar' ? 'المرحلة 8 • مسار الاستراتيجية' : 'STEP 8 • STRATEGY JOURNEY'}
+              </span>
+              <span className="text-slate-300">/</span>
+              <span>{lang === 'ar' ? 'مراقبة الأداء المؤسسي والتصدير' : 'Performance Monitoring & Export'}</span>
             </div>
             <h1 className="text-xl font-bold text-slate-900">
               {lang === 'ar' ? 'تحليلات أداء الإدارات ومؤشرات الأداء (KPIs)' : 'Departmental & KPI Performance Analytics'}
@@ -328,6 +333,34 @@ export const PerformancePage: React.FC = () => {
         data={filteredKpis}
         columns={kpiColumns}
       />
+
+      {/* Step Navigation Banner: Proceed to Step 9 */}
+      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+            8/9
+          </div>
+          <div>
+            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
+              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
+            </span>
+            <h4 className="font-bold text-xs text-slate-900">
+              {lang === 'ar' ? 'المرحلة 9: لوحة القيادة التنفيذية والتقارير' : 'Step 9: Executive Command Dashboard & Reports'}
+            </h4>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setDemoJourneyStep(9);
+            navigate('/');
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <span>{lang === 'ar' ? 'المتابعة إلى لوحة القيادة' : 'Proceed to Step 9: Executive Dashboard ➔'}</span>
+        </button>
+      </div>
 
       {/* Import KPI Modal */}
       <ImportKpiModal

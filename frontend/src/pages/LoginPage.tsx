@@ -18,12 +18,13 @@ import {
   BarChart3,
   TrendingUp,
   FileSpreadsheet,
+  Network,
 } from 'lucide-react';
 import { Role, User } from '../types';
 import { OrganizationLogo } from '../components/common/OrganizationLogo';
 
 export const LoginPage: React.FC = () => {
-  const { login, lang, setLanguage, t, organization } = useApp();
+  const { login, lang, setLanguage, t, organization, setDemoJourneyStep } = useApp();
   const navigate = useNavigate();
 
   const [selectedRole] = useState<Role>('Strategy Specialist');
@@ -41,29 +42,30 @@ export const LoginPage: React.FC = () => {
       email,
     };
     login(userToLogin);
-    // Directly launch into the 5-step specialist journey starting with Organization Setup
+    // Directly launch into the specialist journey starting with Step 1: Entity Identity & Branding
+    setDemoJourneyStep(1);
     navigate('/organization/setup');
   };
 
   const journeySteps = [
     {
       step: '01',
-      title: lang === 'ar' ? 'تسجيل الدخول كـ أخصائي استراتيجية' : 'Strategy Specialist Login',
-      desc: lang === 'ar' ? 'صلاحيات كاملة لصياغة الاستراتيجية والمؤشرات' : 'Authenticated RBAC role for strategy architecture',
-      icon: <Lock className="w-3.5 h-3.5 text-blue-400" />,
+      title: lang === 'ar' ? 'تعريف هوية المنظومة' : 'Entity Identity & Branding',
+      desc: lang === 'ar' ? 'الاسم، الشعار، الألوان، الرؤية، والرسالة' : 'Name, emblem logo, colors, vision & mission',
+      icon: <Building2 className="w-3.5 h-3.5 text-emerald-400" />,
       active: true,
     },
     {
       step: '02',
-      title: lang === 'ar' ? 'تعريف هوية المنظومة' : 'Define Organization & Branding',
-      desc: lang === 'ar' ? 'الاسم، الشعار، الألوان، الرؤية، والرسالة' : 'Name, emblem logo, colors, vision & mission',
-      icon: <Building2 className="w-3.5 h-3.5 text-emerald-400" />,
+      title: lang === 'ar' ? 'الهيكل التنظيمي وأدوار الموظفين' : 'Org Structure & Personnel Roles',
+      desc: lang === 'ar' ? 'الهيكل المتسلسل، إضافة الموظفين وتعيين الأدوار' : 'Hierarchy, adding personnel & role assignments',
+      icon: <Network className="w-3.5 h-3.5 text-blue-400" />,
       active: false,
     },
     {
       step: '03',
-      title: lang === 'ar' ? 'التخطيط الاستراتيجي' : 'Strategy Planning',
-      desc: lang === 'ar' ? 'اسم الاستراتيجية، المدى الزمني، والبيان' : 'Strategy Name, Duration, and Executive Statement',
+      title: lang === 'ar' ? 'التخطيط الاستراتيجي' : 'Strategy Planning & Mandate',
+      desc: lang === 'ar' ? 'اسم الاستراتيجية، المدى الزمني، ووثيقة التكليف' : 'Strategy Name, Duration, and Executive Mandate',
       icon: <Target className="w-3.5 h-3.5 text-amber-400" />,
       active: false,
     },
@@ -76,8 +78,8 @@ export const LoginPage: React.FC = () => {
     },
     {
       step: '05',
-      title: lang === 'ar' ? 'متابعة الأداء والتصدير' : 'Performance Monitoring & Reports',
-      desc: lang === 'ar' ? 'بطاقة الأداء المتوازن وتصدير تقرير PDF و Excel' : 'Scorecards, PDF Dossier & Excel export',
+      title: lang === 'ar' ? 'متابعة الأداء والتصدير' : 'Performance & Reports',
+      desc: lang === 'ar' ? 'متابعة المستهدفات وتصدير تقرير PDF و CSV' : 'Scorecards, PDF Dossier & CSV export',
       icon: <TrendingUp className="w-3.5 h-3.5 text-teal-400" />,
       active: false,
     },
@@ -144,7 +146,7 @@ export const LoginPage: React.FC = () => {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              العربية
+              عربي
             </button>
           </div>
         </div>
@@ -152,11 +154,11 @@ export const LoginPage: React.FC = () => {
 
       {/* Main Login Body */}
       <main className="relative z-10 max-w-6xl w-full mx-auto px-4 py-8 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12">
-        {/* Left Column: Platform Identity & Demo Flow */}
+        {/* Left Column: Platform Identity & Strategy Specialist Workflow */}
         <div className="flex-1 space-y-5 max-w-xl text-center lg:text-start">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/40 text-blue-300 text-xs font-mono">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>{lang === 'ar' ? 'رحلة أخصائي الاستراتيجية • العرض التفاعلي' : 'STRATEGY SPECIALIST WORKFLOW DEMO'}</span>
+            <span>{lang === 'ar' ? 'منظومة التخطيط والاستراتيجية المؤسسية' : 'STRATEGY MANAGEMENT SYSTEM'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
@@ -171,11 +173,11 @@ export const LoginPage: React.FC = () => {
               : 'Unified SaaS platform empowering Strategy Specialists to configure institutional branding, define strategy horizons, cascade objectives to KPIs, and generate executive dossiers.'}
           </p>
 
-          {/* Single Strategy Specialist Persona Card */}
+          {/* Strategy Specialist Role Card */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-blue-950/60 border border-blue-800/60 shadow-lg text-start">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] font-mono uppercase tracking-wider text-blue-300 font-bold bg-blue-900/50 px-2 py-0.5 rounded-full border border-blue-700/50">
-                {lang === 'ar' ? 'الدور المعتمد للدخول' : 'Designated Demo Persona'}
+                {lang === 'ar' ? 'الدور المعتمد بالمنظومة' : 'SYSTEM ROLE'}
               </span>
               <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -184,34 +186,32 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3.5">
-              <img
-                src={matchedUser.avatar}
-                alt={matchedUser.name}
-                className="w-12 h-12 rounded-xl object-cover border-2 border-blue-500/60 shadow-sm"
-              />
+              <div className="w-12 h-12 rounded-xl bg-blue-900/60 border-2 border-blue-500/50 flex items-center justify-center text-blue-300 shadow-sm shrink-0">
+                <Target className="w-6 h-6 text-blue-400" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-white truncate">
-                    {lang === 'ar' ? matchedUser.nameAr || matchedUser.name : matchedUser.name}
+                    {lang === 'ar' ? 'أخصائي الاستراتيجية' : 'Strategy Specialist'}
                   </h4>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-950 text-blue-300 border border-blue-800 font-bold">
                     {t('Strategy Specialist')}
                   </span>
                 </div>
                 <p className="text-xs text-slate-300 mt-0.5 truncate">
-                  {lang === 'ar' ? matchedUser.titleAr || matchedUser.title : matchedUser.title}
+                  {lang === 'ar' ? 'التخطيط الاستراتيجي والأداء المؤسسي' : 'Strategic Planning & Performance Management'}
                 </p>
                 <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">
-                  {lang === 'ar' ? matchedUser.departmentAr || matchedUser.department : matchedUser.department} • {matchedUser.email}
+                  {matchedUser.department} • strategy.specialist@ahda.gov.sa
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 5-Phase End-to-End Specialist Workflow */}
+          {/* 5-Phase Specialist Workflow Starting at Step 1: Entity Branding */}
           <div className="space-y-2 pt-1 text-start">
             <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400">
-              {lang === 'ar' ? 'مسار العمل المتكامل لأخصائي الاستراتيجية:' : 'End-to-End Strategy Specialist Flow:'}
+              {lang === 'ar' ? 'مراحل العمل الاستراتيجي المتكامل:' : 'Strategic Execution Workflow:'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
               {journeySteps.map((step, idx) => (
@@ -246,8 +246,8 @@ export const LoginPage: React.FC = () => {
                 <span>{lang === 'ar' ? 'تسجيل دخول المنظومة' : 'Enterprise Sign In'}</span>
               </h3>
               <p className="text-xs text-slate-400 mt-1">
-                {t('Active Persona:')}{' '}
-                <span className="text-blue-300 font-semibold">{t('Strategy Specialist')}</span> ({matchedUser.name})
+                {lang === 'ar' ? 'الدور المعتمد:' : 'Active Role:'}{' '}
+                <span className="text-blue-300 font-semibold">{t('Strategy Specialist')}</span>
               </p>
             </div>
             <OrganizationLogo logoId={organization.logo} logoUrl={organization.logoUrl} size="sm" />
@@ -331,8 +331,8 @@ export const LoginPage: React.FC = () => {
             >
               <span>
                 {lang === 'ar'
-                  ? 'تسجيل الدخول كـ أخصائي استراتيجية والانطلاق'
-                  : 'Sign In as Strategy Specialist & Begin Journey'}
+                  ? 'تسجيل الدخول بدور أخصائي الاستراتيجية'
+                  : 'Sign In as Strategy Specialist'}
               </span>
               <ArrowRight
                 className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${
@@ -357,7 +357,9 @@ export const LoginPage: React.FC = () => {
 
       {/* Footer */}
       <footer className="relative z-10 max-w-7xl w-full mx-auto px-6 py-4 text-center text-xs font-mono text-slate-500 border-t border-slate-900/80">
-        {t('Enterprise Strategy & Governance Suite • Interactive Enterprise Demonstration')}
+        {lang === 'ar'
+          ? 'المنظومة المؤسسية لإدارة الاستراتيجية والأداء والمواءمة'
+          : 'Enterprise Strategy, Performance & Governance Suite'}
       </footer>
     </div>
   );
