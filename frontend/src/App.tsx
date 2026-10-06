@@ -3,12 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
+import { DemoJourneyBar } from './components/layout/DemoJourneyBar';
 import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { DetailDrawerModal } from './components/modals/DetailDrawerModal';
 import { Toaster } from 'sonner';
 
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { EntitySetupPage } from './pages/EntitySetupPage';
 import { StrategyPage } from './pages/StrategyPage';
 import { CreateStrategyPage } from './pages/CreateStrategyPage';
 import { HierarchyTreePage } from './pages/HierarchyTreePage';
@@ -107,10 +109,12 @@ const AppLayout: React.FC = () => {
         }`}
       >
         <Header />
+        <DemoJourneyBar />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
           <Routes>
             <Route path="/" element={<ProtectedRoute path="/" element={<DashboardPage />} />} />
+            <Route path="/organization/setup" element={<ProtectedRoute path="/organization/setup" element={<EntitySetupPage />} />} />
             <Route path="/strategy" element={<ProtectedRoute path="/strategy" element={<StrategyPage />} />} />
             <Route path="/strategy/create" element={<ProtectedRoute path="/strategy" element={<CreateStrategyPage />} />} />
             <Route path="/hierarchy-tree" element={<ProtectedRoute path="/hierarchy-tree" element={<HierarchyTreePage />} />} />

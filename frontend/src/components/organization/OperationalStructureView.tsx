@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { AUTHORITY_SECTORS, DEPARTMENTS, ORGANIZATION_INFO } from '../../data/mockData';
-import { Department, Sector } from '../../types';
+import { AUTHORITY_SECTORS } from '../../data/mockData';
+import { Department, Sector, Role } from '../../types';
 import {
   Building2,
   Users,
@@ -23,22 +24,47 @@ import {
   BarChart3,
   Network,
   CheckCircle2,
+  Plus,
+  ArrowRight,
+  Key,
+  X,
+  Sparkles,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const OperationalStructureView: React.FC = () => {
-  const { lang, t } = useApp();
+  const navigate = useNavigate();
+  const {
+    departments,
+    addDepartment,
+    updateDepartment,
+    users,
+    switchUserRole,
+    setDemoJourneyStep,
+    lang,
+    t,
+  } = useApp();
+
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeViewMode, setActiveViewMode] = useState<'hierarchy' | 'grid'>('hierarchy');
 
-  const boardOffice = DEPARTMENTS.find((d) => d.id === 'dept-board');
-  const ceoOffice = DEPARTMENTS.find((d) => d.id === 'dept-ceo');
+  // Selected Department for Details & Permissions Drawer/Modal
+  const [selectedDeptForModal, setSelectedDeptForModal] = useState<Department | null>(null);
+  const [activePermissions, setActivePermissions] = useState<string[]>([]);
 
-  const advisoryOffices = DEPARTMENTS.filter(
-    (d) => d.category === 'Advisory & Oversight'
-  );
+  // Add Department Modal
+  const [isAddDeptModalOpen, setIsAddDeptModalOpen] = useState(false);
+  const [newDeptCode, setNewDeptCode] = useState('');
+  const [newDeptName, setNewDeptName] = useState('');
+  const [newDeptNameAr, setNewDeptNameAr] = useState('');
+  const [newDeptHead, setNewDeptHead] = useState('');
+  const [newDeptSectorId, setNewDeptSectorId] = useState(AUTHORITY_SECTORS[0]?.id || 'sec-ssd');
+  const [newDeptEmployeeCount, setNewDeptEmployeeCount] = useState(15);
 
-  const filteredDepartments = DEPARTMENTS.filter((d) => {
+  const advisoryOffices = departments.filter((d) => d.category === 'Advisory & Oversight');
+
+  const filteredDepartments = departments.filter((d) => {
     if (selectedSector && d.sectorId !== selectedSector) return false;
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
@@ -51,22 +77,101 @@ export const OperationalStructureView: React.FC = () => {
     return true;
   });
 
-  const getSectorIcon = (code: string) => {
-    switch (code) {
-      case 'SEC-SS':
-        return <Users className="w-4 h-4 text-slate-700" />;
-      case 'SEC-PPM':
-        return <Briefcase className="w-4 h-4 text-amber-600" />;
-      case 'SEC-SUD':
-        return <Compass className="w-4 h-4 text-emerald-600" />;
-      case 'SEC-IPD':
-        return <TrendingUp className="w-4 h-4 text-indigo-600" />;
-      case 'SEC-SSD':
-        return <BarChart3 className="w-4 h-4 text-blue-600" />;
-      default:
-        return <Building2 className="w-4 h-4 text-slate-700" />;
+  const handleOpenDeptModal = (dept: Department) => {
+    setSelectedDeptForModal(dept);
+    setActivePermissions(
+      dept.permissions || [
+        'read_strategy',
+        'manage_objectives',
+        'approve_kpis',
+        'approve_budget',
+      ]
+    );
+  };
+
+  const handleTogglePermission = (permKey: string) => {
+    if (activePermissions.includes(permKey)) {
+      setActivePermissions(activePermissions.filter((p) => p !== permKey));
+    } else {
+      setActivePermissions([...activePermissions, permKey]);
     }
   };
+
+  const handleSavePermissions = () => {
+    if (selectedDeptForModal) {
+      updateDepartment(selectedDeptForModal.id, {
+        permissions: activePermissions,
+      });
+      setSelectedDeptForModal(null);
+    }
+  };
+
+  const handleCreateDepartment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDeptCode.trim() || !newDeptName.trim() || !newDeptHead.trim()) {
+      toast.error(lang === 'ar' ? 'الرجاء ملء كافة الحقول الإلزامية' : 'Please fill all required fields');
+      return;
+    }
+
+    const parentSector = AUTHORITY_SECTORS.find((s) => s.id === newDeptSectorId);
+
+    addDepartment({
+      code: newDeptCode.trim(),
+      name: newDeptName.trim(),
+      nameAr: newDeptNameAr.trim() || undefined,
+      head: newDeptHead.trim(),
+      employeeCount: Number(newDeptEmployeeCount) || 10,
+      sectorId: newDeptSectorId,
+      sectorName: parentSector?.name || 'Operational Sector',
+      category: 'Operational Sector',
+      permissions: ['read_strategy', 'manage_objectives'],
+    });
+
+    setIsAddDeptModalOpen(false);
+    setNewDeptCode('');
+    setNewDeptName('');
+    setNewDeptNameAr('');
+    setNewDeptHead('');
+  };
+
+  const PERMISSION_OPTIONS = [
+    {
+      key: 'read_strategy',
+      label: 'View Strategic Matrices & Cascades',
+      labelAr: 'الاطلاع على مصفوفات المواءمة الاستراتيجية',
+      description: 'Access executive strategy map and cascading models',
+    },
+    {
+      key: 'manage_objectives',
+      label: 'Create & Edit Department Objectives',
+      labelAr: 'صياغة وتعديل المستهدفات التكتيكية للإدارة',
+      description: 'Author department-level OKRs and update milestones',
+    },
+    {
+      key: 'approve_kpis',
+      label: 'Approve & Publish Quarterly KPIs',
+      labelAr: 'اعتماد واعتماد قياسات المؤشرات الربعية',
+      description: 'Sign-off on verified mathematical KPI achievements',
+    },
+    {
+      key: 'approve_budget',
+      label: 'Authorize Initiative Capital Spend',
+      labelAr: 'اعتماد الميزانيات والصرف الرأسمالي للمبادرات',
+      description: 'Sign-off on regional project expenditure and milestones',
+    },
+    {
+      key: 'manage_risks',
+      label: 'Maintain Sector Risk Register',
+      labelAr: 'إدارة وتحديث سجل مخاطر القطاع (ISO 31000)',
+      description: 'Assess threat likelihood, impacts, and mitigation plans',
+    },
+    {
+      key: 'audit_access',
+      label: 'Executive Board Audit & Oversight',
+      labelAr: 'صلاحيات الرقابة وتدقيق الامتثال لمجلس الهيئة',
+      description: 'View full system audit logs and compliance evidence',
+    },
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -79,37 +184,48 @@ export const OperationalStructureView: React.FC = () => {
               <span>{lang === 'ar' ? 'الهيكل التنظيمي والتشغيلي المعتمد للهيئة' : "THE AUTHORITY'S OPERATIONAL STRUCTURE"}</span>
             </div>
             <h2 className="text-xl font-bold font-sans">
-              {lang === 'ar' ? 'إطار الهيكل التنظيمي لهيئة تطوير الأحساء' : 'Al Ahsa Development Authority Organization Framework'}
+              {lang === 'ar' ? 'إطار الهيكل التنظيمي والصلاحيات المؤسسية' : 'Al Ahsa Development Authority Hierarchy & RBAC'}
             </h2>
             <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
               {lang === 'ar'
-                ? 'الهيكل الإداري التنفيذي الرسمي الذي يشمل مجلس الهيئة، ومكتب الرئيس التنفيذي، والإدارات الرقابية والاستشارية، و5 قطاعات تشغيلية متخصصة تقود مسيرة التنمية الإقليمية المستدامة.'
-                : 'Official executive architecture encompassing the Authority Board, CEO Office, oversight directorates, and 5 specialized operational sectors governing regional sustainable development.'}
+                ? 'الهيكل الإداري التنفيذي الرسمي الذي يشمل مجلس الهيئة، ومكتب الرئيس التنفيذي، والإدارات الرقابية، و5 قطاعات تشغيلية متخصصة مع إدارة ديناميكية للصلاحيات والوحدات.'
+                : 'Executive architecture encompassing the Authority Board, CEO Office, oversight directorates, and 5 specialized operational sectors with active unit and permission management.'}
             </p>
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-700 self-start md:self-auto">
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <button
-              onClick={() => setActiveViewMode('hierarchy')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeViewMode === 'hierarchy'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              onClick={() => setIsAddDeptModalOpen(true)}
+              className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer transition-all"
             >
-              {lang === 'ar' ? 'المخطط الهيكلي التفاعلي' : 'Org Chart Tree'}
+              <Plus className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? '+ إضافة وحدة تنظيمية' : '+ Add Operational Unit'}</span>
             </button>
-            <button
-              onClick={() => setActiveViewMode('grid')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeViewMode === 'grid'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {lang === 'ar' ? `دليل الإدارات والأقسام (${DEPARTMENTS.length})` : `Departments Directory (${DEPARTMENTS.length})`}
-            </button>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-700">
+              <button
+                onClick={() => setActiveViewMode('hierarchy')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeViewMode === 'hierarchy'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {lang === 'ar' ? 'المخطط الهيكلي' : 'Org Tree'}
+              </button>
+              <button
+                onClick={() => setActiveViewMode('grid')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeViewMode === 'grid'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {lang === 'ar' ? `الدليل (${departments.length})` : `Directory (${departments.length})`}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -126,7 +242,7 @@ export const OperationalStructureView: React.FC = () => {
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            {lang === 'ar' ? `جميع القطاعات والوحدات (${DEPARTMENTS.length})` : `All Sectors & Units (${DEPARTMENTS.length})`}
+            {lang === 'ar' ? `جميع القطاعات والوحدات (${departments.length})` : `All Sectors & Units (${departments.length})`}
           </button>
           {AUTHORITY_SECTORS.map((sec) => (
             <button
@@ -138,33 +254,41 @@ export const OperationalStructureView: React.FC = () => {
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
-              {lang === 'ar' ? (sec.nameAr || sec.name) : sec.name}
+              {lang === 'ar' ? sec.nameAr || sec.name : sec.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* VIEW 1: INTERACTIVE HIERARCHY TREE (Matching PDF page 1) */}
+      {/* VIEW 1: INTERACTIVE HIERARCHY TREE */}
       {activeViewMode === 'hierarchy' && (
         <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-8 overflow-x-auto">
           {/* Level 1: Authority Board & Secretariat */}
           <div className="flex flex-col items-center">
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              {/* Internal Audit (Dotted advisory on left) */}
-              <div className="w-56 p-3.5 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 text-center shadow-2xs">
-                <span className="text-[9px] font-mono font-bold uppercase text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">
-                  {lang === 'ar' ? 'الرقابة المستقلة' : 'Independent Oversight'}
-                </span>
+              {/* Internal Audit (Independent Oversight Node) */}
+              <div
+                onClick={() => {
+                  const iaDept = departments.find((d) => d.id === 'dept-ia');
+                  if (iaDept) handleOpenDeptModal(iaDept);
+                }}
+                className="w-56 p-3.5 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 text-center shadow-2xs hover:border-blue-500 hover:bg-blue-50/20 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[9px] font-mono font-bold uppercase text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">
+                    {lang === 'ar' ? 'الرقابة المستقلة' : 'Independent Oversight'}
+                  </span>
+                  <Key className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
+                </div>
                 <div className="font-bold text-xs text-slate-900 mt-1">
                   {lang === 'ar' ? 'المراجعة الداخلية' : 'Internal Audit'}
                 </div>
-                {lang !== 'ar' && <div className="text-[10px] text-slate-500 mt-0.5">المراجعة الداخلية</div>}
                 <div className="text-[10px] text-blue-700 font-mono mt-1">
                   {lang === 'ar' ? 'المدير: عبد الله الغامدي' : 'Head: Abdullah Al-Ghamdi'}
                 </div>
               </div>
 
-              {/* Authority Board (Center Supreme Node) */}
+              {/* Authority Board (Supreme Governance Node) */}
               <div className="w-72 p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white text-center shadow-lg border-2 border-amber-400/40 relative">
                 <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center mx-auto mb-2 shadow-md">
                   <Crown className="w-4 h-4" />
@@ -172,21 +296,28 @@ export const OperationalStructureView: React.FC = () => {
                 <h3 className="font-bold text-sm tracking-wide uppercase">
                   {lang === 'ar' ? 'مجلس الهيئة' : 'Authority Board'}
                 </h3>
-                {lang !== 'ar' && <div className="text-[11px] text-amber-300 font-sans mt-0.5">مجلس الهيئة</div>}
                 <div className="text-[10px] text-slate-300 font-mono mt-1 border-t border-slate-800 pt-1.5">
                   {lang === 'ar' ? 'برئاسة سمو الأمير سعود بن طلال بن بدر آل سعود' : 'Chaired by H.R.H. Prince Saud bin Talal Al Saud'}
                 </div>
               </div>
 
-              {/* Board Secretariat (Right Node) */}
-              <div className="w-56 p-3.5 rounded-xl border border-slate-200 bg-white text-center shadow-2xs">
-                <span className="text-[9px] font-mono font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-                  {lang === 'ar' ? 'المكتب الاستشاري للمجلس' : 'Board Advisory'}
-                </span>
+              {/* Board Secretariat Node */}
+              <div
+                onClick={() => {
+                  const bdDept = departments.find((d) => d.id === 'dept-board');
+                  if (bdDept) handleOpenDeptModal(bdDept);
+                }}
+                className="w-56 p-3.5 rounded-xl border border-slate-200 bg-white text-center shadow-2xs hover:border-blue-500 hover:shadow-xs transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[9px] font-mono font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                    {lang === 'ar' ? 'أمانة المجلس' : 'Board Advisory'}
+                  </span>
+                  <Key className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
+                </div>
                 <div className="font-bold text-xs text-slate-900 mt-1">
                   {lang === 'ar' ? 'أمانة مجلس الهيئة' : 'Authority Board Secretariat'}
                 </div>
-                {lang !== 'ar' && <div className="text-[10px] text-slate-500 mt-0.5">أمانة مجلس الهيئة</div>}
                 <div className="text-[10px] text-slate-600 font-mono mt-1">
                   {lang === 'ar' ? 'ماجد المطيري' : 'Majed Al-Mutairi'}
                 </div>
@@ -198,25 +329,29 @@ export const OperationalStructureView: React.FC = () => {
 
             {/* Level 2: Chief Executive Officer (CEO) */}
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <div className="w-64 p-4 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white text-center shadow-md border border-blue-500">
+              <div className="w-68 p-4 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-800 text-white text-center shadow-md border border-blue-500 relative">
                 <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-200">
-                  {lang === 'ar' ? 'القيادة التنفيذية' : 'Executive Leadership'}
+                  {lang === 'ar' ? 'القيادة التنفيذية العليا' : 'Chief Executive Officer'}
                 </div>
                 <h3 className="font-bold text-sm mt-0.5">
-                  {lang === 'ar' ? 'الرئيس التنفيذي' : 'Chief Executive Officer'}
-                </h3>
-                {lang !== 'ar' && <div className="text-[11px] text-blue-200 font-sans">الرئيس التنفيذي</div>}
-                <div className="text-[10px] text-white/90 font-mono mt-1 font-semibold">
                   {lang === 'ar' ? 'م. عبد العزيز بن أحمد الحسن' : 'Eng. Abdulaziz Al-Hassan'}
+                </h3>
+                <div className="text-[10px] text-blue-200/90 font-mono mt-1 font-semibold flex items-center justify-center gap-1.5">
+                  <span>CEO Office • Authority Oversight</span>
                 </div>
               </div>
 
               {/* CEO Office */}
-              <div className="w-48 p-3 rounded-xl border border-blue-200 bg-blue-50/60 text-center shadow-2xs">
+              <div
+                onClick={() => {
+                  const ceoDept = departments.find((d) => d.id === 'dept-ceo');
+                  if (ceoDept) handleOpenDeptModal(ceoDept);
+                }}
+                className="w-48 p-3 rounded-xl border border-blue-200 bg-blue-50/60 text-center shadow-2xs hover:border-blue-400 transition-all cursor-pointer"
+              >
                 <div className="font-bold text-xs text-blue-950">
                   {lang === 'ar' ? 'مكتب الرئيس التنفيذي' : 'CEO Office'}
                 </div>
-                {lang !== 'ar' && <div className="text-[10px] text-slate-500">مكتب الرئيس التنفيذي</div>}
                 <div className="text-[10px] text-blue-700 font-mono mt-0.5">
                   {lang === 'ar' ? 'فهد الكلثم' : 'Fahad Al-Kaltham'}
                 </div>
@@ -226,38 +361,36 @@ export const OperationalStructureView: React.FC = () => {
             {/* Connecting Vertical Stem */}
             <div className="w-0.5 h-8 bg-blue-600 my-1" />
 
-            {/* Level 3: Direct Advisory & Reporting Offices Grid */}
+            {/* Level 3: Direct Advisory & Oversight Offices Grid */}
             <div className="w-full max-w-4xl p-4 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs space-y-2">
               <div className="flex items-center justify-between pb-2 border-b border-slate-200 text-xs font-mono font-semibold text-slate-600">
                 <span className="uppercase text-[10px] text-blue-700 font-bold">
-                  {lang === 'ar' ? 'الإدارات الاستشارية والرقابية المؤسسية المباشرة' : 'Direct Advisory & Institutional Oversight Directorates'}
+                  {lang === 'ar' ? 'الإدارات الاستشارية والرقابية المباشرة (انقر لإدارة الصلاحيات)' : 'Direct Advisory & Oversight Directorates (Click for Permissions)'}
                 </span>
-                <span>{lang === 'ar' ? 'ترتبط مباشرة بالرئيس التنفيذي' : 'Reports Directly to CEO'}</span>
+                <span>{lang === 'ar' ? 'ترتبط بالرئيس التنفيذي' : 'Reports Directly to CEO'}</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
                 {advisoryOffices
-                  .filter((d) => d.id !== 'dept-ia') // IA is displayed at the top with dotted line
+                  .filter((d) => d.id !== 'dept-ia')
                   .map((dept) => (
                     <div
                       key={dept.id}
-                      className="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs text-center space-y-1 hover:border-blue-400 transition-colors"
+                      onClick={() => handleOpenDeptModal(dept)}
+                      className="p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs text-center space-y-1 hover:border-blue-500 hover:shadow-xs transition-all cursor-pointer group"
                     >
-                      <div className="font-bold text-[11px] text-slate-900 leading-tight">
-                        {lang === 'ar' ? (dept.nameAr || dept.name) : dept.name}
+                      <div className="font-bold text-[11px] text-slate-900 leading-tight group-hover:text-blue-700 transition-colors">
+                        {lang === 'ar' ? dept.nameAr || dept.name : dept.name}
                       </div>
-                      {lang !== 'ar' && dept.nameAr && (
-                        <div className="text-[10px] text-slate-400">{dept.nameAr}</div>
-                      )}
                       <div className="text-[9px] font-mono text-slate-500 pt-1 border-t border-slate-100 truncate">
-                        {lang === 'ar' ? dept.head : dept.head}
+                        {dept.head}
                       </div>
                     </div>
                   ))}
               </div>
             </div>
 
-            {/* Connecting Vertical Stem to 5 Sectors */}
+            {/* Connecting Vertical Stem */}
             <div className="w-0.5 h-8 bg-blue-600 my-1" />
           </div>
 
@@ -265,16 +398,16 @@ export const OperationalStructureView: React.FC = () => {
           <div className="pt-2">
             <div className="text-center mb-6">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-400 tracking-wider">
-                {lang === 'ar' ? 'القطاعات التشغيلية الرئيسية' : 'CORE OPERATIONAL DIVISIONS'}
+                {lang === 'ar' ? 'القطاعات التشغيلية الرئيسية الخمسة' : 'CORE OPERATIONAL SECTORS (5 DIVISIONS)'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                {lang === 'ar' ? '5 قطاعات تشغيلية متخصصة' : '5 Specialized Operational Sectors'}
+                {lang === 'ar' ? 'قطاعات التنمية والتنفيذ المؤسسي' : 'Specialized Executive Sectors & Operational Units'}
               </h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {AUTHORITY_SECTORS.map((sector) => {
-                const subDepts = DEPARTMENTS.filter((d) => d.sectorId === sector.id);
+                const subDepts = departments.filter((d) => d.sectorId === sector.id);
 
                 return (
                   <div
@@ -296,35 +429,32 @@ export const OperationalStructureView: React.FC = () => {
                         </span>
                       </div>
                       <h4 className="font-bold text-xs text-white leading-tight">
-                        {lang === 'ar' ? (sector.nameAr || sector.name) : sector.name}
+                        {lang === 'ar' ? sector.nameAr || sector.name : sector.name}
                       </h4>
-                      {lang !== 'ar' && sector.nameAr && (
-                        <div className="text-[11px] text-slate-300 font-sans">{sector.nameAr}</div>
-                      )}
                       <div className="text-[10px] text-blue-300 font-mono pt-1">
-                        {lang === 'ar' ? `الرئيس: ${sector.head}` : `Head: ${sector.head}`}
+                        {lang === 'ar' ? `الرئيس: ${sector.head}` : `Lead: ${sector.head}`}
                       </div>
                     </div>
 
                     {/* Sub-departments List */}
                     <div className="p-3 space-y-2 flex-1 bg-slate-50/40 divide-y divide-slate-100">
                       {subDepts.map((sub) => (
-                        <div key={sub.id} className="pt-2 first:pt-0">
+                        <div
+                          key={sub.id}
+                          onClick={() => handleOpenDeptModal(sub)}
+                          className="pt-2 first:pt-0 p-1.5 rounded-lg hover:bg-white hover:shadow-2xs transition-all cursor-pointer group"
+                        >
                           <div className="flex items-start justify-between gap-1">
-                            <span className="font-bold text-xs text-slate-900 leading-tight">
-                              {lang === 'ar' ? (sub.nameAr || sub.name) : sub.name}
+                            <span className="font-bold text-xs text-slate-900 leading-tight group-hover:text-blue-700 transition-colors">
+                              {lang === 'ar' ? sub.nameAr || sub.name : sub.name}
                             </span>
                             <span className="text-[9px] font-mono text-slate-500 shrink-0 bg-white px-1.5 py-0.2 rounded border border-slate-200">
                               {lang === 'ar' ? `${sub.employeeCount} كادر` : `${sub.employeeCount}p`}
                             </span>
                           </div>
-                          {lang !== 'ar' && sub.nameAr && (
-                            <div className="text-[10px] text-slate-400 mt-0.5 font-sans">
-                              {sub.nameAr}
-                            </div>
-                          )}
-                          <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
-                            {lang === 'ar' ? `المدير: ${sub.head}` : `Dir: ${sub.head}`}
+                          <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate flex items-center justify-between">
+                            <span>{sub.head}</span>
+                            <Key className="w-2.5 h-2.5 text-slate-300 group-hover:text-blue-600" />
                           </div>
                         </div>
                       ))}
@@ -366,8 +496,8 @@ export const OperationalStructureView: React.FC = () => {
 
             <div className="text-xs text-slate-500 font-mono">
               {lang === 'ar'
-                ? `عرض ${filteredDepartments.length} من أصل ${DEPARTMENTS.length} وحدة تنظيمية`
-                : `Showing ${filteredDepartments.length} of ${DEPARTMENTS.length} Organizational Units`}
+                ? `عرض ${filteredDepartments.length} من أصل ${departments.length} وحدة تنظيمية`
+                : `Showing ${filteredDepartments.length} of ${departments.length} Organizational Units`}
             </div>
           </div>
 
@@ -375,7 +505,8 @@ export const OperationalStructureView: React.FC = () => {
             {filteredDepartments.map((dept) => (
               <div
                 key={dept.id}
-                className="bg-white rounded-xl border border-slate-200/90 p-5 shadow-xs space-y-3 hover:border-blue-300 transition-all"
+                onClick={() => handleOpenDeptModal(dept)}
+                className="bg-white rounded-xl border border-slate-200/90 p-5 shadow-xs space-y-3 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-mono font-bold text-xs text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
@@ -387,38 +518,321 @@ export const OperationalStructureView: React.FC = () => {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">
-                    {lang === 'ar' ? (dept.nameAr || dept.name) : dept.name}
+                  <h3 className="font-bold text-sm text-slate-900 group-hover:text-blue-700 transition-colors">
+                    {lang === 'ar' ? dept.nameAr || dept.name : dept.name}
                   </h3>
-                  {lang !== 'ar' && dept.nameAr && (
-                    <div className="text-xs text-slate-400 font-sans mt-0.5">{dept.nameAr}</div>
-                  )}
                   {dept.sectorName && (
                     <div className="text-[11px] font-semibold text-blue-600 mt-1 font-mono">
                       {lang === 'ar'
-                        ? (AUTHORITY_SECTORS.find((s) => s.id === dept.sectorId)?.nameAr || dept.sectorName)
+                        ? AUTHORITY_SECTORS.find((s) => s.id === dept.sectorId)?.nameAr || dept.sectorName
                         : dept.sectorName}
                     </div>
-                  )}
-                  {dept.category && (
-                    <span className="inline-block mt-1 text-[9px] font-mono uppercase font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                      {lang === 'ar'
-                        ? (dept.category === 'Operational Sector'
-                            ? 'قطاع تشغيلي'
-                            : dept.category === 'Advisory & Oversight'
-                            ? 'رقابي واستشاري'
-                            : 'مجلس الهيئة والرئيس التنفيذي')
-                        : dept.category}
-                    </span>
                   )}
                 </div>
 
                 <div className="text-xs text-slate-600 pt-2 border-t border-slate-100 font-mono flex items-center justify-between">
-                  <span>{lang === 'ar' ? 'مدير الوحدة:' : 'Unit Director:'}</span>
+                  <span>{lang === 'ar' ? 'المدير المسؤول:' : 'Lead Officer:'}</span>
                   <span className="font-bold text-slate-900">{dept.head}</span>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Banner: Proceed to Step 4 */}
+      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+            3/10
+          </div>
+          <div>
+            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
+              {lang === 'ar' ? 'المحطة التالية في رحلة العرض' : 'NEXT STEP IN DEMO JOURNEY'}
+            </span>
+            <h4 className="font-bold text-xs text-slate-900">
+              {lang === 'ar' ? 'صياغة المواءمة الاستراتيجية متعددة الكيانات' : 'Step 4: Strategy Formulation & Multi-Entity Cascade'}
+            </h4>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setDemoJourneyStep(4);
+            navigate('/strategy/create');
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <span>{lang === 'ar' ? 'الانتقال لصياغة الاستراتيجية' : 'Proceed to Step 4 ➔'}</span>
+        </button>
+      </div>
+
+      {/* MODAL 1: DEPARTMENT DETAILS & RBAC PERMISSIONS DRAWER */}
+      {selectedDeptForModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-xl overflow-hidden animate-in slide-in-from-bottom-2">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center font-bold font-mono">
+                  {selectedDeptForModal.code}
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">
+                    {lang === 'ar' ? selectedDeptForModal.nameAr || selectedDeptForModal.name : selectedDeptForModal.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-mono">
+                    {lang === 'ar' ? `مدير الوحدة: ${selectedDeptForModal.head}` : `Lead: ${selectedDeptForModal.head}`} • {selectedDeptForModal.employeeCount} Cadres
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedDeptForModal(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body: RBAC Permissions Matrix */}
+            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                  <Key className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{lang === 'ar' ? 'مصفوفة صلاحيات الإدارة (RBAC Permissions Matrix)' : 'Assigned Role Permissions (RBAC Matrix)'}</span>
+                </div>
+                <span className="text-[10px] font-mono text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  {activePermissions.length} Active
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {PERMISSION_OPTIONS.map((perm) => {
+                  const isChecked = activePermissions.includes(perm.key);
+                  return (
+                    <div
+                      key={perm.key}
+                      onClick={() => handleTogglePermission(perm.key)}
+                      className={`p-3 rounded-xl border text-xs transition-all cursor-pointer flex items-start gap-3 ${
+                        isChecked
+                          ? 'border-blue-400 bg-blue-50/50 text-slate-900'
+                          : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => {}}
+                        className="mt-0.5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <div className="font-bold">
+                          {lang === 'ar' ? perm.labelAr : perm.label}
+                        </div>
+                        <div className="text-[11px] text-slate-500 mt-0.5">
+                          {perm.description}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Personnel in this Department */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>{lang === 'ar' ? 'الكوادر والمستخدمون المسجلون' : 'Assigned Cadres & Users'}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    {lang === 'ar' ? 'انقر لمحاكاة الدور مباشرة' : 'Click to simulate user role'}
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  {users
+                    .filter((u) => u.department.includes(selectedDeptForModal.name) || u.name.includes(selectedDeptForModal.head))
+                    .slice(0, 3)
+                    .map((user) => (
+                      <div
+                        key={user.id}
+                        className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover" />
+                          <div>
+                            <div className="font-semibold text-slate-900">{user.name}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{user.role}</div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            switchUserRole(user.role);
+                            setSelectedDeptForModal(null);
+                          }}
+                          className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
+                        >
+                          {lang === 'ar' ? 'محاكاة الدور' : 'Simulate Role'}
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedDeptForModal(null)}
+                className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleSavePermissions}
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+              >
+                {lang === 'ar' ? 'حفظ الصلاحيات' : 'Save Permissions'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: ADD OPERATIONAL UNIT */}
+      {isAddDeptModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in slide-in-from-bottom-2">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-sm text-slate-900">
+                  {lang === 'ar' ? 'إضافة وحدة تنظيمية / إدارة جديدة' : 'Add New Operational Unit'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddDeptModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateDepartment} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'رمز الوحدة' : 'Unit Code'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newDeptCode}
+                    onChange={(e) => setNewDeptCode(e.target.value)}
+                    placeholder="e.g. SSD-TO"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'القطاع التابع له' : 'Parent Sector'} *
+                  </label>
+                  <select
+                    value={newDeptSectorId}
+                    onChange={(e) => setNewDeptSectorId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                  >
+                    {AUTHORITY_SECTORS.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.code} — {lang === 'ar' ? s.nameAr || s.name : s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'اسم الوحدة التنظيمية (بالإنجليزية)' : 'Unit Name (English)'} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newDeptName}
+                  onChange={(e) => setNewDeptName(e.target.value)}
+                  placeholder="e.g. Tourism Development Office"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'اسم الوحدة التنظيمية (بالعربية)' : 'Unit Name (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  value={newDeptNameAr}
+                  onChange={(e) => setNewDeptNameAr(e.target.value)}
+                  dir="rtl"
+                  placeholder="مثال: مكتب تطوير السياحة"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 text-right"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'مدير الوحدة المسند' : 'Lead Officer'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newDeptHead}
+                    onChange={(e) => setNewDeptHead(e.target.value)}
+                    placeholder="e.g. Eng. Tariq Al-Dosari"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'عدد الكوادر' : 'Employee Count'}
+                  </label>
+                  <input
+                    type="number"
+                    value={newDeptEmployeeCount}
+                    onChange={(e) => setNewDeptEmployeeCount(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddDeptModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إضافة الوحدة' : 'Create Unit'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

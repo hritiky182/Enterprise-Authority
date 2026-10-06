@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StatCard } from '../components/common/StatCard';
 import { Heatmap5x5 } from '../components/common/Heatmap5x5';
@@ -6,6 +6,7 @@ import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { RiskItem, StrategicInitiative } from '../types';
 import { PERFORMANCE_MONTHLY_TRENDS } from '../data/mockData';
+import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -29,6 +30,8 @@ import {
   Shield,
   Layers,
   Sparkles,
+  Printer,
+  Download,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,6 +51,7 @@ export const DashboardPage: React.FC = () => {
   } = useApp();
 
   const navigate = useNavigate();
+  const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
   const openRisks = risks.filter((r) => r.status !== 'Closed');
   const criticalRisks = risks.filter((r) => r.inherentScore >= 16);
@@ -142,7 +146,15 @@ export const DashboardPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setIsExecutiveBriefOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-emerald-300" />
+              <span>{lang === 'ar' ? 'تقرير تنفيذي (PDF/طباعة)' : 'Executive Brief (PDF)'}</span>
+            </button>
+
             {permissions.canCreateRisk && (
               <button
                 onClick={() => openModal('create_risk')}
@@ -403,6 +415,12 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Executive Strategic Dossier & PDF Modal */}
+      <ExecutiveBriefModal
+        isOpen={isExecutiveBriefOpen}
+        onClose={() => setIsExecutiveBriefOpen(false)}
+      />
     </div>
   );
 };

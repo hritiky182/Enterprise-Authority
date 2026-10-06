@@ -3,6 +3,8 @@ import {
   User,
   Role,
   Sector,
+  Department,
+  OrganizationConfig,
   RiskItem,
   StrategicTheme,
   StrategicGoal,
@@ -19,6 +21,7 @@ import {
 import {
   ORGANIZATION_INFO,
   AUTHORITY_SECTORS,
+  DEPARTMENTS as initialDepartments,
   CURRENT_USER,
   MOCK_USERS,
   RISKS as initialRisks,
@@ -189,7 +192,17 @@ interface AppContextType {
 
   // Organization Structure & Client Metadata
   sectors: Sector[];
-  organization: typeof ORGANIZATION_INFO;
+  departments: Department[];
+  organization: OrganizationConfig;
+  updateOrganization: (updates: Partial<OrganizationConfig>) => void;
+  addDepartment: (dept: Omit<Department, 'id'>) => Department;
+  updateDepartment: (id: string, updates: Partial<Department>) => void;
+
+  // Story-Driven Demo Journey State
+  demoJourneyStep: number;
+  setDemoJourneyStep: (step: number) => void;
+  isDemoJourneyActive: boolean;
+  setIsDemoJourneyActive: (active: boolean) => void;
 
   // Modal / Drawer State
   activeModal: ModalConfig | null;
@@ -358,6 +371,120 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [bcmProcesses] = useState<BCMProcess[]>(initialBcmProcesses);
   const [bcmPlans] = useState<BCMPlan[]>(initialBcmPlans);
+
+  // Organization Branding & Identity State
+  const defaultOrgConfig: OrganizationConfig = {
+    name: ORGANIZATION_INFO.name,
+    nameAr: ORGANIZATION_INFO.nameAr,
+    shortName: ORGANIZATION_INFO.shortName,
+    shortCode: ORGANIZATION_INFO.shortName || 'AHDA',
+    logo: 'ahda-emblem',
+    logoUrl: '',
+    themeColor: 'blue',
+    vision: ORGANIZATION_INFO.vision,
+    visionAr: ORGANIZATION_INFO.visionAr,
+    mission: ORGANIZATION_INFO.mission,
+    missionAr: 'قيادة التنمية المكانية والاجتماعية والاقتصادية المستدامة عبر واحة الأحساء والمراكز الحضرية.',
+    values: [
+      'Civic Co-Creation & Community First',
+      'Sustainable Environmental Stewardship',
+      'Heritage Preservation & Oasis Identity',
+      'Institutional Agility & Innovation',
+      'Governance, Transparency & Integrity',
+    ],
+    coreValues: [
+      'Civic Co-Creation & Community First',
+      'Sustainable Environmental Stewardship',
+      'Heritage Preservation & Oasis Identity',
+      'Institutional Agility & Innovation',
+      'Governance, Transparency & Integrity',
+    ],
+    valuesAr: [
+      'المشاركة المجتمعية وأولوية المواطن',
+      'الريادة البيئية والاستدامة',
+      'حفظ التراث وهوية الواحة',
+      'المرونة المؤسسية والابتكار',
+      'الحوكمة والنزاهة والشفافية',
+    ],
+    boardChair: ORGANIZATION_INFO.boardChair,
+    ceo: ORGANIZATION_INFO.ceo,
+  };
+
+  const [organization, setOrganization] = useState<OrganizationConfig>(() => {
+    const saved = sessionStorage.getItem('eda_org_info');
+    if (saved) {
+      try {
+        return { ...defaultOrgConfig, ...JSON.parse(saved) };
+      } catch (e) {}
+    }
+    return defaultOrgConfig;
+  });
+
+  const updateOrganization = (updates: Partial<OrganizationConfig>) => {
+    setOrganization((prev) => {
+      const next = { ...prev, ...updates };
+      sessionStorage.setItem('eda_org_info', JSON.stringify(next));
+      return next;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث هوية وبيانات المنظومة' : 'Organization Setup Updated', {
+      description: lang === 'ar' ? 'تم حفظ التعديلات وتطبيقها على المنظومة' : 'Changes applied to entity profile & theme',
+    });
+  };
+
+  // Departments State
+  const [departments, setDepartments] = useState<Department[]>(() => {
+    const saved = sessionStorage.getItem('eda_departments');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return initialDepartments;
+  });
+
+  const addDepartment = (dept: Omit<Department, 'id'>): Department => {
+    const newDept: Department = {
+      ...dept,
+      id: `dept-${Date.now()}`,
+    };
+    setDepartments((prev) => {
+      const next = [...prev, newDept];
+      sessionStorage.setItem('eda_departments', JSON.stringify(next));
+      return next;
+    });
+    toast.success(lang === 'ar' ? 'تمت إضافة الإدارة/الوحدة التنظيمية' : 'Department Added Successfully');
+    return newDept;
+  };
+
+  const updateDepartment = (id: string, updates: Partial<Department>) => {
+    setDepartments((prev) => {
+      const next = prev.map((d) => (d.id === id ? { ...d, ...updates } : d));
+      sessionStorage.setItem('eda_departments', JSON.stringify(next));
+      return next;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث الإدارة والصلاحيات' : 'Department & Permissions Updated');
+  };
+
+  // Story-Driven Demo Journey State
+  const [demoJourneyStep, setDemoJourneyStepState] = useState<number>(() => {
+    const saved = sessionStorage.getItem('eda_demo_step');
+    return saved ? Number(saved) : 1;
+  });
+
+  const [isDemoJourneyActive, setIsDemoJourneyActiveState] = useState<boolean>(() => {
+    const saved = sessionStorage.getItem('eda_demo_active');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const setDemoJourneyStep = (step: number) => {
+    setDemoJourneyStepState(step);
+    sessionStorage.setItem('eda_demo_step', String(step));
+  };
+
+  const setIsDemoJourneyActive = (active: boolean) => {
+    setIsDemoJourneyActiveState(active);
+    sessionStorage.setItem('eda_demo_active', String(active));
+  };
 
   // Modals & Drawers
   const [activeModal, setActiveModal] = useState<ModalConfig | null>(null);
@@ -1416,7 +1543,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         bcmProcesses,
         bcmPlans,
         sectors: AUTHORITY_SECTORS,
-        organization: ORGANIZATION_INFO,
+        departments,
+        organization,
+        updateOrganization,
+        addDepartment,
+        updateDepartment,
+        demoJourneyStep,
+        setDemoJourneyStep,
+        isDemoJourneyActive,
+        setIsDemoJourneyActive,
         activeModal,
         openModal,
         closeModal,

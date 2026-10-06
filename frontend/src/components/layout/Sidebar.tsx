@@ -53,6 +53,7 @@ export const Sidebar: React.FC = () => {
     objectives,
     kpis,
     initiatives,
+    organization,
   } = useApp();
 
   const criticalRisksCount = risks.filter(
@@ -69,6 +70,7 @@ export const Sidebar: React.FC = () => {
       title: 'CORE COMMAND',
       items: [
         { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" /> },
         { name: 'Strategy Matrix', path: '/strategy', icon: <Target className="w-4 h-4" /> },
         {
           name: 'Hierarchy Tree',
@@ -168,16 +170,24 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 bg-slate-950/60">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
-            <Building2 className="w-5 h-5" />
-          </div>
+          {organization?.logoUrl ? (
+            <img
+              src={organization.logoUrl}
+              alt="Logo"
+              className="w-9 h-9 rounded-xl object-contain bg-white/10 p-1 border border-slate-700 shrink-0"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
+              <Building2 className="w-5 h-5" />
+            </div>
+          )}
           {!sidebarCollapsed && (
             <div className="truncate">
-              <h1 className="text-xs font-bold text-white tracking-wide uppercase leading-tight font-sans">
-                {t('enterprise_authority')}
+              <h1 className="text-xs font-bold text-white tracking-wide uppercase leading-tight font-sans truncate" title={lang === 'ar' ? (organization?.nameAr || organization?.name) : organization?.name}>
+                {lang === 'ar' ? (organization?.nameAr || organization?.name || t('enterprise_authority')) : (organization?.name || t('enterprise_authority'))}
               </h1>
-              <span className="text-[10px] text-blue-400 font-mono tracking-wider block uppercase">
-                {t('grc_strategy_suite')}
+              <span className="text-[10px] text-blue-400 font-mono tracking-wider block uppercase truncate">
+                {organization?.shortCode || organization?.shortName || 'AHDA'} • {t('grc_strategy_suite')}
               </span>
             </div>
           )}

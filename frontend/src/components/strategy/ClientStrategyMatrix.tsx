@@ -19,13 +19,16 @@ import {
   Award,
   BookOpen,
   Plus,
+  Printer,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ExecutiveBriefModal } from '../modals/ExecutiveBriefModal';
 
 export const ClientStrategyMatrix: React.FC = () => {
   const { kpis, objectives, openModal, lang, t } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedObjectiveFilter, setSelectedObjectiveFilter] = useState<'all' | '2.1' | '2.2'>('all');
+  const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
   // Filter client-specific KPIs (specifically under pillar 02 or with cascading attributes)
   const clientKpis = kpis.filter((k) => {
@@ -148,6 +151,14 @@ export const ClientStrategyMatrix: React.FC = () => {
               <Plus className="w-4 h-4" />
               <span>{lang === 'ar' ? '+ صياغة الاستراتيجية' : '+ Strategy Formulation'}</span>
             </Link>
+
+            <button
+              onClick={() => setIsExecutiveBriefOpen(true)}
+              className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-emerald-300" />
+              <span>{lang === 'ar' ? 'تقرير تنفيذي (PDF)' : 'Executive Brief (PDF)'}</span>
+            </button>
 
             <button
               onClick={handleExportCSV}
@@ -392,6 +403,11 @@ export const ClientStrategyMatrix: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ExecutiveBriefModal
+        isOpen={isExecutiveBriefOpen}
+        onClose={() => setIsExecutiveBriefOpen(false)}
+      />
     </div>
   );
 };

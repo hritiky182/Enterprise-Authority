@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { DataTable, Column } from '../components/common/DataTable';
@@ -17,15 +18,24 @@ import {
   List,
   Target,
   Clock,
+  ArrowRight,
+  Check,
+  FolderGit2,
+  Milestone,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const InitiativesPage: React.FC = () => {
-  const { initiatives, objectives, addInitiative, toggleMilestone, lang, t } = useApp();
+  const navigate = useNavigate();
+  const { initiatives, objectives, addInitiative, toggleMilestone, setDemoJourneyStep, lang, t } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // AI Copilot state
+  const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
 
   // Form State for Create Initiative
   const [formCode, setFormCode] = useState(`INIT-0${initiatives.length + 1}`);
@@ -33,10 +43,9 @@ export const InitiativesPage: React.FC = () => {
   const [formTitleAr, setFormTitleAr] = useState('');
   const [formObjectiveId, setFormObjectiveId] = useState(objectives[0]?.id || 'obj-1');
   const [formDescription, setFormDescription] = useState('');
-  const [formDescriptionAr, setFormDescriptionAr] = useState('');
   const [formOwner, setFormOwner] = useState('Eng. Fahad Al-Subaie');
   const [formDepartment, setFormDepartment] = useState('Regional Transformation & Urban Planning');
-  const [formBudgetSAR, setFormBudgetSAR] = useState(15000000);
+  const [formBudgetSAR, setFormBudgetSAR] = useState(12000000);
   const [formSpentSAR, setFormSpentSAR] = useState(2500000);
   const [formProgress, setFormProgress] = useState(20);
   const [formStartDate, setFormStartDate] = useState('2026-01-01');
@@ -44,6 +53,79 @@ export const InitiativesPage: React.FC = () => {
   const [formStatus, setFormStatus] = useState<'Planning' | 'In Progress' | 'At Risk' | 'Completed'>('In Progress');
   const [formMilestoneTitle, setFormMilestoneTitle] = useState('Phase 1 Detailed Master Plan Sign-off');
   const [formMilestoneDate, setFormMilestoneDate] = useState('2026-11-30');
+
+  // AI Initiative Recommendations
+  const AI_INITIATIVE_SUGGESTIONS = [
+    {
+      code: 'INIT-06',
+      title: 'Initiative 6: Raise awareness of Al-Ahsa Strategy & Digital Civic Engagement',
+      titleAr: 'المبادرة 6: رفع الوعي باستراتيجية تطوير الأحساء وتعزيز التفاعل الرقمي',
+      description: 'Comprehensive public awareness campaigns, multi-media storytelling of oasis heritage, and unified digital communication channels.',
+      budget: 8500000,
+      spent: 5200000,
+      owner: 'Tourism Destination Management Office',
+      department: 'Marketing & Public Relations',
+      milestones: [
+        { title: 'Develop community awareness framework & brand guide', dueDate: '2026-06-30', status: 'Completed' as const },
+        { title: 'Launch multimedia digital engagement portal', dueDate: '2026-10-15', status: 'In Progress' as const },
+        { title: 'Execute regional oasis festival campaigns', dueDate: '2027-02-28', status: 'Pending' as const },
+      ],
+      keyProject: 'Al-Ahsa Strategy Awareness Project',
+    },
+    {
+      code: 'INIT-07',
+      title: 'Initiative 7: Increase community participation in regional development planning',
+      titleAr: 'المبادرة 7: تعزيز المشاركة المجتمعية في تخطيط مسارات التنمية الإقليمية',
+      description: 'Unified civic engagement digital portal enabling citizens to vote on regional ideas, participate in municipal surveys, and empower local community economy.',
+      budget: 12000000,
+      spent: 7800000,
+      owner: 'Strategy & Sector Development Sector',
+      department: 'Strategy Development',
+      milestones: [
+        { title: 'Digital Platforms and Technical Integration Framework', dueDate: '2026-05-15', status: 'Completed' as const },
+        { title: 'Unified digital civic voting & consultation portal', dueDate: '2026-12-15', status: 'In Progress' as const },
+        { title: 'Local initiatives incubator & community impact dashboard', dueDate: '2027-03-31', status: 'Pending' as const },
+      ],
+      keyProject: 'Digital Platforms & Technical Integration for Community Engagement',
+    },
+    {
+      code: 'INIT-08',
+      title: 'Initiative 8: Enhance urban living standards & oasis environmental services',
+      titleAr: 'المبادرة 8: تحسين جودة الحياة الحضرية والخدمات البيئية لواحة الأحساء',
+      description: 'Upgrading recreational spaces, developing continuous green corridors, expanding pedestrian network, and monitoring living satisfaction.',
+      budget: 16500000,
+      spent: 6200000,
+      owner: 'Spatial & Urban Development Sector',
+      department: 'Urban & Rural Planning',
+      milestones: [
+        { title: 'Regional green corridor environmental baseline audit', dueDate: '2026-07-31', status: 'Completed' as const },
+        { title: 'Municipal park revitalizations & community sports track', dueDate: '2026-12-31', status: 'In Progress' as const },
+        { title: 'Comprehensive civic satisfaction measurement benchmark', dueDate: '2027-04-30', status: 'Pending' as const },
+      ],
+      keyProject: 'Quality of Life & Oasis Civic Satisfaction Project',
+    },
+  ];
+
+  const handleApplyAiSuggestion = (sug: typeof AI_INITIATIVE_SUGGESTIONS[0]) => {
+    setFormCode(sug.code);
+    setFormTitle(sug.title);
+    setFormTitleAr(sug.titleAr);
+    setFormDescription(sug.description);
+    setFormBudgetSAR(sug.budget);
+    setFormSpentSAR(sug.spent);
+    setFormOwner(sug.owner);
+    setFormDepartment(sug.department);
+    setFormMilestoneTitle(sug.milestones[0]?.title || 'Master Scope Sign-off');
+    setFormMilestoneDate(sug.milestones[0]?.dueDate || '2026-11-30');
+
+    setIsAiCopilotOpen(false);
+    toast.success(
+      lang === 'ar' ? 'تم تطبيق مقترح المبادرة بالذكاء الاصطناعي بنجاح' : 'AI Copilot Initiative Recommendation Applied!',
+      {
+        description: `${sug.code}: ${sug.title}`,
+      }
+    );
+  };
 
   // Metrics
   const totalCount = initiatives.length;
@@ -79,10 +161,9 @@ export const InitiativesPage: React.FC = () => {
       titleAr: formTitleAr.trim() || undefined,
       objectiveId: formObjectiveId,
       objectiveTitle: matchedObj ? matchedObj.title : 'Strategic Objective',
-      description: formDescription.trim(),
-      descriptionAr: formDescriptionAr.trim() || undefined,
-      owner: formOwner,
-      department: formDepartment,
+      description: formDescription.trim() || undefined,
+      owner: formOwner.trim(),
+      department: formDepartment.trim(),
       budgetSAR: Number(formBudgetSAR),
       spentSAR: Number(formSpentSAR),
       progress: Number(formProgress),
@@ -92,53 +173,55 @@ export const InitiativesPage: React.FC = () => {
       milestones: [
         {
           id: `m-${Date.now()}-1`,
-          title: formMilestoneTitle || 'Milestone Phase 1 Delivery',
-          dueDate: formMilestoneDate || '2026-12-31',
+          title: formMilestoneTitle.trim() || 'Core Deliverable Approval',
+          dueDate: formMilestoneDate,
           status: 'In Progress',
         },
       ],
       risksCount: 1,
-      actionsCount: 1,
-      keyProjects: ['Strategic Transformation Delivery'],
+      actionsCount: 2,
     });
 
     setIsCreateModalOpen(false);
+    toast.success(lang === 'ar' ? 'تم إنشاء المبادرة بنجاح' : 'Initiative Created Successfully');
+
+    // Reset Form
+    setFormCode(`INIT-0${initiatives.length + 2}`);
     setFormTitle('');
     setFormTitleAr('');
     setFormDescription('');
-    setFormCode(`INIT-0${initiatives.length + 2}`);
   };
 
   const columns: Column<StrategicInitiative>[] = [
     {
-      header: t('Code'),
-      accessorKey: 'code',
+      header: t('Initiative Code & Title'),
+      accessorKey: 'title',
       sortable: true,
-      width: '110px',
       cell: (i) => (
-        <div className="flex items-center space-x-1.5">
-          <span className="font-mono font-bold text-slate-900">{i.code}</span>
-          {i.isCustom && (
-            <span className="text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
-              {lang === 'ar' ? 'جديد' : 'NEW'}
+        <div className="space-y-0.5">
+          <div className="flex items-center space-x-2">
+            <span className="font-mono font-bold text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              {i.code}
             </span>
-          )}
+            <span className="text-[10px] font-mono text-slate-400">
+              {i.milestones?.length || 0} {lang === 'ar' ? 'معالم' : 'Gates'}
+            </span>
+          </div>
+          <div className="font-semibold text-xs text-slate-900 mt-1">
+            {lang === 'ar' ? i.titleAr || i.title : i.title}
+          </div>
+          <div className="text-[11px] text-slate-500 line-clamp-1">{i.description}</div>
         </div>
       ),
     },
     {
-      header: t('Strategic Initiatives'),
-      accessorKey: 'title',
+      header: t('Lead Officer & Dept'),
+      accessorKey: 'owner',
       sortable: true,
       cell: (i) => (
-        <div>
-          <div className="font-semibold text-slate-900">{lang === 'ar' ? (i.titleAr || i.title) : i.title}</div>
-          {lang !== 'ar' && i.titleAr && (
-            <div className="text-[11px] text-slate-400 font-sans mt-0.5">{i.titleAr}</div>
-          )}
-          <div className="text-[10px] text-slate-500 mt-1 line-clamp-1">
-            {lang === 'ar' ? (i.descriptionAr || i.description) : i.description}
-          </div>
+        <div className="text-xs">
+          <div className="font-semibold text-slate-800">{i.owner}</div>
+          <div className="text-[10px] text-slate-400 font-mono mt-0.5">{i.department}</div>
         </div>
       ),
     },
@@ -146,334 +229,414 @@ export const InitiativesPage: React.FC = () => {
       header: t('Budget Allocation'),
       accessorKey: 'budgetSAR',
       sortable: true,
-      width: '140px',
-      cell: (i) => (
-        <div className="font-mono text-xs">
-          <div className="font-bold text-slate-900">
-            {lang === 'ar' ? `${(i.budgetSAR / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(i.budgetSAR / 1000000).toFixed(1)}M`}
+      cell: (i) => {
+        const burnPct = i.budgetSAR > 0 ? Math.round((i.spentSAR / i.budgetSAR) * 100) : 0;
+        return (
+          <div className="space-y-1 min-w-[130px]">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="font-bold text-slate-900">
+                SAR {(i.budgetSAR / 1000000).toFixed(1)}M
+              </span>
+              <span className="text-amber-800 font-semibold">{burnPct}% burn</span>
+            </div>
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div className="bg-amber-500 h-full transition-all" style={{ width: `${Math.min(100, burnPct)}%` }} />
+            </div>
+            <span className="text-[10px] text-slate-400 font-mono block">
+              Spent: SAR {(i.spentSAR / 1000000).toFixed(1)}M
+            </span>
           </div>
-          <div className="text-[10px] text-slate-400">
-            {lang === 'ar' ? `المصروف: ${(i.spentSAR / 1000000).toFixed(1)} م` : `Spent: ${(i.spentSAR / 1000000).toFixed(1)}M`}
-          </div>
-        </div>
-      ),
+        );
+      },
     },
     {
-      header: t('Overall Completion'),
+      header: t('Progress & Milestones'),
       accessorKey: 'progress',
       sortable: true,
-      width: '130px',
       cell: (i) => (
-        <div className="flex items-center gap-2">
-          <div className="w-16 bg-slate-200 h-2 rounded-full overflow-hidden">
-            <div className="bg-emerald-600 h-full transition-all" style={{ width: `${i.progress}%` }} />
+        <div className="space-y-1 min-w-[120px]">
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="font-bold text-indigo-700">{i.progress}%</span>
+            <span className="text-slate-400">{i.endDate}</span>
           </div>
-          <span className="font-mono font-bold text-xs text-slate-900">{i.progress}%</span>
+          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+            <div className="bg-indigo-600 h-full transition-all" style={{ width: `${i.progress}%` }} />
+          </div>
         </div>
-      ),
-    },
-    {
-      header: t('Owner'),
-      accessorKey: 'owner',
-      sortable: true,
-      cell: (i) => (
-        <div>
-          <div className="font-medium text-slate-800 text-xs">{t(i.owner)}</div>
-          <div className="text-[10px] text-slate-400">{t(i.department)}</div>
-        </div>
-      ),
-    },
-    {
-      header: lang === 'ar' ? 'الجدول الزمني' : 'Timeline',
-      accessorKey: 'endDate',
-      sortable: true,
-      width: '140px',
-      cell: (i) => (
-        <span className="font-mono text-[11px] text-slate-600">
-          {i.startDate} → {i.endDate}
-        </span>
       ),
     },
     {
       header: t('Status'),
       accessorKey: 'status',
       sortable: true,
-      width: '110px',
       cell: (i) => <StatusBadge status={i.status} />,
     },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Top Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+    <div className="space-y-6 pb-12 animate-in fade-in">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-amber-600 mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>{t('AL AHSA DEVELOPMENT AUTHORITY • STRATEGIC DELIVERY & TRANSFORMATION')}</span>
+          <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
+            <span className="font-bold uppercase">
+              {lang === 'ar' ? 'المحطة 7 من رحلة العرض' : 'STEP 7 OF DEMO JOURNEY'}
+            </span>
+            <span className="text-slate-300">/</span>
+            <span>{lang === 'ar' ? 'المبادرات والمشاريع والذكاء الاصطناعي' : 'Strategic Programs & AI Copilot'}</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع' : 'Strategic Initiatives & Projects'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
             {lang === 'ar'
-              ? 'حوكمة وتنفيذ برامج التحول والمبادرات الاستراتيجية، ومتابعة الميزانيات المعتمدة والمصروفات والمعالم الإنجازية.'
-              : 'Executive roadmap, capital expenditure (CAPEX), delivery milestones, and operational project schedules.'}
+              ? 'إدارة محافظ المبادرات الممولة، والميزانيات المعتمدة بالريال السعودي، ومحطات المعالم التنفيذية مع مساعد مدمج بالذكاء الاصطناعي لاقتراح المشاريع.'
+              : 'Funded implementation initiatives, capital allocations (SAR), deliverables, milestone checklists, and embedded AI Project Recommender.'}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
-        >
-          <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>{lang === 'ar' ? 'إضافة مبادرة استراتيجية' : 'Create Initiative'}</span>
-        </button>
-      </div>
+        <div className="flex items-center gap-2">
+          {/* AI Copilot Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsAiCopilotOpen(true);
+              setIsCreateModalOpen(true);
+            }}
+            className="px-4 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-600 hover:from-purple-700 hover:to-amber-700 text-white rounded-xl text-xs font-semibold shadow-md hover:shadow-lg transition-all flex items-center space-x-1.5 cursor-pointer animate-pulse"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>{lang === 'ar' ? '✨ مساعد الذكاء للمبادرات' : '✨ AI Initiative Copilot'}</span>
+          </button>
 
-      {/* Metric Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
-            {lang === 'ar' ? 'إجمالي المبادرات' : 'Total Initiatives'}
-          </div>
-          <div className="text-xl font-bold font-mono text-slate-900 mt-1">{totalCount}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">
-            {lang === 'ar' ? 'المبادرات المعتمدة' : 'Active strategic programs'}
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-emerald-600 uppercase font-semibold">
-            {lang === 'ar' ? 'الميزانية المعتمدة' : 'Allocated Budget'}
-          </div>
-          <div className="text-lg font-bold font-mono text-emerald-700 mt-1">
-            {lang === 'ar' ? `${(totalBudget / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(totalBudget / 1000000).toFixed(1)}M`}
-          </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">
-            {lang === 'ar' ? 'إجمالي الاعتماد المالي' : 'Total approved budget'}
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-blue-600 uppercase font-semibold">
-            {lang === 'ar' ? 'المصروف الفعلي' : 'Actual Spent'}
-          </div>
-          <div className="text-lg font-bold font-mono text-blue-700 mt-1">
-            {lang === 'ar' ? `${(totalSpent / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(totalSpent / 1000000).toFixed(1)}M`}
-          </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">
-            {lang === 'ar' ? `نسبة الصرف: ${totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0}%` : `Burn: ${totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0}%`}
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="text-[10px] font-mono text-amber-600 uppercase font-semibold">
-            {lang === 'ar' ? 'قيد التنفيذ' : 'In Progress'}
-          </div>
-          <div className="text-xl font-bold font-mono text-amber-700 mt-1">{inProgressCount}</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">
-            {lang === 'ar' ? 'مبادرات نشطة حالياً' : 'Active flight programs'}
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-slate-900 to-amber-950 p-4 rounded-xl text-white shadow-2xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-amber-300 uppercase font-semibold">
-              {lang === 'ar' ? 'متوسط الإنجاز' : 'Avg Completion'}
-            </span>
-            <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
-          </div>
-          <div className="text-xl font-bold font-mono text-white mt-1">{avgProgress}%</div>
-          <div className="text-[10px] text-slate-400 font-mono">
-            {lang === 'ar' ? 'معدل تسليم المعالم' : 'Milestones delivery index'}
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{lang === 'ar' ? '+ إضافة مبادرة' : '+ Create Initiative'}</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter Toolbar & View Toggle */}
-      <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[280px]">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className={`w-3.5 h-3.5 absolute ${lang === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-slate-400`} />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={lang === 'ar' ? 'بحث بالرمز، المبادرة، المالك، أو الإدارة...' : 'Search by code, title, owner, or department...'}
-              className={`w-full ${lang === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600`}
-            />
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <FolderGit2 className="w-5 h-5" />
           </div>
+          <div>
+            <div className="text-[11px] font-mono text-slate-400 uppercase">{t('Total Initiatives')}</div>
+            <div className="text-xl font-extrabold text-slate-900 font-mono">{totalCount}</div>
+          </div>
+        </div>
 
-          {/* Status Filter */}
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <DollarSign className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[11px] font-mono text-slate-400 uppercase">{t('Total Allocated Budget')}</div>
+            <div className="text-lg font-extrabold text-emerald-700 font-mono">
+              SAR {(totalBudget / 1000000).toFixed(1)}M
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <Clock className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[11px] font-mono text-slate-400 uppercase">{t('Active Execution')}</div>
+            <div className="text-xl font-extrabold text-blue-700 font-mono">{inProgressCount}</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[11px] font-mono text-slate-400 uppercase">{t('Portfolio Delivery')}</div>
+            <div className="text-xl font-extrabold text-indigo-700 font-mono">{avgProgress}%</div>
+          </div>
+        </div>
+      </div>
+
+      {/* View Switcher and Filters */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={lang === 'ar' ? 'بحث بالمبادرة، الرمز، المسؤول...' : 'Search initiatives, owner...'}
+            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-blue-600"
+            className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none cursor-pointer"
           >
             <option value="all">{lang === 'ar' ? 'جميع الحالات' : 'All Statuses'}</option>
-            <option value="Planning">{lang === 'ar' ? 'تخطيط' : 'Planning'}</option>
             <option value="In Progress">{lang === 'ar' ? 'قيد التنفيذ' : 'In Progress'}</option>
+            <option value="Planning">{lang === 'ar' ? 'تخطيط' : 'Planning'}</option>
             <option value="At Risk">{lang === 'ar' ? 'معرض للخطر' : 'At Risk'}</option>
             <option value="Completed">{lang === 'ar' ? 'مكتمل' : 'Completed'}</option>
           </select>
-        </div>
 
-        {/* View Switcher Toggle */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-xs">
+          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             <button
-              type="button"
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-md transition-all cursor-pointer ${
-                viewMode === 'grid' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
+                viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
               }`}
-              title={lang === 'ar' ? 'عرض البطاقات' : 'Grid View'}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
             </button>
             <button
-              type="button"
               onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-md transition-all cursor-pointer ${
-                viewMode === 'table' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
+                viewMode === 'table' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
               }`}
-              title={lang === 'ar' ? 'عرض الجدول' : 'Table View'}
             >
               <List className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          <div className="text-xs font-mono text-slate-500">
-            {lang === 'ar' ? `العدد: ${filteredInitiatives.length}` : `Count: ${filteredInitiatives.length}`}
-          </div>
         </div>
       </div>
 
-      {/* View Mode 1: Grid Cards View */}
+      {/* Grid or Table View */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredInitiatives.map((init) => (
             <div
               key={init.id}
-              className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4 hover:border-slate-300 transition-all group"
+              className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4"
             >
-              <div className="flex items-start justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                    {init.code}
+                  </span>
+                  <StatusBadge status={init.status} />
+                </div>
+
                 <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      {init.code}
-                    </span>
-                    <StatusBadge status={init.status} />
-                    {init.isCustom && (
-                      <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                        {lang === 'ar' ? 'مبادرة جديدة' : 'NEW INITIATIVE'}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-sm text-slate-900 mt-2 group-hover:text-blue-700 transition-colors">
-                    {lang === 'ar' ? (init.titleAr || init.title) : init.title}
+                  <h3 className="font-bold text-sm text-slate-900 leading-tight">
+                    {lang === 'ar' ? init.titleAr || init.title : init.title}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                    {lang === 'ar' ? (init.descriptionAr || init.description) : init.description}
+                  <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                    {init.description}
                   </p>
                 </div>
-              </div>
 
-              {/* Budget & Progress stats */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <div>
-                  <span className="panel-label">{t('Budget Allocation')}</span>
-                  <div className="font-mono font-bold text-sm text-slate-900 mt-0.5">
-                    {lang === 'ar' ? `${(init.budgetSAR / 1000000).toFixed(1)} مليون ر.س` : `SAR ${(init.budgetSAR / 1000000).toFixed(1)}M`}
+                {/* Progress bar */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-400">{lang === 'ar' ? 'نسبة الإنجاز' : 'Delivery Progress'}</span>
+                    <span className="font-bold text-indigo-700">{init.progress}%</span>
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono">
-                    {lang === 'ar' ? `المصروف: ${(init.spentSAR / 1000000).toFixed(1)} مليون ر.س` : `Spent: SAR ${(init.spentSAR / 1000000).toFixed(1)}M`}
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-indigo-600 h-full transition-all" style={{ width: `${init.progress}%` }} />
                   </div>
                 </div>
 
-                <div>
-                  <span className="panel-label">{t('Overall Completion')}</span>
-                  <div className="font-mono font-bold text-sm text-emerald-700 mt-0.5">
-                    {init.progress}%
-                  </div>
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full mt-1.5 overflow-hidden">
-                    <div className="bg-emerald-600 h-full transition-all" style={{ width: `${init.progress}%` }} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Milestones list */}
-              <div>
-                <h4 className="font-semibold text-xs text-slate-900 uppercase tracking-wider mb-2">
-                  {t('Key Deliverables & Milestones')}
-                </h4>
-                <div className="space-y-1.5">
-                  {init.milestones?.map((m) => (
-                    <div
-                      key={m.id}
-                      onClick={() => toggleMilestone(init.id, m.id)}
-                      className="p-2.5 rounded-lg border border-slate-100 bg-white hover:bg-slate-50 flex items-center justify-between text-xs cursor-pointer transition-colors shadow-2xs"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className={`w-3.5 h-3.5 ${m.status === 'Completed' ? 'text-emerald-600' : 'text-slate-300'}`} />
-                        <span className={`font-medium ${m.status === 'Completed' ? 'text-slate-500 line-through' : 'text-slate-800'}`}>
-                          {m.title}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2 font-mono text-[10px]">
-                        <span className="text-slate-400">{m.dueDate}</span>
-                        <StatusBadge status={m.status} />
-                      </div>
+                {/* Milestones Checklist */}
+                {init.milestones && init.milestones.length > 0 && (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-slate-800">
+                      <span>{lang === 'ar' ? 'محطات الإنجاز التنفيذية' : 'Key Milestone Gates'}</span>
+                      <span className="font-mono text-slate-500 text-[10px]">
+                        {init.milestones.filter((m) => m.status === 'Completed').length}/{init.milestones.length} Done
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <div className="space-y-1.5">
+                      {init.milestones.map((m) => (
+                        <div
+                          key={m.id}
+                          onClick={() => toggleMilestone(init.id, m.id)}
+                          className="flex items-center gap-2 text-[11px] text-slate-700 cursor-pointer hover:text-slate-900"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={m.status === 'Completed'}
+                            onChange={() => {}}
+                            className="rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
+                          <span className={`flex-1 truncate ${m.status === 'Completed' ? 'line-through text-slate-400' : ''}`}>
+                            {m.title}
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-400 shrink-0">{m.dueDate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 font-mono">
-                <span>{lang === 'ar' ? `المالك: ${t(init.owner)}` : `Owner: ${init.owner}`}</span>
-                <span>{init.startDate} → {init.endDate}</span>
+              {/* Card Footer: Budget & Owner */}
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <div>
+                  <span className="text-[10px] text-slate-400 block">{lang === 'ar' ? 'الميزانية' : 'Budget'}</span>
+                  <span className="font-bold text-slate-900">
+                    SAR {(init.budgetSAR / 1000000).toFixed(1)}M
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-slate-400 block">{lang === 'ar' ? 'المسؤول' : 'Owner'}</span>
+                  <span className="font-semibold text-slate-700 truncate max-w-[120px] block">
+                    {init.owner}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
         <DataTable
-          title={t('Strategic Initiatives')}
-          subtitle={t('Key Deliverables & Milestones')}
+          title={t('Official Strategic Initiatives Register')}
+          subtitle={t('Capital expenditures, implementation roadmap gates and milestones')}
           data={filteredInitiatives}
           columns={columns}
         />
       )}
 
-      {/* Create Initiative Modal */}
+      {/* Bottom Step Guide Banner */}
+      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+            7/10
+          </div>
+          <div>
+            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
+              {lang === 'ar' ? 'المحطة التالية في رحلة العرض' : 'NEXT STEP IN DEMO JOURNEY'}
+            </span>
+            <h4 className="font-bold text-xs text-slate-900">
+              {lang === 'ar' ? 'مصفوفة المواءمة الاستراتيجية الشاملة' : 'Step 8: Cascading Strategy Matrix & PDF/Excel Export'}
+            </h4>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setDemoJourneyStep(8);
+            navigate('/strategy');
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <span>{lang === 'ar' ? 'المتابعة إلى المصفوفة' : 'Proceed to Step 8 ➔'}</span>
+        </button>
+      </div>
+
+      {/* CREATE INITIATIVE MODAL WITH EMBEDDED AI COPILOT */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/80">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
-                  <Sparkles className="w-4 h-4" />
+                  <FolderGit2 className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm text-slate-900">
                     {lang === 'ar' ? 'إضافة مبادرة استراتيجية جديدة' : 'Create New Strategic Initiative'}
                   </h3>
                   <p className="text-[11px] text-slate-400">
-                    {lang === 'ar' ? 'تخصيص الميزانية وجداول التسليم والمعالم الرئيسية' : 'Allocate CAPEX budget, deliverable milestones, and project owner'}
+                    {lang === 'ar' ? 'تخصيص الميزانية ومحطات الإنجاز ومسؤول التنفيذ' : 'Allocate budget, milestones, deliverables and project ownership'}
                   </p>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setIsCreateModalOpen(false)}
+                onClick={() => {
+                  setIsCreateModalOpen(false);
+                  setIsAiCopilotOpen(false);
+                }}
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
+            {/* AI COPILOT BANNER & DRAWER */}
+            <div className="p-4 bg-gradient-to-r from-purple-50 via-indigo-50 to-amber-50 border-b border-indigo-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-purple-950">
+                      {lang === 'ar' ? 'مساعد الذكاء لاقتراح المبادرات وخارطة الطريق' : 'Antigravity AI Initiative Generator'}
+                    </h4>
+                    <span className="text-[10px] text-purple-700 font-mono">
+                      {lang === 'ar' ? 'توليد مشاريع ممولة ومحطات معالم متوافقة مع الاستراتيجية' : 'Generates implementation packages, budget estimates, and milestone gates'}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsAiCopilotOpen(!isAiCopilotOpen)}
+                  className="px-2.5 py-1 bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[11px] font-bold shadow-2xs transition-all cursor-pointer"
+                >
+                  {isAiCopilotOpen ? (lang === 'ar' ? 'إخفاء المقترحات' : 'Hide Suggestions') : (lang === 'ar' ? 'عرض مقترحات AI' : '✨ Show AI Options')}
+                </button>
+              </div>
+
+              {/* Expanded AI Recommendations */}
+              {isAiCopilotOpen && (
+                <div className="mt-3 pt-3 border-t border-purple-200/60 space-y-2 animate-in fade-in slide-in-from-top-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-purple-900 block">
+                    {lang === 'ar' ? '3 محافظ مشاريع استراتيجية مقترحة بالذكاء الاصطناعي:' : '3 AI-Generated Initiative Packages with Deliverables:'}
+                  </span>
+                  <div className="space-y-2">
+                    {AI_INITIATIVE_SUGGESTIONS.map((sug, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 bg-white rounded-xl border border-purple-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-purple-400 transition-colors"
+                      >
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono font-bold text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                              {sug.code}
+                            </span>
+                            <span className="font-bold text-xs text-slate-900">
+                              {lang === 'ar' ? sug.titleAr : sug.title}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">{sug.description}</p>
+                          <div className="flex items-center gap-2 mt-1 text-[10px] font-mono text-slate-400">
+                            <span className="text-emerald-700 font-bold">SAR {(sug.budget / 1000000).toFixed(1)}M Budget</span>
+                            <span>• {sug.milestones.length} Milestone Gates</span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleApplyAiSuggestion(sug)}
+                          className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[11px] font-semibold shrink-0 cursor-pointer flex items-center gap-1"
+                        >
+                          <Check className="w-3 h-3" />
+                          <span>{lang === 'ar' ? 'تطبيق المبادرة' : 'Apply Package'}</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Main Initiative Form */}
             <form onSubmit={handleCreateSubmit} className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -485,8 +648,8 @@ export const InitiativesPage: React.FC = () => {
                     required
                     value={formCode}
                     onChange={(e) => setFormCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-600"
-                    placeholder="INIT-04"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-blue-600"
+                    placeholder="INIT-06"
                   />
                 </div>
 
@@ -518,7 +681,7 @@ export const InitiativesPage: React.FC = () => {
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
-                  placeholder="e.g. Al-Ahsa Integrated Smart Mobility & Logistics Corridor"
+                  placeholder="e.g. Al-Ahsa Integrated Smart Mobility Corridor"
                 />
               </div>
 
@@ -530,22 +693,22 @@ export const InitiativesPage: React.FC = () => {
                   type="text"
                   value={formTitleAr}
                   onChange={(e) => setFormTitleAr(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-blue-600"
-                  placeholder="مثال: ممر النقل الذكي والخدمات اللوجستية المتكاملة في الأحساء"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-sans focus:outline-none focus:border-blue-600 text-right"
+                  placeholder="مثال: ممر النقل والخدمات اللوجستية المتكاملة في الأحساء"
                   dir="rtl"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                  {lang === 'ar' ? 'الوصف والنطاق' : 'Scope & Description'}
+                  {lang === 'ar' ? 'الوصف والنطاق الاستراتيجي' : 'Scope & Description'}
                 </label>
                 <textarea
                   rows={2}
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
-                  placeholder="Scope deliverables, expected economic outcomes, and partner entities..."
+                  placeholder="Describe scope deliverables, milestones, and expected socio-economic impacts..."
                 />
               </div>
 
@@ -559,7 +722,7 @@ export const InitiativesPage: React.FC = () => {
                     required
                     value={formBudgetSAR}
                     onChange={(e) => setFormBudgetSAR(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -572,7 +735,7 @@ export const InitiativesPage: React.FC = () => {
                     required
                     value={formSpentSAR}
                     onChange={(e) => setFormSpentSAR(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:border-blue-600"
                   />
                 </div>
               </div>
@@ -605,52 +768,10 @@ export const InitiativesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    {lang === 'ar' ? 'تاريخ البدء' : 'Start Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={formStartDate}
-                    onChange={(e) => setFormStartDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    {lang === 'ar' ? 'تاريخ الانتهاء' : 'End Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={formEndDate}
-                    onChange={(e) => setFormEndDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    {lang === 'ar' ? 'الحالة' : 'Status'}
-                  </label>
-                  <select
-                    value={formStatus}
-                    onChange={(e) => setFormStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
-                  >
-                    <option value="Planning">{lang === 'ar' ? 'تخطيط' : 'Planning'}</option>
-                    <option value="In Progress">{lang === 'ar' ? 'قيد التنفيذ' : 'In Progress'}</option>
-                    <option value="At Risk">{lang === 'ar' ? 'معرض للخطر' : 'At Risk'}</option>
-                    <option value="Completed">{lang === 'ar' ? 'مكتمل' : 'Completed'}</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Milestone Sub-Form */}
+              {/* Initial Milestone */}
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="font-semibold text-[11px] text-slate-800">
-                  {lang === 'ar' ? 'المعلم الإنجازي الأولي' : 'Initial Deliverable Milestone'}
+                  {lang === 'ar' ? 'المعلم الإنجازي الأولي' : 'Initial Deliverable Milestone Gate'}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">

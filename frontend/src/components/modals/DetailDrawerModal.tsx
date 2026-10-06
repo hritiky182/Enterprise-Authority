@@ -16,7 +16,9 @@ import {
   Calculator,
   FolderGit2,
   Milestone,
+  Sparkles,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { StatusBadge } from '../common/StatusBadge';
 import { StrategyDetailView } from './StrategyDetailView';
 
@@ -508,6 +510,36 @@ export const DetailDrawerModal: React.FC = () => {
           {/* TYPE: CREATE KPI FORM (AHDA Cascading Model) */}
           {type === 'create_kpi' && (
             <form onSubmit={handleCreateKpiSubmit} className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200/80">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-indigo-900 block">✨ AI KPI Formulation Copilot</span>
+                    <span className="text-[10px] text-indigo-700">Auto-recommend verified KPI statement, math formula & targets</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setKpiName('Community Event Visitor Participation Rate');
+                    setKpiNameAr('معدل مشاركة زوار الفعاليات المجتمعية والتنموية');
+                    setKpiFormula('(Actual Attendees Recorded at Heritage Sites / Targeted Regional Population Capacity) * 100%');
+                    setKpiBaseline('48%');
+                    setKpiTarget2026('72%');
+                    setKpiTarget2027('85%');
+                    setKpiTarget(72);
+                    setKpiUnit('%');
+                    toast.success('✨ AI Copilot formulated KPI statement, formula, and multi-year targets!');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold shadow-xs transition-colors cursor-pointer shrink-0 flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>AI Recommend</span>
+                </button>
+              </div>
+
               <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200/80 text-emerald-900 text-xs">
                 <span className="font-bold block">Cascaded Strategic Performance Indicator Formulation</span>
                 <span className="text-[11px] text-emerald-700">
@@ -737,6 +769,33 @@ export const DetailDrawerModal: React.FC = () => {
           {/* TYPE: CREATE INITIATIVE FORM */}
           {type === 'create_initiative' && (
             <form onSubmit={handleCreateInitiativeSubmit} className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/80">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-amber-900 block">✨ AI Initiative Formulation Copilot</span>
+                    <span className="text-[10px] text-amber-700">Auto-recommend project deliverables, capital budget & milestone</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInitTitle('Smart Al-Ahsa Heritage & Visitor Engagement Hub');
+                    setInitDesc('Deploy modern IoT digital visitor analytics, unified portal for cultural events, and automated satisfaction measurement gates across 14 heritage locations.');
+                    setInitBudget(12500000);
+                    setInitMilestoneTitle('Phase 1 IoT Infrastructure & Mobile App Pilot Launch');
+                    setInitProject('Digital Heritage Transformation Program');
+                    toast.success('✨ AI Copilot formulated initiative scope, capital budget (SAR 12.5M), and milestone gate!');
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-semibold shadow-xs transition-colors cursor-pointer shrink-0 flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>AI Recommend</span>
+                </button>
+              </div>
+
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/80 text-amber-900 text-xs">
                 <span className="font-bold block">Strategic Initiative Formulation</span>
                 <span className="text-[11px] text-amber-700">

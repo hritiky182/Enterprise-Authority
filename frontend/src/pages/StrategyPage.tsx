@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ClientStrategyMatrix } from '../components/strategy/ClientStrategyMatrix';
+import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
 import {
   Target,
   Plus,
   DollarSign,
+  Printer,
+  Compass,
+  Layers,
+  Flag,
+  BarChart3,
+  Sparkles,
+  ArrowRight,
+  ChevronRight,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const StrategyPage: React.FC = () => {
-  const { themes, goals, objectives, initiatives, kpis, lang, t } = useApp();
+  const { themes, goals, objectives, initiatives, kpis, organization, lang, t } = useApp();
+  const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
   const totalBudget = initiatives.reduce((sum, i) => sum + (i.budgetSAR || 0), 0);
   const totalSpent = initiatives.reduce((sum, i) => sum + (i.spentSAR || 0), 0);
@@ -21,24 +32,137 @@ export const StrategyPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-600 mb-1">
             <Target className="w-4 h-4" />
-            <span>{t('AL AHSA DEVELOPMENT AUTHORITY • STRATEGY & GOVERNANCE')}</span>
+            <span>{organization.name} • {t('STRATEGY & GOVERNANCE')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
             {t('Strategy Architecture & Cascading Matrix')}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            {t('Vision: A Leader in Sustainable Development in Al-Ahsa — Cascaded Objectives, KPIs & Projects')}
+            {lang === 'ar'
+              ? `الرؤية: ${organization.visionAr || organization.vision} — مواءمة الأهداف والمؤشرات والمشاريع التمكينية`
+              : `Vision: ${organization.vision} — Cascaded Objectives, KPIs & Projects`}
           </p>
         </div>
 
-        {/* Action Button: Create Strategy */}
-        <Link
-          to="/strategy/create"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
-        >
-          <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>{t('Create Strategy')}</span>
-        </Link>
+        {/* Action Buttons: Export PDF & Create Strategy */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <button
+            onClick={() => setIsExecutiveBriefOpen(true)}
+            className="inline-flex items-center gap-2 px-3.5 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs transition-all cursor-pointer group"
+          >
+            <Printer className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+            <span>{lang === 'ar' ? 'تقرير تنفيذي (PDF/طباعة)' : 'Executive Brief (PDF)'}</span>
+          </button>
+
+          <Link
+            to="/strategy/create"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
+          >
+            <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <span>{t('Create Strategy')}</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Complete Strategic Relationship Lineage Bar (Vision -> Mission -> Values -> Pillars -> Objectives -> KPIs -> Projects) */}
+      <div className="bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 shadow-md">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Compass className="w-4 h-4 text-blue-400" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+              {lang === 'ar' ? 'سلسلة المواءمة الاستراتيجية الكاملة (Complete Strategic Lineage)' : 'Complete Strategic Relationship Lineage'}
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">
+            {lang === 'ar' ? 'مواءمة معتمدة 100%' : '100% Cascaded & Aligned'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {/* 1. Vision */}
+          <Link
+            to="/organization/setup"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-blue-500 transition-all text-start group"
+          >
+            <div className="text-[9px] font-mono text-blue-400 uppercase font-semibold">1. Vision</div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {organization.shortCode || organization.shortName || 'AHDA'} {lang === 'ar' ? 'الرؤية' : 'Vision'}
+            </div>
+            <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{organization.vision}</div>
+          </Link>
+
+          {/* 2. Mission */}
+          <Link
+            to="/organization/setup"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-indigo-500 transition-all text-start group"
+          >
+            <div className="text-[9px] font-mono text-indigo-400 uppercase font-semibold">2. Mission</div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {lang === 'ar' ? 'الرسالة المؤسسية' : 'Institutional Mission'}
+            </div>
+            <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{organization.mission}</div>
+          </Link>
+
+          {/* 3. Pillars */}
+          <Link
+            to="/hierarchy-tree"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500 transition-all text-start group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-emerald-400 uppercase font-semibold">3. Pillars</span>
+              <span className="text-[10px] font-mono font-bold bg-emerald-900/60 text-emerald-300 px-1 rounded">{themes.length}</span>
+            </div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Themes'}
+            </div>
+            <div className="text-[10px] text-slate-400 mt-0.5">{lang === 'ar' ? '5 ركائز معتمدة' : '5 Themes / Pillars'}</div>
+          </Link>
+
+          {/* 4. Objectives */}
+          <Link
+            to="/objectives"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500 transition-all text-start group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-cyan-400 uppercase font-semibold">4. Objectives</span>
+              <span className="text-[10px] font-mono font-bold bg-cyan-900/60 text-cyan-300 px-1 rounded">{objectives.length}</span>
+            </div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {lang === 'ar' ? 'المستهدفات الاستراتيجية' : 'Strategic OKRs'}
+            </div>
+            <div className="text-[10px] text-slate-400 mt-0.5">{lang === 'ar' ? 'المواءمة والملكية' : 'Sector Ownership'}</div>
+          </Link>
+
+          {/* 5. KPIs */}
+          <Link
+            to="/kpis"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-amber-500 transition-all text-start group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 uppercase font-semibold">5. KPIs</span>
+              <span className="text-[10px] font-mono font-bold bg-amber-900/60 text-amber-300 px-1 rounded">{kpis.length}</span>
+            </div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {lang === 'ar' ? 'مؤشرات الأداء' : 'Telemetry KPIs'}
+            </div>
+            <div className="text-[10px] text-slate-400 mt-0.5">{lang === 'ar' ? 'المعادلات والأوزان' : 'Formulas & Weights'}</div>
+          </Link>
+
+          {/* 6. Projects */}
+          <Link
+            to="/initiatives"
+            className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-purple-500 transition-all text-start group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-purple-400 uppercase font-semibold">6. Projects</span>
+              <span className="text-[10px] font-mono font-bold bg-purple-900/60 text-purple-300 px-1 rounded">{initiatives.length}</span>
+            </div>
+            <div className="text-xs font-bold text-white truncate mt-0.5">
+              {lang === 'ar' ? 'المبادرات والمشاريع' : 'Initiatives & Portfolios'}
+            </div>
+            <div className="text-[10px] text-slate-400 mt-0.5">SAR {(totalBudget / 1000000).toFixed(0)}M Capital</div>
+          </Link>
+        </div>
       </div>
 
       {/* Metrics & Strategy Architecture Overview with Quick Links */}
@@ -116,6 +240,12 @@ export const StrategyPage: React.FC = () => {
 
       {/* Primary View: Al-Ahsa Client Strategy Matrix */}
       <ClientStrategyMatrix />
+
+      {/* Executive Strategic Dossier & PDF Modal */}
+      <ExecutiveBriefModal
+        isOpen={isExecutiveBriefOpen}
+        onClose={() => setIsExecutiveBriefOpen(false)}
+      />
     </div>
   );
 };

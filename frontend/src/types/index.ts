@@ -38,16 +38,37 @@ export interface Sector {
   color: string;
 }
 
+export interface OrganizationConfig {
+  name: string;
+  nameAr?: string | undefined;
+  shortName: string;
+  shortCode?: string | undefined;
+  logo: string;
+  logoUrl?: string | undefined;
+  themeColor: string;
+  vision: string;
+  visionAr?: string | undefined;
+  mission: string;
+  missionAr?: string | undefined;
+  values: string[];
+  valuesAr?: string[] | undefined;
+  coreValues?: string[] | undefined;
+  boardChair: string;
+  ceo: string;
+}
+
 export interface Department {
   id: string;
   code: string;
   name: string;
-  nameAr?: string;
+  nameAr?: string | undefined;
   head: string;
   employeeCount: number;
-  sectorId?: string;
-  sectorName?: string;
-  category?: 'Board & CEO' | 'Advisory & Oversight' | 'Operational Sector';
+  sectorId?: string | undefined;
+  sectorName?: string | undefined;
+  category?: 'Board & CEO' | 'Advisory & Oversight' | 'Operational Sector' | undefined;
+  permissions?: string[] | undefined;
+  assignedUsers?: string[] | undefined;
 }
 
 export interface StrategicTheme {
@@ -106,6 +127,8 @@ export interface KPI {
   achievementPct: number;
   frequency: 'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual';
   status: 'on-track' | 'warning' | 'critical' | 'achieved';
+  type?: 'Leading' | 'Lagging' | undefined;
+  weight?: number | undefined;
   isCustom?: boolean | undefined;
   // Al-Ahsa Client Cascading Strategy Attributes
   pillarCode?: string | undefined;

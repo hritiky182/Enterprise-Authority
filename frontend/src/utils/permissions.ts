@@ -16,6 +16,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   Administrator: {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
@@ -47,6 +48,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Authority Board & CEO': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
@@ -74,6 +76,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Sector Director General': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
@@ -99,6 +102,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Department Manager': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/performance',
       '/bcm',
       '/actions',
@@ -118,6 +122,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'GRC & Enterprise Risk': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/enterprise-risk',
       '/governance',
       '/compliance',
@@ -140,6 +145,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Cybersecurity Officer': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/cyber-risk',
       '/compliance',
       '/enterprise-risk',
@@ -160,6 +166,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Internal Audit': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/hierarchy-tree',
       '/objectives',
@@ -187,6 +194,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Strategy Manager': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
@@ -212,6 +220,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Risk Manager': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/enterprise-risk',
       '/cyber-risk',
       '/performance',
@@ -232,6 +241,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'Compliance Manager': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/governance',
       '/compliance',
       '/cyber-risk',
@@ -250,6 +260,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   'BCM Manager': {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/bcm',
       '/enterprise-risk',
       '/tasks',
@@ -268,6 +279,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   Executive: {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
@@ -295,6 +307,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   Auditor: {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/enterprise-risk',
       '/cyber-risk',
       '/governance',
@@ -314,6 +327,7 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
   Viewer: {
     allowedRoutes: [
       '/',
+      '/organization/setup',
       '/strategy',
       '/strategy/create',
       '/hierarchy-tree',
