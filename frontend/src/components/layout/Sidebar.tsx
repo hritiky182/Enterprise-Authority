@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { BrandLogo } from '../common/BrandLogo';
 import {
   LayoutDashboard,
   Target,
@@ -25,6 +24,7 @@ import {
   Network,
   TrendingUp,
 } from 'lucide-react';
+import { OrganizationLogo } from '../common/OrganizationLogo';
 
 interface NavItem {
   name: string;
@@ -169,13 +169,25 @@ export const Sidebar: React.FC = () => {
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-3 border-b border-slate-800 bg-slate-950/60 overflow-hidden">
-        <BrandLogo
-          variant={sidebarCollapsed ? 'emblem' : 'full'}
-          inverted={true}
-          size="md"
-          showText={!sidebarCollapsed}
-        />
+      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 bg-slate-950/60">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <OrganizationLogo
+            logoId={organization?.logo || 'ahda-emblem'}
+            logoUrl={organization?.logoUrl}
+            size="sm"
+            className="shrink-0"
+          />
+          {!sidebarCollapsed && (
+            <div className="truncate">
+              <h1 className="text-xs font-bold text-white tracking-wide uppercase leading-tight font-sans truncate" title={lang === 'ar' ? (organization?.nameAr || organization?.name) : organization?.name}>
+                {lang === 'ar' ? (organization?.nameAr || organization?.name || t('enterprise_authority')) : (organization?.name || t('enterprise_authority'))}
+              </h1>
+              <span className="text-[10px] text-blue-400 font-mono tracking-wider block uppercase truncate">
+                {organization?.shortCode || organization?.shortName || 'AHDA'} • {t('grc_strategy_suite')}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Active Role Persona Indicator */}

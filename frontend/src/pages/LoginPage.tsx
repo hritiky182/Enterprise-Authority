@@ -4,10 +4,10 @@ import { useApp } from '../context/AppContext';
 import { MOCK_USERS } from '../data/mockData';
 import { Building2, ShieldCheck, Lock, Mail, Key, ArrowRight, Eye, EyeOff, Sparkles, CheckCircle2, UserCheck } from 'lucide-react';
 import { Role, User } from '../types';
-import { BrandLogo } from '../components/common/BrandLogo';
+import { OrganizationLogo } from '../components/common/OrganizationLogo';
 
 export const LoginPage: React.FC = () => {
-  const { login, lang, setLanguage, t } = useApp();
+  const { login, lang, setLanguage, t, organization } = useApp();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState<Role>('Authority Board & CEO');
@@ -52,7 +52,17 @@ export const LoginPage: React.FC = () => {
 
       {/* Top Header */}
       <header className="relative z-10 max-w-7xl w-full mx-auto px-6 py-6 flex items-center justify-between">
-        <BrandLogo size="lg" inverted={true} />
+        <div className="flex items-center space-x-3">
+          <OrganizationLogo logoId={organization.logo} logoUrl={organization.logoUrl} size="md" />
+          <div>
+            <h1 className="text-sm font-bold tracking-wider text-white uppercase leading-none font-sans">
+              {lang === 'ar' ? (organization.nameAr || organization.name) : organization.name}
+            </h1>
+            <span className="text-[10px] text-blue-300/80 font-mono tracking-widest block uppercase mt-0.5">
+              {organization.shortCode || organization.shortName || 'AHDA'} • {t('GRC & Strategy Suite', 'GRC & Strategy Suite')}
+            </span>
+          </div>
+        </div>
 
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center space-x-6 text-xs text-slate-400 font-mono">
@@ -149,14 +159,17 @@ export const LoginPage: React.FC = () => {
 
         {/* Right Column: Glassmorphism Login Form */}
         <div className="w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6">
-          <div className="border-b border-slate-800 pb-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Lock className="w-4 h-4 text-blue-400" />
-              <span>{t('Enterprise Sign In')}</span>
-            </h3>
-            <p className="text-xs text-slate-400 mt-1">
-              {t('Active Persona:')} <span className="text-blue-300 font-semibold">{t(selectedRole)}</span> ({matchedUser.name})
-            </p>
+          <div className="border-b border-slate-800 pb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Lock className="w-4 h-4 text-blue-400" />
+                <span>{t('Enterprise Sign In')}</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                {t('Active Persona:')} <span className="text-blue-300 font-semibold">{t(selectedRole)}</span> ({matchedUser.name})
+              </p>
+            </div>
+            <OrganizationLogo logoId={organization.logo} logoUrl={organization.logoUrl} size="sm" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -21,7 +21,7 @@ import {
   Award,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { BrandLogo } from '../components/common/BrandLogo';
+import { OrganizationLogo } from '../components/common/OrganizationLogo';
 
 const COLOR_THEMES = [
   { id: 'blue', name: 'Executive Navy', hex: '#1e40af', bg: 'bg-blue-600', border: 'border-blue-600', ring: 'ring-blue-500' },
@@ -70,6 +70,7 @@ export const EntitySetupPage: React.FC = () => {
   const [nameAr, setNameAr] = useState(organization.nameAr || 'هيئة تطوير الأحساء');
   const [shortName, setShortName] = useState(organization.shortName);
   const [logo, setLogo] = useState(organization.logo || 'ahda-emblem');
+  const [logoUrl, setLogoUrl] = useState(organization.logoUrl || '');
   const [themeColor, setThemeColor] = useState(organization.themeColor || 'blue');
   const [vision, setVision] = useState(organization.vision);
   const [visionAr, setVisionAr] = useState(organization.visionAr || 'رؤية: رائد في التنمية المستدامة في الأحساء');
@@ -81,6 +82,28 @@ export const EntitySetupPage: React.FC = () => {
   const [newValue, setNewValue] = useState('');
   const [boardChair, setBoardChair] = useState(organization.boardChair);
   const [ceo, setCeo] = useState(organization.ceo);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(lang === 'ar' ? 'حجم الملف يتجاوز 5 ميجابايت' : 'File size exceeds 5MB limit');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setLogoUrl(result);
+        toast.success(lang === 'ar' ? 'تم رفع الشعار المخصص بنجاح!' : 'Custom logo uploaded successfully!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleClearCustomLogo = () => {
+    setLogoUrl('');
+    toast.info(lang === 'ar' ? 'تم الرجوع إلى الشعارات الرسمية المعتمدة' : 'Reverted to preset official emblems');
+  };
 
   const handleAddValue = () => {
     if (newValue.trim() && !values.includes(newValue.trim())) {
@@ -99,15 +122,14 @@ export const EntitySetupPage: React.FC = () => {
       name,
       nameAr,
       shortName,
-      shortCode: shortName,
       logo,
+      logoUrl,
       themeColor,
       vision,
       visionAr,
       mission,
       missionAr,
       values,
-      coreValues: values,
       boardChair,
       ceo,
     });
@@ -118,15 +140,14 @@ export const EntitySetupPage: React.FC = () => {
       name,
       nameAr,
       shortName,
-      shortCode: shortName,
       logo,
+      logoUrl,
       themeColor,
       vision,
       visionAr,
       mission,
       missionAr,
       values,
-      coreValues: values,
       boardChair,
       ceo,
     });
@@ -269,26 +290,36 @@ export const EntitySetupPage: React.FC = () => {
 
             {/* Logo Options */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-2">
-                {lang === 'ar' ? 'اختر رمز شعار المنظومة' : 'Select Official Emblem'}
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-semibold text-slate-700">
+                  {lang === 'ar' ? 'اختر رمز شعار المنظومة (الشعارات الرسمية المعتمدة)' : 'Official Emblems & Vector Presets'}
+                </label>
+                {logoUrl && (
+                  <span className="text-[10px] font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    {lang === 'ar' ? 'الشعار المخصص نشط حالياً' : 'Custom Uploaded Logo Active'}
+                  </span>
+                )}
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {PRESET_LOGOS.map((l) => {
-                  const Icon = l.icon;
-                  const isSelected = logo === l.id;
+                  const isSelected = logo === l.id && !logoUrl;
                   return (
                     <button
                       key={l.id}
                       type="button"
-                      onClick={() => setLogo(l.id)}
+                      onClick={() => {
+                        setLogo(l.id);
+                        setLogoUrl('');
+                        toast.success(lang === 'ar' ? `تم اختيار ${l.nameAr}` : `Selected ${l.name}`);
+                      }}
                       className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-2 ${
                         isSelected
                           ? 'border-blue-600 bg-blue-50/60 ring-2 ring-blue-500/40 shadow-xs'
                           : 'border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-50'
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${l.color}`}>
-                        <Icon className="w-5 h-5" />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center p-1 bg-white border border-slate-200 shadow-2xs">
+                        <OrganizationLogo logoId={l.id} size="sm" />
                       </div>
                       <span className="text-[11px] font-semibold text-slate-800 line-clamp-1">
                         {lang === 'ar' ? l.nameAr : l.name}
@@ -297,6 +328,62 @@ export const EntitySetupPage: React.FC = () => {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Custom Logo File Upload Dropzone */}
+            <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/60 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900">
+                      {lang === 'ar' ? 'رفع شعار مخصص للمنظومة (PNG, SVG, JPG)' : 'Upload Custom Organization Logo File'}
+                    </h4>
+                    <p className="text-[10px] text-slate-500">
+                      {lang === 'ar'
+                        ? 'يمكنك رفع شعار الهيئة الرسمي وتطبيقه فوراً على كامل المنصة والمستندات'
+                        : 'Upload high-resolution official emblem to brand the entire suite and reports'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{lang === 'ar' ? 'اختر ملف الشعار' : 'Choose Logo File'}</span>
+                    <input
+                      type="file"
+                      accept="image/png,image/svg+xml,image/jpeg,image/webp"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {logoUrl && (
+                    <button
+                      type="button"
+                      onClick={handleClearCustomLogo}
+                      className="px-2.5 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+                    >
+                      {lang === 'ar' ? 'إزالة' : 'Clear'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {logoUrl && (
+                <div className="p-2.5 bg-white rounded-lg border border-slate-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img src={logoUrl} alt="Custom Logo Preview" className="w-10 h-10 object-contain rounded-lg p-0.5 border border-slate-200" />
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">{lang === 'ar' ? 'الشعار المخصص الحالي' : 'Active Custom Logo'}</div>
+                      <div className="text-[10px] text-emerald-600 font-mono">✓ {lang === 'ar' ? 'مطبق على رأس القائمة والتقارير' : 'Applied to navigation and PDF dossiers'}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Brand Color Theme Palette */}
@@ -468,8 +555,8 @@ export const EntitySetupPage: React.FC = () => {
               {/* Emblem Header */}
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-slate-200 shadow-xs overflow-hidden bg-white p-1">
-                    <BrandLogo size="md" variant="emblem" />
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center border border-slate-200 bg-white shadow-xs p-1">
+                    <OrganizationLogo logoId={logo} logoUrl={logoUrl} size="md" />
                   </div>
                   <div>
                     <h4 className="font-bold text-sm text-slate-900 leading-tight">

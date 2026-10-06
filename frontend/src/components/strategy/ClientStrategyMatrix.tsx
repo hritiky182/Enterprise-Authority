@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExecutiveBriefModal } from '../modals/ExecutiveBriefModal';
-import { BrandLogo } from '../common/BrandLogo';
 
 export const ClientStrategyMatrix: React.FC = () => {
   const { kpis, objectives, openModal, lang, t } = useApp();
@@ -103,30 +102,27 @@ export const ClientStrategyMatrix: React.FC = () => {
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/15 via-transparent to-transparent pointer-events-none" />
 
         <div className="p-6 sm:p-7 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <BrandLogo size="lg" variant="emblem" />
-            <div className="space-y-2">
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
-                  {lang === 'ar' ? 'الإطار الاستراتيجي المعتمد' : 'Official Strategic Framework'}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {lang === 'ar' ? 'هيئة تطوير الأحساء' : 'Al Ahsa Development Authority'}
-                </span>
-              </div>
-
-              <div className="flex items-baseline gap-3">
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
-                  {lang === 'ar' ? 'الرؤية: ريادة في التنمية المستدامة في الأحساء' : 'Vision: A Leader in Sustainable Development in Al-Ahsa'}
-                </h1>
-              </div>
-
-              <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-                {lang === 'ar'
-                  ? 'هندسة الأداء الاستراتيجي المتوائم مع أهداف الركيزة 02 (الإنسان والمجتمع) مع مؤشرات قابلة للقياس، وتعريفات المعادلات، ومستهدفات متعددة السنوات (2026–2027)، ومشاريع التمكين الرئيسية.'
-                  : 'Cascaded strategic performance architecture aligning Pillar 02 People and Society objectives with measurable indicators, formula definitions, multi-year targets (2026–2027), and flagship enablement projects.'}
-              </p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
+                {lang === 'ar' ? 'الإطار الاستراتيجي المعتمد' : 'Official Strategic Framework'}
+              </span>
+              <span className="text-xs text-slate-400 font-mono">
+                {lang === 'ar' ? 'هيئة تطوير الأحساء' : 'Al Ahsa Development Authority'}
+              </span>
             </div>
+
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
+                {lang === 'ar' ? 'الرؤية: ريادة في التنمية المستدامة في الأحساء' : 'Vision: A Leader in Sustainable Development in Al-Ahsa'}
+              </h1>
+            </div>
+
+            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+              {lang === 'ar'
+                ? 'هندسة الأداء الاستراتيجي المتوائم مع أهداف الركيزة 02 (الإنسان والمجتمع) مع مؤشرات قابلة للقياس، وتعريفات المعادلات، ومستهدفات متعددة السنوات (2026–2027)، ومشاريع التمكين الرئيسية.'
+                : 'Cascaded strategic performance architecture aligning Pillar 02 People and Society objectives with measurable indicators, formula definitions, multi-year targets (2026–2027), and flagship enablement projects.'}
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">

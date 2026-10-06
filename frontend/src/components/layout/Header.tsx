@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Role } from '../../types';
 import { ROLE_PERMISSIONS_MAP } from '../../utils/permissions';
-import { BrandLogo } from '../common/BrandLogo';
 
 export const Header: React.FC = () => {
   const {
@@ -60,10 +59,6 @@ export const Header: React.FC = () => {
         >
           <Menu className="w-4 h-4" />
         </button>
-
-        {sidebarCollapsed && (
-          <BrandLogo size="sm" variant="emblem" showText={false} />
-        )}
 
         <Breadcrumbs />
       </div>

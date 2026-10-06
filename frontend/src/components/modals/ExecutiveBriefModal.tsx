@@ -17,7 +17,7 @@ import {
   Award,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { BrandLogo } from '../common/BrandLogo';
+import { OrganizationLogo } from '../common/OrganizationLogo';
 
 interface ExecutiveBriefModalProps {
   isOpen: boolean;
@@ -151,7 +151,9 @@ export const ExecutiveBriefModal: React.FC<ExecutiveBriefModalProps> = ({ isOpen
           <div className="border-b-2 border-slate-900 pb-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <BrandLogo size="xl" variant="emblem" />
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center p-1 bg-slate-50 border border-slate-200 shadow-2xs shrink-0">
+                  <OrganizationLogo logoId={organization.logo} logoUrl={organization.logoUrl} size="lg" />
+                </div>
                 <div>
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
                     {lang === 'ar' ? (organization.nameAr || organization.name) : organization.name}

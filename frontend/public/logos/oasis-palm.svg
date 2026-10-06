@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="oasisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#064E3B"/>
+    </linearGradient>
+    <linearGradient id="oasisGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Circular Emblem Base -->
+  <circle cx="60" cy="60" r="54" fill="url(#oasisGrad)" stroke="url(#oasisGold)" stroke-width="3"/>
+  <circle cx="60" cy="60" r="47" stroke="#ffffff" stroke-width="1" stroke-dasharray="2 4" opacity="0.4"/>
+  <!-- Oasis Sun/Water Waves -->
+  <path d="M26 84 C40 80 50 88 60 84 C70 80 80 88 94 84" stroke="url(#oasisGold)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M32 92 C44 88 54 94 60 92 C66 90 76 94 88 92" stroke="#6EE7B7" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <!-- Palm Trunk -->
+  <path d="M58 84 L57 52 Q60 50 63 52 L62 84 Z" fill="url(#oasisGold)"/>
+  <!-- Elegant Palm Fronds -->
+  <path d="M60 52 C45 36 30 46 22 56 C38 52 50 56 60 52 Z" fill="#A7F3D0"/>
+  <path d="M60 52 C75 36 90 46 98 56 C82 52 70 56 60 52 Z" fill="#A7F3D0"/>
+  <path d="M60 50 C48 26 36 32 30 40 C46 38 54 44 60 50 Z" fill="#34D399"/>
+  <path d="M60 50 C72 26 84 32 90 40 C74 38 66 44 60 50 Z" fill="#34D399"/>
+  <path d="M60 48 C55 22 65 22 60 48 Z" fill="#FBBF24"/>
+  <!-- Dates Bunches -->
+  <circle cx="53" cy="56" r="3" fill="url(#oasisGold)"/>
+  <circle cx="67" cy="56" r="3" fill="url(#oasisGold)"/>
+  <circle cx="50" cy="61" r="2.5" fill="url(#oasisGold)"/>
+  <circle cx="70" cy="61" r="2.5" fill="url(#oasisGold)"/>
+</svg>

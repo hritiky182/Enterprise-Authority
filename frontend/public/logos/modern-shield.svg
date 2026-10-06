@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="shieldCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="shieldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+  </defs>
+  <!-- Hexagonal Tech Shield -->
+  <polygon points="60,8 106,32 106,86 60,112 14,86 14,32" fill="url(#shieldDark)" stroke="url(#shieldCyan)" stroke-width="3"/>
+  <!-- Inner Circuit Grid -->
+  <polygon points="60,20 94,40 94,80 60,100 26,80 26,40" stroke="#1E293B" stroke-width="1.5" fill="none"/>
+  <!-- Central Transformation Nodes -->
+  <circle cx="60" cy="60" r="14" fill="url(#shieldCyan)"/>
+  <circle cx="60" cy="60" r="7" fill="#FFFFFF"/>
+  <!-- Data Vectors / Axis lines -->
+  <line x1="60" y1="20" x2="60" y2="46" stroke="url(#shieldCyan)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="60" y1="74" x2="60" y2="100" stroke="url(#shieldCyan)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="26" y1="60" x2="46" y2="60" stroke="url(#shieldCyan)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="74" y1="60" x2="94" y2="60" stroke="url(#shieldCyan)" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Orbital Nodes -->
+  <circle cx="60" cy="20" r="3" fill="#06B6D4"/>
+  <circle cx="60" cy="100" r="3" fill="#6366F1"/>
+  <circle cx="26" cy="60" r="3" fill="#3B82F6"/>
+  <circle cx="94" cy="60" r="3" fill="#06B6D4"/>
+</svg>

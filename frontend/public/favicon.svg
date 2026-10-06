@@ -1,11 +1,17 @@
-<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="47" fill="#064E3B" stroke="#F59E0B" stroke-width="3" />
-  <circle cx="50" cy="50" r="43" fill="none" stroke="#D97706" stroke-width="1" stroke-dasharray="2 2" opacity="0.6" />
-  <path d="M47.5 68L48.5 45H51.5L52.5 68H47.5Z" fill="#F59E0B" />
-  <path d="M50 45C45 38 35 37 26 40C34 44 42 46 49 46" fill="#10B981" />
-  <path d="M50 45C55 38 65 37 74 40C66 44 58 46 51 46" fill="#10B981" />
-  <path d="M50 44C43 33 32 30 22 31C30 36 40 40 48 44" fill="#059669" />
-  <path d="M50 44C57 33 68 30 78 31C70 36 60 40 52 44" fill="#059669" />
-  <path d="M50 42C50 28 47 19 50 16C53 19 50 28 50 42" fill="#FDE68A" />
-  <path d="M38 72Q50 78 62 72" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="url(#grad)"/>
+  <!-- Shield Icon -->
+  <path d="M32 13L47 20V32C47 42.5 32 49 32 49C32 49 17 42.5 17 32V20L32 13Z" fill="url(#shieldGrad)" stroke="#059669" stroke-width="1.5"/>
+  <!-- Checkmark -->
+  <path d="M25 31.5L30 36.5L39 25.5" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="17" y1="13" x2="47" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10B981"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
 </svg>
