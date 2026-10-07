@@ -24,6 +24,7 @@ import {
   Clock,
   ArrowRight,
   Network,
+  RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -34,7 +35,7 @@ Majed Al-Mutairi,majed.mutairi@ahda.gov.sa,Strategic Performance Lead,Strategy D
 Noura Al-Hassan,noura.hassan@ahda.gov.sa,Chief Internal Auditor,Internal Audit,Auditor`;
 
 export const AdminPage: React.FC = () => {
-  const { currentUser, switchUserRole, users, importUsers, lang, t } = useApp();
+  const { currentUser, switchUserRole, users, importUsers, exportAllDataAsJson, resetAllDataToDefaults, lang, t } = useApp();
   const [activeTab, setActiveTab] = useState<'users' | 'roles' | 'departments' | 'data_import'>('users');
 
   // User CSV upload state
@@ -328,14 +329,28 @@ export const AdminPage: React.FC = () => {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handleExportSystemSnapshot}
-                className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shrink-0"
-              >
-                <Download className="w-4 h-4" />
-                <span>{lang === 'ar' ? 'تصدير نسخة النظام (JSON)' : 'Export System Snapshot (JSON)'}</span>
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={exportAllDataAsJson}
+                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>{lang === 'ar' ? 'تصدير بيانات المنظومة (JSON)' : 'Export System Data (JSON)'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(lang === 'ar' ? 'هل أنت متأكد من استعادة بيانات النظام الافتراضية؟ سيتم مسح أي تعديلات سابقة.' : 'Reset all data to system defaults? Any customized entries will be restored to initial mock data.')) {
+                      resetAllDataToDefaults();
+                    }
+                  }}
+                  className="px-4 py-2.5 bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400/40 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>{lang === 'ar' ? 'استعادة الافتراضي' : 'Reset Defaults'}</span>
+                </button>
+              </div>
             </div>
           </div>
 

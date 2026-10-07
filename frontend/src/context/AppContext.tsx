@@ -162,10 +162,18 @@ interface AppContextType {
   addStrategy: (payload: CreateStrategyPayload) => { themeId: string; goalId: string; objectiveId: string };
   addObjective: (objective: Omit<StrategicObjective, 'id'>) => StrategicObjective;
   addKPI: (kpi: Omit<KPI, 'id'>) => KPI;
+  updateKPI: (id: string, updates: Partial<KPI>) => void;
+  deleteKPI: (id: string) => void;
   addInitiative: (init: Omit<StrategicInitiative, 'id'>) => StrategicInitiative;
+  updateInitiative: (id: string, updates: Partial<StrategicInitiative>) => void;
+  deleteInitiative: (id: string) => void;
+  updateGoal: (id: string, updates: Partial<StrategicGoal>) => void;
+  deleteGoal: (id: string) => void;
+  updateStrategyTheme: (id: string, updates: Partial<StrategicTheme>) => void;
   deleteStrategyTheme: (themeId: string) => void;
   resetStrategies: () => void;
   updateObjective: (id: string, updates: Partial<StrategicObjective>, note?: string) => void;
+  deleteObjective: (id: string) => void;
   toggleMilestone: (initiativeId: string, milestoneId: string) => void;
   importStrategyData: (data: {
     themes?: StrategicTheme[];
@@ -174,6 +182,8 @@ interface AppContextType {
     initiatives?: StrategicInitiative[];
     kpis?: KPI[];
   }) => { themesCount: number; objectivesCount: number; kpisCount: number; initiativesCount: number };
+  exportAllDataAsJson: () => void;
+  resetAllDataToDefaults: () => void;
 
   actions: ActionItem[];
   addAction: (action: Omit<ActionItem, 'id' | 'code'>) => void;
@@ -207,6 +217,7 @@ interface AppContextType {
   updateOrganization: (updates: Partial<OrganizationConfig>) => void;
   addDepartment: (dept: Omit<Department, 'id'>) => Department;
   updateDepartment: (id: string, updates: Partial<Department>) => void;
+  deleteDepartment: (id: string) => void;
 
   // Story-Driven Demo Journey State
   demoJourneyStep: number;
@@ -226,22 +237,61 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// Robust local storage persistence helper for demo data manipulation
+const loadStorageState = <T,>(key: string, fallback: T): T => {
+  try {
+    const local = localStorage.getItem(key);
+    if (local !== null && local !== 'undefined') {
+      const parsed = JSON.parse(local);
+      if (parsed !== null && parsed !== undefined) {
+        if (Array.isArray(fallback)) {
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed as T;
+        } else {
+          return parsed as T;
+        }
+      }
+    }
+    // Migration fallback from sessionStorage
+    const session = sessionStorage.getItem(key);
+    if (session !== null && session !== 'undefined') {
+      const parsed = JSON.parse(session);
+      if (parsed !== null && parsed !== undefined) {
+        if (Array.isArray(fallback)) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            localStorage.setItem(key, session);
+            return parsed as T;
+          }
+        } else {
+          localStorage.setItem(key, session);
+          return parsed as T;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[Storage] Failed to read ${key}:`, err);
+  }
+  return fallback;
+};
+
+const saveStorageState = <T,>(key: string, data: T): void => {
+  try {
+    const serialized = JSON.stringify(data);
+    localStorage.setItem(key, serialized);
+    sessionStorage.setItem(key, serialized);
+  } catch (err) {
+    console.warn(`[Storage] Failed to save ${key}:`, err);
+  }
+};
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem('eda_auth') === 'true';
+    return localStorage.getItem('eda_auth') === 'true' || sessionStorage.getItem('eda_auth') === 'true';
   });
 
   const [currentUser, setCurrentUser] = useState<User>(() => {
-    const savedUser = sessionStorage.getItem('eda_user');
-    if (savedUser) {
-      try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed && parsed.role && (parsed.role === 'Authority Board & CEO' || ROLE_PERMISSIONS_MAP[parsed.role as Role])) {
-          return parsed;
-        }
-      } catch (e) {
-        return CURRENT_USER;
-      }
+    const savedUser = loadStorageState<User | null>('eda_user', null);
+    if (savedUser && savedUser.role && (savedUser.role === 'Authority Board & CEO' || ROLE_PERMISSIONS_MAP[savedUser.role as Role])) {
+      return savedUser;
     }
     return CURRENT_USER;
   });
@@ -264,108 +314,37 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Entities
   const [risks, setRisks] = useState<RiskItem[]>(() => {
-    const saved = sessionStorage.getItem('eda_risks');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialRisks;
+    return loadStorageState<RiskItem[]>('eda_risks', initialRisks);
   });
 
   const [themes, setThemes] = useState<StrategicTheme[]>(() => {
-    const saved = sessionStorage.getItem('eda_themes');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((t: any) => t.title?.includes('People and Society') || t.id === 'st-people')) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialThemes;
+    return loadStorageState<StrategicTheme[]>('eda_themes', initialThemes);
   });
 
   const [goals, setGoals] = useState<StrategicGoal[]>(() => {
-    const saved = sessionStorage.getItem('eda_goals');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((g: any) => g.id === 'sg-people-1' || g.title?.includes('Community Participation'))) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialGoals;
+    return loadStorageState<StrategicGoal[]>('eda_goals', initialGoals);
   });
 
   const [objectives, setObjectives] = useState<StrategicObjective[]>(() => {
-    const saved = sessionStorage.getItem('eda_objectives');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((o: any) => o.code === '2.1' || o.id === 'so-2-1')) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialObjectives;
+    return loadStorageState<StrategicObjective[]>('eda_objectives', initialObjectives);
   });
 
   const [initiatives, setInitiatives] = useState<StrategicInitiative[]>(() => {
-    const saved = sessionStorage.getItem('eda_initiatives');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((i: any) => i.id === 'init-aha-1' || i.code?.includes('AHA'))) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialInitiatives;
+    return loadStorageState<StrategicInitiative[]>('eda_initiatives', initialInitiatives);
   });
 
   const [kpis, setKpis] = useState<KPI[]>(() => {
-    const saved = sessionStorage.getItem('eda_kpis');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((k: any) => k.code === '2.1.1' || k.id === 'kpi-2-1-1')) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialKpis;
+    return loadStorageState<KPI[]>('eda_kpis', initialKpis);
   });
 
   const [strategyPlan, setStrategyPlan] = useState<StrategyPlan>(() => {
-    const saved = sessionStorage.getItem('eda_strategy_plan');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return DEFAULT_STRATEGY_PLAN;
+    return loadStorageState<StrategyPlan>('eda_strategy_plan', DEFAULT_STRATEGY_PLAN);
   });
 
   const updateStrategyPlan = (updates: Partial<StrategyPlan>) => {
     setStrategyPlan((prev) => {
       const updated = { ...prev, ...updates, updatedAt: new Date().toISOString() };
-      sessionStorage.setItem('eda_strategy_plan', JSON.stringify(updated));
+      saveStorageState('eda_strategy_plan', updated);
       return updated;
     });
   };
@@ -373,30 +352,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [actions, setActions] = useState<ActionItem[]>(initialActions);
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
   const [documents, setDocuments] = useState<DocumentItem[]>(() => {
-    const saved = sessionStorage.getItem('eda_documents');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return initialDocuments;
+    return loadStorageState<DocumentItem[]>('eda_documents', initialDocuments);
   });
 
   const [users, setUsers] = useState<User[]>(() => {
-    const saved = sessionStorage.getItem('eda_users');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.some((u: any) => u.role === 'Authority Board & CEO' || u.id === 'usr-106')) {
-          return parsed;
-        }
-      } catch (e) {
-        /* fallback */
-      }
-    }
-    return MOCK_USERS;
+    return loadStorageState<User[]>('eda_users', MOCK_USERS);
   });
 
   const [bcmProcesses] = useState<BCMProcess[]>(initialBcmProcesses);
@@ -441,19 +401,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const [organization, setOrganization] = useState<OrganizationConfig>(() => {
-    const saved = sessionStorage.getItem('eda_org_info');
-    if (saved) {
-      try {
-        return { ...defaultOrgConfig, ...JSON.parse(saved) };
-      } catch (e) {}
-    }
-    return defaultOrgConfig;
+    return loadStorageState<OrganizationConfig>('eda_org_info', defaultOrgConfig);
   });
 
   const updateOrganization = (updates: Partial<OrganizationConfig>) => {
     setOrganization((prev) => {
       const next = { ...prev, ...updates };
-      sessionStorage.setItem('eda_org_info', JSON.stringify(next));
+      saveStorageState('eda_org_info', next);
       return next;
     });
     toast.success(lang === 'ar' ? 'تم تحديث هوية وبيانات المنظومة' : 'Organization Setup Updated', {
@@ -463,13 +417,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Departments State
   const [departments, setDepartments] = useState<Department[]>(() => {
-    const saved = sessionStorage.getItem('eda_departments');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
-    }
-    return initialDepartments;
+    return loadStorageState<Department[]>('eda_departments', initialDepartments);
   });
 
   const addDepartment = (dept: Omit<Department, 'id'>): Department => {
@@ -479,7 +427,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
     setDepartments((prev) => {
       const next = [...prev, newDept];
-      sessionStorage.setItem('eda_departments', JSON.stringify(next));
+      saveStorageState('eda_departments', next);
       return next;
     });
     toast.success(lang === 'ar' ? 'تمت إضافة الإدارة/الوحدة التنظيمية' : 'Department Added Successfully');
@@ -489,31 +437,38 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const updateDepartment = (id: string, updates: Partial<Department>) => {
     setDepartments((prev) => {
       const next = prev.map((d) => (d.id === id ? { ...d, ...updates } : d));
-      sessionStorage.setItem('eda_departments', JSON.stringify(next));
+      saveStorageState('eda_departments', next);
       return next;
     });
     toast.success(lang === 'ar' ? 'تم تحديث الإدارة والصلاحيات' : 'Department & Permissions Updated');
   };
 
+  const deleteDepartment = (id: string) => {
+    setDepartments((prev) => {
+      const next = prev.filter((d) => d.id !== id);
+      saveStorageState('eda_departments', next);
+      return next;
+    });
+    toast.info(lang === 'ar' ? 'تم حذف الإدارة' : 'Department Removed');
+  };
+
   // Story-Driven Demo Journey State
   const [demoJourneyStep, setDemoJourneyStepState] = useState<number>(() => {
-    const saved = sessionStorage.getItem('eda_demo_step');
-    return saved ? Number(saved) : 1;
+    return loadStorageState<number>('eda_demo_step', 1);
   });
 
   const [isDemoJourneyActive, setIsDemoJourneyActiveState] = useState<boolean>(() => {
-    const saved = sessionStorage.getItem('eda_demo_active');
-    return saved !== null ? saved === 'true' : true;
+    return loadStorageState<boolean>('eda_demo_active', true);
   });
 
   const setDemoJourneyStep = (step: number) => {
     setDemoJourneyStepState(step);
-    sessionStorage.setItem('eda_demo_step', String(step));
+    saveStorageState('eda_demo_step', step);
   };
 
   const setIsDemoJourneyActive = (active: boolean) => {
     setIsDemoJourneyActiveState(active);
-    sessionStorage.setItem('eda_demo_active', String(active));
+    saveStorageState('eda_demo_active', active);
   };
 
   // Modals & Drawers
@@ -526,8 +481,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const userToSet = userToLogin || currentUser;
     setCurrentUser(userToSet);
     setIsAuthenticated(true);
+    localStorage.setItem('eda_auth', 'true');
     sessionStorage.setItem('eda_auth', 'true');
-    sessionStorage.setItem('eda_user', JSON.stringify(userToSet));
+    saveStorageState('eda_user', userToSet);
     toast.success(lang === 'ar' ? 'تم تسجيل الدخول بنجاح' : 'Signed in successfully', {
       description: lang === 'ar' ? `الدور النشط: ${userToSet.role}` : `Active Role: ${userToSet.role}`,
     });
@@ -535,19 +491,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem('eda_auth');
+    localStorage.removeItem('eda_user');
     sessionStorage.removeItem('eda_auth');
     sessionStorage.removeItem('eda_user');
     toast.info('Signed out of Enterprise Platform');
   };
 
   const switchUserRole = (role: Role) => {
-    const matchedUser = MOCK_USERS.find((u) => u.role === role) || {
+    const matchedUser = users.find((u) => u.role === role) || MOCK_USERS.find((u) => u.role === role) || {
       ...currentUser,
       role,
       title: `${role} Officer`,
     };
     setCurrentUser(matchedUser);
-    sessionStorage.setItem('eda_user', JSON.stringify(matchedUser));
+    saveStorageState('eda_user', matchedUser);
     toast.success(`Active Persona: ${role}`, {
       description: ROLE_PERMISSIONS_MAP[role]?.roleDescription || 'Role permissions updated.',
     });
@@ -949,7 +907,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const deleteUser = (userId: string) => {
     setUsers((prev) => {
       const updated = prev.filter((u) => u.id !== userId);
-      sessionStorage.setItem('eda_users', JSON.stringify(updated));
+      saveStorageState('eda_users', updated);
       return updated;
     });
     toast.success(lang === 'ar' ? 'تم حذف المستخدم من المنظومة' : 'User removed from system');
@@ -969,7 +927,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     setObjectives((prev) => {
       const updated = [...prev, createdObj];
-      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      saveStorageState('eda_objectives', updated);
       return updated;
     });
 
@@ -977,6 +935,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       description: 'Added to live Strategy framework and OKR portfolio.',
     });
     return createdObj;
+  };
+
+  const deleteObjective = (id: string) => {
+    setObjectives((prev) => {
+      const updated = prev.filter((o) => o.id !== id);
+      saveStorageState('eda_objectives', updated);
+      return updated;
+    });
+    setKpis((prev) => {
+      const updated = prev.filter((k) => k.objectiveId !== id);
+      saveStorageState('eda_kpis', updated);
+      return updated;
+    });
+    setInitiatives((prev) => {
+      const updated = prev.filter((i) => i.objectiveId !== id);
+      saveStorageState('eda_initiatives', updated);
+      return updated;
+    });
+    toast.info(lang === 'ar' ? 'تم حذف الهدف الاستراتيجي والمؤشرات المرتبطة' : 'Objective and linked metrics removed');
   };
 
   const addKPI = (newKpiData: Omit<KPI, 'id'>) => {
@@ -996,7 +973,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     setKpis((prev) => {
       const updated = [...prev, createdKpi];
-      sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+      saveStorageState('eda_kpis', updated);
       return updated;
     });
 
@@ -1004,7 +981,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const updated = prev.map((o) =>
         o.id === newKpiData.objectiveId ? { ...o, kpiCount: (o.kpiCount || 0) + 1 } : o
       );
-      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      saveStorageState('eda_objectives', updated);
       return updated;
     });
 
@@ -1012,6 +989,38 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       description: 'Added to live Strategy Matrix and OKR register.',
     });
     return createdKpi;
+  };
+
+  const updateKPI = (id: string, updates: Partial<KPI>) => {
+    setKpis((prev) => {
+      const updated = prev.map((k) => {
+        if (k.id === id) {
+          const nextTarget = updates.target !== undefined ? Number(updates.target) : k.target;
+          const nextActual = updates.actual !== undefined ? Number(updates.actual) : k.actual;
+          const nextAchievement = nextTarget > 0 ? Math.min(100, Math.round((nextActual / nextTarget) * 100)) : 0;
+          return {
+            ...k,
+            ...updates,
+            target: nextTarget,
+            actual: nextActual,
+            achievementPct: updates.achievementPct !== undefined ? updates.achievementPct : nextAchievement,
+          };
+        }
+        return k;
+      });
+      saveStorageState('eda_kpis', updated);
+      return updated;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث مؤشر الأداء بنجاح' : 'KPI updated successfully');
+  };
+
+  const deleteKPI = (id: string) => {
+    setKpis((prev) => {
+      const updated = prev.filter((k) => k.id !== id);
+      saveStorageState('eda_kpis', updated);
+      return updated;
+    });
+    toast.info(lang === 'ar' ? 'تم حذف مؤشر الأداء' : 'KPI removed from system');
   };
 
   const addInitiative = (newInitData: Omit<StrategicInitiative, 'id'>) => {
@@ -1024,7 +1033,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     setInitiatives((prev) => {
       const updated = [...prev, createdInit];
-      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      saveStorageState('eda_initiatives', updated);
       return updated;
     });
 
@@ -1032,6 +1041,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       description: 'Added to strategic delivery roadmap.',
     });
     return createdInit;
+  };
+
+  const updateInitiative = (id: string, updates: Partial<StrategicInitiative>) => {
+    setInitiatives((prev) => {
+      const updated = prev.map((i) => (i.id === id ? { ...i, ...updates } : i));
+      saveStorageState('eda_initiatives', updated);
+      return updated;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث المبادرة بنجاح' : 'Initiative updated successfully');
+  };
+
+  const deleteInitiative = (id: string) => {
+    setInitiatives((prev) => {
+      const updated = prev.filter((i) => i.id !== id);
+      saveStorageState('eda_initiatives', updated);
+      return updated;
+    });
+    toast.info(lang === 'ar' ? 'تم حذف المبادرة الاستراتيجية' : 'Initiative removed from roadmap');
   };
 
   const addStrategy = (payload: CreateStrategyPayload) => {
@@ -1373,7 +1400,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
     setThemes((prev) => {
       const updated = [...prev, newTheme];
-      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+      saveStorageState('eda_themes', updated);
       return updated;
     });
     toast.success(
@@ -1384,6 +1411,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return newTheme;
   };
 
+  const updateStrategyTheme = (id: string, updates: Partial<StrategicTheme>) => {
+    setThemes((prev) => {
+      const updated = prev.map((t) => (t.id === id ? { ...t, ...updates } : t));
+      saveStorageState('eda_themes', updated);
+      return updated;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث الركيزة الاستراتيجية' : 'Strategic Pillar Updated');
+  };
+
   const addGoal = (goalData: Omit<StrategicGoal, 'id'>): StrategicGoal => {
     const newGoal: StrategicGoal = {
       ...goalData,
@@ -1392,7 +1428,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
     setGoals((prev) => {
       const updated = [...prev, newGoal];
-      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+      saveStorageState('eda_goals', updated);
       return updated;
     });
     toast.success(
@@ -1403,36 +1439,59 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return newGoal;
   };
 
+  const updateGoal = (id: string, updates: Partial<StrategicGoal>) => {
+    setGoals((prev) => {
+      const updated = prev.map((g) => (g.id === id ? { ...g, ...updates } : g));
+      saveStorageState('eda_goals', updated);
+      return updated;
+    });
+    toast.success(lang === 'ar' ? 'تم تحديث الهدف الاستراتيجي' : 'Strategic Goal Updated');
+  };
+
+  const deleteGoal = (id: string) => {
+    setGoals((prev) => {
+      const updated = prev.filter((g) => g.id !== id);
+      saveStorageState('eda_goals', updated);
+      return updated;
+    });
+    setObjectives((prev) => {
+      const updated = prev.filter((o) => o.goalId !== id);
+      saveStorageState('eda_objectives', updated);
+      return updated;
+    });
+    toast.info(lang === 'ar' ? 'تم حذف الهدف الاستراتيجي' : 'Strategic Goal Removed');
+  };
+
   const deleteStrategyTheme = (themeId: string) => {
     setThemes((prev) => {
       const updated = prev.filter((t) => t.id !== themeId);
-      sessionStorage.setItem('eda_themes', JSON.stringify(updated));
+      saveStorageState('eda_themes', updated);
       return updated;
     });
 
     const goalsToRemove = goals.filter((g) => g.themeId === themeId).map((g) => g.id);
     setGoals((prev) => {
       const updated = prev.filter((g) => g.themeId !== themeId);
-      sessionStorage.setItem('eda_goals', JSON.stringify(updated));
+      saveStorageState('eda_goals', updated);
       return updated;
     });
 
     const objsToRemove = objectives.filter((o) => o.themeId === themeId).map((o) => o.id);
     setObjectives((prev) => {
       const updated = prev.filter((o) => o.themeId !== themeId);
-      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      saveStorageState('eda_objectives', updated);
       return updated;
     });
 
     setKpis((prev) => {
       const updated = prev.filter((k) => !objsToRemove.includes(k.objectiveId));
-      sessionStorage.setItem('eda_kpis', JSON.stringify(updated));
+      saveStorageState('eda_kpis', updated);
       return updated;
     });
 
     setInitiatives((prev) => {
       const updated = prev.filter((i) => !objsToRemove.includes(i.objectiveId));
-      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      saveStorageState('eda_initiatives', updated);
       return updated;
     });
 
@@ -1447,14 +1506,55 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setObjectives(initialObjectives);
     setInitiatives(initialInitiatives);
     setKpis(initialKpis);
-    sessionStorage.removeItem('eda_themes');
-    sessionStorage.removeItem('eda_goals');
-    sessionStorage.removeItem('eda_objectives');
-    sessionStorage.removeItem('eda_initiatives');
-    sessionStorage.removeItem('eda_kpis');
+    saveStorageState('eda_themes', initialThemes);
+    saveStorageState('eda_goals', initialGoals);
+    saveStorageState('eda_objectives', initialObjectives);
+    saveStorageState('eda_initiatives', initialInitiatives);
+    saveStorageState('eda_kpis', initialKpis);
     toast.success('Strategy Architecture Reset', {
       description: 'Restored baseline enterprise strategic pillars and OKRs.',
     });
+  };
+
+  const exportAllDataAsJson = () => {
+    const data = {
+      exportedAt: new Date().toISOString(),
+      organization,
+      departments,
+      users,
+      themes,
+      goals,
+      objectives,
+      kpis,
+      initiatives,
+      risks,
+      strategyPlan,
+    };
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enterprise_strategy_data_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(lang === 'ar' ? 'تم تصدير ملف بيانات المنظومة بنجاح' : 'Demo Data JSON Exported Successfully');
+  };
+
+  const resetAllDataToDefaults = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setThemes(initialThemes);
+    setGoals(initialGoals);
+    setObjectives(initialObjectives);
+    setInitiatives(initialInitiatives);
+    setKpis(initialKpis);
+    setUsers(MOCK_USERS);
+    setDepartments(initialDepartments);
+    setOrganization(defaultOrgConfig);
+    setRisks(initialRisks);
+    setStrategyPlan(DEFAULT_STRATEGY_PLAN);
+    toast.success(lang === 'ar' ? 'تمت استعادة كافة البيانات الافتراضية' : 'All Demo Data Reset to Defaults');
   };
 
   const updateObjective = (id: string, updates: Partial<StrategicObjective>, note?: string) => {
@@ -1465,7 +1565,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
         return obj;
       });
-      sessionStorage.setItem('eda_objectives', JSON.stringify(updated));
+      saveStorageState('eda_objectives', updated);
       return updated;
     });
 
@@ -1495,7 +1595,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
         return init;
       });
-      sessionStorage.setItem('eda_initiatives', JSON.stringify(updated));
+      saveStorageState('eda_initiatives', updated);
       return updated;
     });
     toast.success('Deliverable Milestone Status Updated');
@@ -1637,24 +1737,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         importRisks,
         themes,
         addStrategyTheme,
+        updateStrategyTheme,
+        deleteStrategyTheme,
         goals,
         addGoal,
+        updateGoal,
+        deleteGoal,
         objectives,
+        addObjective,
+        updateObjective,
+        deleteObjective,
         initiatives,
+        addInitiative,
+        updateInitiative,
+        deleteInitiative,
         kpis,
+        addKPI,
+        updateKPI,
+        deleteKPI,
         strategyPlan,
         updateStrategyPlan,
         cascadeStrategy,
         addStrategy,
-        addObjective,
-        addKPI,
-        addInitiative,
-        deleteStrategyTheme,
         resetStrategies,
-        updateObjective,
         toggleMilestone,
         importStrategyData,
         importKpiActuals,
+        exportAllDataAsJson,
+        resetAllDataToDefaults,
         actions,
         addAction,
         updateActionStatus,
@@ -1674,6 +1784,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         bcmPlans,
         sectors: AUTHORITY_SECTORS,
         departments,
+        deleteDepartment,
         organization,
         updateOrganization,
         addDepartment,

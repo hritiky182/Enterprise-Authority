@@ -22,17 +22,64 @@ import {
   Check,
   FolderGit2,
   Milestone,
+  Edit2,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const InitiativesPage: React.FC = () => {
   const navigate = useNavigate();
-  const { initiatives, objectives, addInitiative, toggleMilestone, setDemoJourneyStep, lang, t } = useApp();
+  const { initiatives, objectives, addInitiative, updateInitiative, deleteInitiative, toggleMilestone, setDemoJourneyStep, lang, t } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Edit Initiative State
+  const [editingInit, setEditingInit] = useState<StrategicInitiative | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editTitleAr, setEditTitleAr] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editOwner, setEditOwner] = useState('');
+  const [editDepartment, setEditDepartment] = useState('');
+  const [editBudgetSAR, setEditBudgetSAR] = useState(0);
+  const [editSpentSAR, setEditSpentSAR] = useState(0);
+  const [editProgress, setEditProgress] = useState(0);
+  const [editStatus, setEditStatus] = useState<'Planning' | 'In Progress' | 'At Risk' | 'Completed'>('In Progress');
+
+  const openEditModal = (i: StrategicInitiative) => {
+    setEditingInit(i);
+    setEditTitle(i.title);
+    setEditTitleAr(i.titleAr || '');
+    setEditDescription(i.description || '');
+    setEditOwner(i.owner);
+    setEditDepartment(i.department);
+    setEditBudgetSAR(i.budgetSAR);
+    setEditSpentSAR(i.spentSAR);
+    setEditProgress(i.progress);
+    setEditStatus(i.status);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingInit) return;
+    updateInitiative(editingInit.id, {
+      title: editTitle.trim(),
+      titleAr: editTitleAr.trim() || undefined,
+      description: editDescription.trim() || undefined,
+      owner: editOwner.trim(),
+      department: editDepartment.trim(),
+      budgetSAR: Number(editBudgetSAR),
+      spentSAR: Number(editSpentSAR),
+      progress: Number(editProgress),
+      status: editStatus,
+    });
+    setIsEditModalOpen(false);
+    setEditingInit(null);
+  };
 
   // AI Copilot state
   const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
@@ -271,6 +318,37 @@ export const InitiativesPage: React.FC = () => {
       sortable: true,
       cell: (i) => <StatusBadge status={i.status} />,
     },
+    {
+      header: lang === 'ar' ? 'الإجراءات' : 'Actions',
+      cell: (i) => (
+        <div className="flex items-center gap-1.5 justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditModal(i);
+            }}
+            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'تعديل المبادرة' : 'Edit Initiative'}
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(lang === 'ar' ? `هل أنت متأكد من حذف المبادرة "${i.title}"؟` : `Delete Initiative "${i.title}"?`)) {
+                deleteInitiative(i.id);
+              }
+            }}
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'حذف المبادرة' : 'Delete Initiative'}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -481,7 +559,7 @@ export const InitiativesPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Card Footer: Budget & Owner */}
+              {/* Card Footer: Budget & Owner & Actions */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
                 <div>
                   <span className="text-[10px] text-slate-400 block">{lang === 'ar' ? 'الميزانية' : 'Budget'}</span>
@@ -489,9 +567,35 @@ export const InitiativesPage: React.FC = () => {
                     SAR {(init.budgetSAR / 1000000).toFixed(1)}M
                   </span>
                 </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal(init);
+                    }}
+                    className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                    title={lang === 'ar' ? 'تعديل المبادرة' : 'Edit Initiative'}
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(lang === 'ar' ? `هل أنت متأكد من حذف المبادرة "${init.title}"؟` : `Delete Initiative "${init.title}"?`)) {
+                        deleteInitiative(init.id);
+                      }
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    title={lang === 'ar' ? 'حذف المبادرة' : 'Delete Initiative'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block">{lang === 'ar' ? 'المسؤول' : 'Owner'}</span>
-                  <span className="font-semibold text-slate-700 truncate max-w-[120px] block">
+                  <span className="font-semibold text-slate-700 truncate max-w-[100px] block font-sans">
                     {init.owner}
                   </span>
                 </div>
@@ -807,6 +911,173 @@ export const InitiativesPage: React.FC = () => {
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   {lang === 'ar' ? 'حفظ ونشر المبادرة' : 'Save & Publish Initiative'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Initiative Modal */}
+      {isEditModalOpen && editingInit && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    {lang === 'ar' ? `تعديل المبادرة الاستراتيجية (${editingInit.code})` : `Edit Strategic Initiative (${editingInit.code})`}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {lang === 'ar' ? 'تحديث الميزانية، والمسؤول، ونسبة الإنجاز' : 'Update capital budget, lead owner, and execution progress'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="mt-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'عنوان المبادرة بالإنجليزية' : 'Initiative Title (EN)'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'عنوان المبادرة بالعربية' : 'Initiative Title (AR)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editTitleAr}
+                    onChange={(e) => setEditTitleAr(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق التنفيذي' : 'Executive Description'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسؤول التنفيذي' : 'Lead Officer / Owner'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editOwner}
+                    onChange={(e) => setEditOwner(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الإدارة المعنية' : 'Department'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editDepartment}
+                    onChange={(e) => setEditDepartment(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الميزانية المعتمدة (SAR)' : 'Budget (SAR)'} *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={editBudgetSAR}
+                    onChange={(e) => setEditBudgetSAR(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المصروف الفعلي (SAR)' : 'Spent (SAR)'}
+                  </label>
+                  <input
+                    type="number"
+                    value={editSpentSAR}
+                    onChange={(e) => setEditSpentSAR(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'نسبة الإنجاز (%)' : 'Progress (%)'}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editProgress}
+                    onChange={(e) => setEditProgress(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الحالة التنفيذية' : 'Status'}
+                </label>
+                <select
+                  value={editStatus}
+                  onChange={(e) => setEditStatus(e.target.value as any)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                >
+                  <option value="Planning">{lang === 'ar' ? 'تخطيط' : 'Planning'}</option>
+                  <option value="In Progress">{lang === 'ar' ? 'قيد التنفيذ' : 'In Progress'}</option>
+                  <option value="At Risk">{lang === 'ar' ? 'معرض للخطر' : 'At Risk'}</option>
+                  <option value="Completed">{lang === 'ar' ? 'مكتمل' : 'Completed'}</option>
+                </select>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}
                 </button>
               </div>
             </form>

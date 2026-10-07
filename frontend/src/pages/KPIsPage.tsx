@@ -23,18 +23,71 @@ import {
   Zap,
   Check,
   Cpu,
+  Edit2,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const KPIsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { kpis, objectives, themes, addKPI, setDemoJourneyStep, lang, t } = useApp();
+  const { kpis, objectives, themes, addKPI, updateKPI, deleteKPI, setDemoJourneyStep, lang, t } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedObjectiveId, setSelectedObjectiveId] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedFrequency, setSelectedFrequency] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Edit KPI state
+  const [editingKpi, setEditingKpi] = useState<KPI | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editNameAr, setEditNameAr] = useState('');
+  const [editTarget, setEditTarget] = useState(100);
+  const [editActual, setEditActual] = useState(0);
+  const [editUnit, setEditUnit] = useState('%');
+  const [editFrequency, setEditFrequency] = useState<'Monthly' | 'Quarterly' | 'Bi-Annual' | 'Annual'>('Quarterly');
+  const [editStatus, setEditStatus] = useState<'on-track' | 'warning' | 'critical' | 'achieved'>('on-track');
+  const [editFormula, setEditFormula] = useState('');
+  const [editBaseline, setEditBaseline] = useState('');
+  const [editTarget2026, setEditTarget2026] = useState('');
+  const [editTarget2027, setEditTarget2027] = useState('');
+
+  const openEditModal = (k: KPI) => {
+    setEditingKpi(k);
+    setEditName(k.name);
+    setEditNameAr(k.nameAr || '');
+    setEditTarget(k.target);
+    setEditActual(k.actual);
+    setEditUnit(k.unit || '%');
+    setEditFrequency(k.frequency);
+    setEditStatus(k.status);
+    setEditFormula(k.formula || '');
+    setEditBaseline(String(k.baseline || ''));
+    setEditTarget2026(String(k.target2026 || ''));
+    setEditTarget2027(String(k.target2027 || ''));
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingKpi) return;
+    updateKPI(editingKpi.id, {
+      name: editName.trim(),
+      nameAr: editNameAr.trim() || undefined,
+      target: Number(editTarget),
+      actual: Number(editActual),
+      unit: editUnit.trim() || '%',
+      frequency: editFrequency,
+      status: editStatus,
+      formula: editFormula.trim() || undefined,
+      baseline: editBaseline.trim() || undefined,
+      target2026: editTarget2026.trim() || undefined,
+      target2027: editTarget2027.trim() || undefined,
+    });
+    setIsEditModalOpen(false);
+    setEditingKpi(null);
+  };
 
   // AI Copilot state
   const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
@@ -333,6 +386,37 @@ export const KPIsPage: React.FC = () => {
       accessorKey: 'status',
       sortable: true,
       cell: (k) => <StatusBadge status={k.status} />,
+    },
+    {
+      header: lang === 'ar' ? 'الإجراءات' : 'Actions',
+      cell: (k) => (
+        <div className="flex items-center gap-1.5 justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditModal(k);
+            }}
+            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'تعديل المؤشر' : 'Edit KPI'}
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(lang === 'ar' ? `هل أنت متأكد من حذف مؤشر الأداء "${k.name}"؟` : `Delete KPI "${k.name}"?`)) {
+                deleteKPI(k.id);
+              }
+            }}
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'حذف المؤشر' : 'Delete KPI'}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -819,6 +903,163 @@ export const KPIsPage: React.FC = () => {
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   {lang === 'ar' ? 'حفظ ونشر المؤشر' : 'Save & Publish KPI'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit KPI Modal */}
+      {isEditModalOpen && editingKpi && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    {lang === 'ar' ? `تعديل مؤشر الأداء (${editingKpi.code})` : `Edit KPI (${editingKpi.code})`}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {lang === 'ar' ? 'تحديث المستهدفات، والقياس الفعلي، والصيغة الرياضية' : 'Update telemetry target, current actual, and mathematical formula'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="mt-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'اسم المؤشر بالإنجليزية' : 'KPI Name (EN)'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'اسم المؤشر بالعربية' : 'KPI Name (AR)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editNameAr}
+                    onChange={(e) => setEditNameAr(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المستهدف الإجمالي' : 'Target Value'} *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={editTarget}
+                    onChange={(e) => setEditTarget(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'القياس الفعلي' : 'Current Actual'} *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={editActual}
+                    onChange={(e) => setEditActual(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'وحدة القياس' : 'Unit'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editUnit}
+                    onChange={(e) => setEditUnit(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs font-mono focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'دورية القياس' : 'Frequency'}
+                  </label>
+                  <select
+                    value={editFrequency}
+                    onChange={(e) => setEditFrequency(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  >
+                    <option value="Monthly">{lang === 'ar' ? 'شهري' : 'Monthly'}</option>
+                    <option value="Quarterly">{lang === 'ar' ? 'ربعي' : 'Quarterly'}</option>
+                    <option value="Bi-Annual">{lang === 'ar' ? 'نصف سنوي' : 'Bi-Annual'}</option>
+                    <option value="Annual">{lang === 'ar' ? 'سنوي' : 'Annual'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'حالة الإنجاز' : 'Status'}
+                  </label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  >
+                    <option value="on-track">{lang === 'ar' ? 'على المسار' : 'On Track'}</option>
+                    <option value="warning">{lang === 'ar' ? 'يحتاج متابعة' : 'Warning'}</option>
+                    <option value="critical">{lang === 'ar' ? 'حرج / متأخر' : 'Critical'}</option>
+                    <option value="achieved">{lang === 'ar' ? 'متحقق بالكامل' : 'Achieved'}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'المعادلة الرياضية وطريقة الاحتساب' : 'Calculation Formula'}
+                </label>
+                <input
+                  type="text"
+                  value={editFormula}
+                  onChange={(e) => setEditFormula(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs font-mono focus:outline-none focus:border-blue-600"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}
                 </button>
               </div>
             </form>

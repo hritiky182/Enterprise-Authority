@@ -20,16 +20,60 @@ import {
   Layers,
   Sparkles,
   BarChart3,
+  Edit2,
+  Trash2,
 } from 'lucide-react';
 
 export const ObjectivesPage: React.FC = () => {
   const navigate = useNavigate();
-  const { objectives, themes, goals, sectors, addObjective, openModal, setDemoJourneyStep, lang, t } = useApp();
+  const { objectives, themes, goals, sectors, addObjective, updateObjective, deleteObjective, openModal, setDemoJourneyStep, lang, t } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedThemeId, setSelectedThemeId] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Edit Objective State
+  const [editingObj, setEditingObj] = useState<StrategicObjective | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editTitleAr, setEditTitleAr] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editOwner, setEditOwner] = useState('');
+  const [editDepartment, setEditDepartment] = useState('');
+  const [editTargetYear, setEditTargetYear] = useState(2026);
+  const [editProgress, setEditProgress] = useState(0);
+  const [editStatus, setEditStatus] = useState<'on-track' | 'at-risk' | 'behind' | 'achieved'>('on-track');
+
+  const openEditModal = (o: StrategicObjective) => {
+    setEditingObj(o);
+    setEditTitle(o.title);
+    setEditTitleAr(o.titleAr || '');
+    setEditDescription(o.description || '');
+    setEditOwner(o.owner);
+    setEditDepartment(o.department);
+    setEditTargetYear(o.targetYear);
+    setEditProgress(o.progress);
+    setEditStatus(o.status);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingObj) return;
+    updateObjective(editingObj.id, {
+      title: editTitle.trim(),
+      titleAr: editTitleAr.trim() || undefined,
+      description: editDescription.trim() || undefined,
+      owner: editOwner.trim(),
+      department: editDepartment.trim(),
+      targetYear: Number(editTargetYear),
+      progress: Number(editProgress),
+      status: editStatus,
+    });
+    setIsEditModalOpen(false);
+    setEditingObj(null);
+  };
 
   // Form State for Create Objective
   const [formCode, setFormCode] = useState(`SO-0${objectives.length + 1}`);
@@ -206,6 +250,38 @@ export const ObjectivesPage: React.FC = () => {
       sortable: true,
       width: '110px',
       cell: (o) => <StatusBadge status={o.status} />,
+    },
+    {
+      header: lang === 'ar' ? 'الإجراءات' : 'Actions',
+      width: '100px',
+      cell: (o) => (
+        <div className="flex items-center gap-1.5 justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditModal(o);
+            }}
+            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'تعديل الهدف' : 'Edit Objective'}
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(lang === 'ar' ? `هل أنت متأكد من حذف الهدف الاستراتيجي "${o.title}" والمؤشرات التابعة؟` : `Delete Strategic Objective "${o.title}" and linked metrics?`)) {
+                deleteObjective(o.id);
+              }
+            }}
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            title={lang === 'ar' ? 'حذف الهدف' : 'Delete Objective'}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -605,6 +681,160 @@ export const ObjectivesPage: React.FC = () => {
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   {lang === 'ar' ? 'حفظ ونشر الهدف' : 'Save & Publish Objective'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Objective Modal */}
+      {isEditModalOpen && editingObj && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    {lang === 'ar' ? `تعديل الهدف الاستراتيجي (${editingObj.code})` : `Edit Strategic Objective (${editingObj.code})`}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {lang === 'ar' ? 'تحديث المستهدف، ونسبة الإنجاز، والجهة المالكة' : 'Update objective title, progress telemetry, and responsible department'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="mt-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'عنوان الهدف بالإنجليزية' : 'Objective Title (EN)'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'عنوان الهدف بالعربية' : 'Objective Title (AR)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editTitleAr}
+                    onChange={(e) => setEditTitleAr(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  {lang === 'ar' ? 'الوصف والنطاق' : 'Description'}
+                </label>
+                <textarea
+                  rows={2}
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'المسؤول' : 'Owner'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editOwner}
+                    onChange={(e) => setEditOwner(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الإدارة' : 'Department'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editDepartment}
+                    onChange={(e) => setEditDepartment(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'سنة الاستهداف' : 'Target Year'}
+                  </label>
+                  <input
+                    type="number"
+                    value={editTargetYear}
+                    onChange={(e) => setEditTargetYear(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs font-mono focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'نسبة الإنجاز (%)' : 'Progress (%)'}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editProgress}
+                    onChange={(e) => setEditProgress(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs font-mono focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    {lang === 'ar' ? 'الحالة' : 'Status'}
+                  </label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-blue-600"
+                  >
+                    <option value="on-track">{lang === 'ar' ? 'على المسار' : 'On Track'}</option>
+                    <option value="at-risk">{lang === 'ar' ? 'معرض للخطر' : 'At Risk'}</option>
+                    <option value="behind">{lang === 'ar' ? 'متأخر' : 'Behind'}</option>
+                    <option value="achieved">{lang === 'ar' ? 'متحقق' : 'Achieved'}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  {lang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}
                 </button>
               </div>
             </form>
