@@ -393,7 +393,7 @@ export const InitiativesPage: React.FC = () => {
             className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer transition-colors"
           >
             <Plus className="w-4 h-4" />
-            <span>{lang === 'ar' ? '+ إضافة مبادرة' : '+ Create Initiative'}</span>
+            <span>{lang === 'ar' ? 'إضافة مبادرة' : 'Create Initiative'}</span>
           </button>
         </div>
       </div>
@@ -472,17 +472,15 @@ export const InitiativesPage: React.FC = () => {
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
-                viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
-              }`}
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
-                viewMode === 'table' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
-              }`}
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'table' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
               <List className="w-3.5 h-3.5" />
             </button>
@@ -545,7 +543,7 @@ export const InitiativesPage: React.FC = () => {
                           <input
                             type="checkbox"
                             checked={m.status === 'Completed'}
-                            onChange={() => {}}
+                            onChange={() => { }}
                             className="rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                           />
                           <span className={`flex-1 truncate ${m.status === 'Completed' ? 'line-through text-slate-400' : ''}`}>

@@ -34,6 +34,7 @@ interface NavItem {
   badge?: string | undefined;
   badgeColor?: string | undefined;
   hidden?: boolean;
+  end?: boolean;
 }
 
 interface NavGroup {
@@ -72,7 +73,7 @@ export const Sidebar: React.FC = () => {
     {
       title: 'CORE COMMAND',
       items: [
-        { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" />, end: true },
         { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" /> },
         { name: 'Org Structure', path: '/org-structure', icon: <Network className="w-4 h-4" /> },
         {
@@ -83,7 +84,7 @@ export const Sidebar: React.FC = () => {
           badgeColor: 'bg-purple-600 text-white',
         },
         { name: 'Strategy Planning', path: '/strategy/create', icon: <Target className="w-4 h-4" /> },
-        { name: 'Strategy Matrix', path: '/strategy', icon: <Layers className="w-4 h-4" /> },
+        { name: 'Strategy Matrix', path: '/strategy', icon: <Layers className="w-4 h-4" />, end: true },
         {
           name: 'Hierarchy Tree',
           path: '/hierarchy-tree',
@@ -223,6 +224,7 @@ export const Sidebar: React.FC = () => {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  end={item.end || false}
                   className={({ isActive }) =>
                     `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
                       isActive

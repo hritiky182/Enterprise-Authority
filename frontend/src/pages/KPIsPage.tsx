@@ -277,11 +277,10 @@ export const KPIsPage: React.FC = () => {
             </span>
             {k.type && (
               <span
-                className={`text-[9px] font-mono px-1.5 py-0.2 rounded border font-semibold ${
-                  k.type === 'Leading'
+                className={`text-[9px] font-mono px-1.5 py-0.2 rounded border font-semibold ${k.type === 'Leading'
                     ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
                     : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                }`}
+                  }`}
               >
                 {k.type}
               </span>
@@ -352,13 +351,12 @@ export const KPIsPage: React.FC = () => {
           </div>
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all ${
-                k.achievementPct >= 100
+              className={`h-full transition-all ${k.achievementPct >= 100
                   ? 'bg-emerald-500'
                   : k.achievementPct >= 70
-                  ? 'bg-blue-600'
-                  : 'bg-amber-500'
-              }`}
+                    ? 'bg-blue-600'
+                    : 'bg-amber-500'
+                }`}
               style={{ width: `${Math.min(100, k.achievementPct)}%` }}
             />
           </div>
@@ -462,7 +460,7 @@ export const KPIsPage: React.FC = () => {
             className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer transition-colors"
           >
             <Plus className="w-4 h-4" />
-            <span>{lang === 'ar' ? '+ إضافة مؤشر أداء' : '+ Create KPI'}</span>
+            <span>{lang === 'ar' ? 'إضافة مؤشر أداء' : 'Create KPI'}</span>
           </button>
         </div>
       </div>

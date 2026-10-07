@@ -381,17 +381,16 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white border rounded-xl text-start text-xs font-medium text-slate-800 flex items-center justify-between transition-all cursor-pointer shadow-2xs ${
-            isOpen ? `${colorStyles.activeBorder} bg-white ring-2 ring-opacity-20` : 'border-slate-200'
-          }`}
+          className={`w-full px-3.5 py-2.5 bg-slate-50 hover:bg-white border rounded-xl text-start text-xs font-medium text-slate-800 flex items-center justify-between transition-all cursor-pointer shadow-2xs ${isOpen ? `${colorStyles.activeBorder} bg-white ring-2 ring-opacity-20` : 'border-slate-200'
+            }`}
         >
           <div className="flex items-center gap-2 truncate">
             <span className="font-semibold text-slate-700">
               {selectedIds.length === 0
                 ? placeholder
                 : lang === 'ar'
-                ? `تم اختيار (${selectedIds.length}) من (${items.length})`
-                : `(${selectedIds.length}) of (${items.length}) items selected`}
+                  ? `تم اختيار (${selectedIds.length}) من (${items.length})`
+                  : `(${selectedIds.length}) of (${items.length}) items selected`}
             </span>
           </div>
           <div className="flex items-center gap-1.5 shrink-0 text-slate-400">
@@ -455,9 +454,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                     <div
                       key={item.id}
                       onClick={() => toggleItem(item.id)}
-                      className={`p-2 rounded-xl flex items-start gap-2.5 transition-colors cursor-pointer text-xs ${
-                        isChecked ? 'bg-blue-50/60 text-slate-900' : 'hover:bg-slate-50 text-slate-700'
-                      }`}
+                      className={`p-2 rounded-xl flex items-start gap-2.5 transition-colors cursor-pointer text-xs ${isChecked ? 'bg-blue-50/60 text-slate-900' : 'hover:bg-slate-50 text-slate-700'
+                        }`}
                     >
                       <div className="pt-0.5 shrink-0">
                         {isChecked ? (
@@ -562,11 +560,11 @@ export const CreateStrategyPage: React.FC = () => {
   );
   const [strategyStatement, setStrategyStatement] = useState(
     strategyPlan?.statement ||
-      "To lead comprehensive socio-economic, spatial, and cultural transformation in Al-Ahsa, unlocking the heritage oasis economy, enhancing residents' quality of life, and achieving sustainable regional prosperity in alignment with Saudi Vision 2030."
+    "To lead comprehensive socio-economic, spatial, and cultural transformation in Al-Ahsa, unlocking the heritage oasis economy, enhancing residents' quality of life, and achieving sustainable regional prosperity in alignment with Saudi Vision 2030."
   );
   const [strategyStatementAr, setStrategyStatementAr] = useState(
     strategyPlan?.statementAr ||
-      'قيادة التحول التنموي الشامل، والمكاني، والاقتصادي في الأحساء، وتعظيم الاستفادة من واحة التراث العالمي، والارتقاء بجودة حياة السكان، وتحقيق الازدهار المستدام بما يتماشى مع رؤية السعودية 2030.'
+    'قيادة التحول التنموي الشامل، والمكاني، والاقتصادي في الأحساء، وتعظيم الاستفادة من واحة التراث العالمي، والارتقاء بجودة حياة السكان، وتحقيق الازدهار المستدام بما يتماشى مع رؤية السعودية 2030.'
   );
 
   const handleYearChange = (start: number, end: number) => {
@@ -1223,8 +1221,8 @@ export const CreateStrategyPage: React.FC = () => {
                   ? 'جاري الاعتماد...'
                   : 'Cascading...'
                 : lang === 'ar'
-                ? 'حفظ ومواءمة الاستراتيجية'
-                : 'Save & Cascade Strategy'}
+                  ? 'حفظ ومواءمة الاستراتيجية'
+                  : 'Save & Cascade Strategy'}
             </span>
           </button>
         </div>
@@ -1432,7 +1430,7 @@ export const CreateStrategyPage: React.FC = () => {
                   className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '+ إنشاء ركيزة' : '+ Create Pillar'}</span>
+                  <span>{lang === 'ar' ? 'إنشاء ركيزة' : 'Create Pillar'}</span>
                 </button>
                 <Link
                   to="/hierarchy-tree"
@@ -1516,24 +1514,23 @@ export const CreateStrategyPage: React.FC = () => {
                   className="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '+ إنشاء هدف' : '+ Create Goal'}</span>
+                  <span>{lang === 'ar' ? 'إنشاء هدف' : 'Create Goal'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setOnlyShowThemeGoals(!onlyShowThemeGoals)}
-                  className={`text-[11px] font-mono px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
-                    onlyShowThemeGoals
-                      ? 'bg-teal-50 text-teal-700 border-teal-200 font-bold'
-                      : 'bg-slate-50 text-slate-600 border-slate-200'
-                  }`}
+                  className={`text-[11px] font-mono px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${onlyShowThemeGoals
+                    ? 'bg-teal-50 text-teal-700 border-teal-200 font-bold'
+                    : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
                 >
                   {onlyShowThemeGoals
                     ? lang === 'ar'
                       ? 'أهداف الركيزة فقط'
                       : 'Pillar Goals Only'
                     : lang === 'ar'
-                    ? 'عرض جميع الأهداف'
-                    : 'All Goals'}
+                      ? 'عرض جميع الأهداف'
+                      : 'All Goals'}
                 </button>
               </div>
             </div>
@@ -1594,7 +1591,7 @@ export const CreateStrategyPage: React.FC = () => {
                   className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '+ إنشاء هدف' : '+ Create Objective'}</span>
+                  <span>{lang === 'ar' ? 'إنشاء هدف' : 'Create Objective'}</span>
                 </button>
                 <button
                   type="button"
@@ -1726,9 +1723,8 @@ export const CreateStrategyPage: React.FC = () => {
                 code: o.code,
                 title: o.title,
                 titleAr: o.titleAr,
-                description: `${o.owner} • ${o.department} • FY ${o.targetYear}${
-                  o.description ? ` — ${o.description}` : ''
-                }`,
+                description: `${o.owner} • ${o.department} • FY ${o.targetYear}${o.description ? ` — ${o.description}` : ''
+                  }`,
                 badge: `${o.progress}% Progress`,
                 extra: `Status: ${o.status}`,
               }))}
@@ -1771,7 +1767,7 @@ export const CreateStrategyPage: React.FC = () => {
                   className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '+ إنشاء مؤشر' : '+ Create KPI'}</span>
+                  <span>{lang === 'ar' ? 'إنشاء مؤشر' : 'Create KPI'}</span>
                 </button>
                 <button
                   type="button"
@@ -1956,7 +1952,7 @@ export const CreateStrategyPage: React.FC = () => {
                   className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[11px] font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '+ إنشاء مبادرة' : '+ Create Initiative'}</span>
+                  <span>{lang === 'ar' ? 'إنشاء مبادرة' : 'Create Initiative'}</span>
                 </button>
                 <button
                   type="button"
@@ -2102,8 +2098,8 @@ export const CreateStrategyPage: React.FC = () => {
                     ? 'جاري الاعتماد...'
                     : 'Cascading...'
                   : lang === 'ar'
-                  ? 'حفظ واعتماد مواءمة الاستراتيجية'
-                  : 'Save & Deploy Strategy Cascade'}
+                    ? 'حفظ واعتماد مواءمة الاستراتيجية'
+                    : 'Save & Deploy Strategy Cascade'}
               </span>
             </button>
           </div>
@@ -2387,8 +2383,8 @@ export const CreateStrategyPage: React.FC = () => {
                     ? 'جاري الاعتماد...'
                     : 'Cascading...'
                   : lang === 'ar'
-                  ? 'اعتماد ومواءمة في مصفوفة الاستراتيجية'
-                  : 'Deploy into Strategy Matrix'}
+                    ? 'اعتماد ومواءمة في مصفوفة الاستراتيجية'
+                    : 'Deploy into Strategy Matrix'}
               </span>
             </button>
           </div>
