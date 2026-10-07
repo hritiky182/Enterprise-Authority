@@ -30,6 +30,18 @@ import { TasksPage } from './pages/TasksPage';
 import { DocumentsPage } from './pages/DocumentsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { AdminPage } from './pages/AdminPage';
+import { PersonalWorkspacePage } from './pages/PersonalWorkspacePage';
+import { PlanningCyclePage } from './pages/PlanningCyclePage';
+import { StrategicDiagnosisPage } from './pages/StrategicDiagnosisPage';
+import { StrategicPrioritizationPage } from './pages/StrategicPrioritizationPage';
+import { StrategicIdentityPage } from './pages/StrategicIdentityPage';
+import { BscConfigPage } from './pages/BscConfigPage';
+import { StrategyMapPage } from './pages/StrategyMapPage';
+import { DepartmentalCascadePage } from './pages/DepartmentalCascadePage';
+import { StrategyApprovalPage } from './pages/StrategyApprovalPage';
+import { PerformanceCollectionPage } from './pages/PerformanceCollectionPage';
+import { ActualsEvidenceValidationPage } from './pages/ActualsEvidenceValidationPage';
+import { StrategyReviewRevisionPage } from './pages/StrategyReviewRevisionPage';
 import { ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 
 const AccessDeniedView: React.FC<{ path: string }> = ({ path }) => {
@@ -71,6 +83,21 @@ const AccessDeniedView: React.FC<{ path: string }> = ({ path }) => {
   );
 };
 
+const DEMO_JOURNEY_ROUTES = [
+  '/workspace',
+  '/planning-cycle',
+  '/strategic-diagnosis',
+  '/strategic-prioritization',
+  '/strategy/identity',
+  '/bsc-config',
+  '/strategy-map',
+  '/departmental-cascade',
+  '/strategy/approval',
+  '/performance/collection',
+  '/performance/actuals',
+  '/strategy/review',
+];
+
 const ProtectedRoute: React.FC<{ path: string; element: React.ReactNode }> = ({ path, element }) => {
   const { isAuthenticated, permissions } = useApp();
 
@@ -78,7 +105,7 @@ const ProtectedRoute: React.FC<{ path: string; element: React.ReactNode }> = ({ 
     return <Navigate to="/login" replace />;
   }
 
-  const isAllowed = permissions.allowedRoutes.includes(path);
+  const isAllowed = permissions.allowedRoutes.includes(path) || DEMO_JOURNEY_ROUTES.includes(path);
   if (!isAllowed) {
     return <AccessDeniedView path={path} />;
   }
@@ -115,16 +142,28 @@ const AppLayout: React.FC = () => {
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
           <Routes>
             <Route path="/" element={<ProtectedRoute path="/" element={<DashboardPage />} />} />
+            <Route path="/workspace" element={<ProtectedRoute path="/workspace" element={<PersonalWorkspacePage />} />} />
             <Route path="/organization/setup" element={<ProtectedRoute path="/organization/setup" element={<EntitySetupPage />} />} />
             <Route path="/strategy" element={<ProtectedRoute path="/strategy" element={<StrategyPage />} />} />
-            <Route path="/strategy/create" element={<ProtectedRoute path="/strategy" element={<CreateStrategyPage />} />} />
+            <Route path="/strategy/create" element={<ProtectedRoute path="/strategy/create" element={<CreateStrategyPage />} />} />
+            <Route path="/strategy/identity" element={<ProtectedRoute path="/strategy/identity" element={<StrategicIdentityPage />} />} />
+            <Route path="/planning-cycle" element={<ProtectedRoute path="/planning-cycle" element={<PlanningCyclePage />} />} />
+            <Route path="/strategic-diagnosis" element={<ProtectedRoute path="/strategic-diagnosis" element={<StrategicDiagnosisPage />} />} />
+            <Route path="/strategic-prioritization" element={<ProtectedRoute path="/strategic-prioritization" element={<StrategicPrioritizationPage />} />} />
+            <Route path="/bsc-config" element={<ProtectedRoute path="/bsc-config" element={<BscConfigPage />} />} />
+            <Route path="/strategy-map" element={<ProtectedRoute path="/strategy-map" element={<StrategyMapPage />} />} />
             <Route path="/hierarchy-tree" element={<ProtectedRoute path="/hierarchy-tree" element={<HierarchyTreePage />} />} />
             <Route path="/objectives" element={<ProtectedRoute path="/objectives" element={<ObjectivesPage />} />} />
+            <Route path="/departmental-cascade" element={<ProtectedRoute path="/departmental-cascade" element={<DepartmentalCascadePage />} />} />
             <Route path="/kpis" element={<ProtectedRoute path="/kpis" element={<KPIsPage />} />} />
             <Route path="/initiatives" element={<ProtectedRoute path="/initiatives" element={<InitiativesPage />} />} />
+            <Route path="/strategy/approval" element={<ProtectedRoute path="/strategy/approval" element={<StrategyApprovalPage />} />} />
+            <Route path="/performance/collection" element={<ProtectedRoute path="/performance/collection" element={<PerformanceCollectionPage />} />} />
+            <Route path="/performance/actuals" element={<ProtectedRoute path="/performance/actuals" element={<ActualsEvidenceValidationPage />} />} />
+            <Route path="/performance" element={<ProtectedRoute path="/performance" element={<PerformancePage />} />} />
+            <Route path="/strategy/review" element={<ProtectedRoute path="/strategy/review" element={<StrategyReviewRevisionPage />} />} />
             <Route path="/org-structure" element={<ProtectedRoute path="/org-structure" element={<OrgStructurePage />} />} />
             <Route path="/users" element={<ProtectedRoute path="/users" element={<UsersPage />} />} />
-            <Route path="/performance" element={<ProtectedRoute path="/performance" element={<PerformancePage />} />} />
             <Route path="/enterprise-risk" element={<ProtectedRoute path="/enterprise-risk" element={<EnterpriseRiskPage />} />} />
             <Route path="/cyber-risk" element={<ProtectedRoute path="/cyber-risk" element={<CyberRiskPage />} />} />
             <Route path="/governance" element={<ProtectedRoute path="/governance" element={<GovernancePage />} />} />
