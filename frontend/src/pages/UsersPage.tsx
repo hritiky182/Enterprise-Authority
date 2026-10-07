@@ -254,7 +254,7 @@ export const UsersPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
           >
             <UserPlus className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>{lang === 'ar' ? '+ إضافة مستخدم وتعيين دور' : '+ Add User & Assign Role'}</span>
+            <span>{lang === 'ar' ? 'إضافة مستخدم وتعيين دور' : 'Add User & Assign Role'}</span>
           </button>
         </div>
       </div>
@@ -312,9 +312,8 @@ export const UsersPage: React.FC = () => {
       <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         <div className="relative flex-1">
           <Search
-            className={`w-4 h-4 absolute ${
-              lang === 'ar' ? 'right-3' : 'left-3'
-            } top-1/2 -translate-y-1/2 text-slate-400`}
+            className={`w-4 h-4 absolute ${lang === 'ar' ? 'right-3' : 'left-3'
+              } top-1/2 -translate-y-1/2 text-slate-400`}
           />
           <input
             type="text"
@@ -325,9 +324,8 @@ export const UsersPage: React.FC = () => {
                 ? 'البحث بالاسم، البريد الإلكتروني، المسمى الوظيفي، الإدارة أو الدور...'
                 : 'Search by name, email, job title, department, or role...'
             }
-            className={`w-full ${
-              lang === 'ar' ? 'pr-9 pl-4' : 'pl-9 pr-4'
-            } py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-sans text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600`}
+            className={`w-full ${lang === 'ar' ? 'pr-9 pl-4' : 'pl-9 pr-4'
+              } py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-sans text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600`}
           />
         </div>
 
