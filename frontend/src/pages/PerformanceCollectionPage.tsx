@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface ImportRecord {
   kpiCode: string;
@@ -148,7 +149,7 @@ export const PerformanceCollectionPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 15 من 20 • مسار العرض' : 'STEP 15 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 15 من 20 • دورة حياة الاستراتيجية' : 'STAGE 15 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'جمع الأداء الفعلي واستيراد البيانات' : 'Performance Data Collection Hub'}</span>
@@ -165,7 +166,7 @@ export const PerformanceCollectionPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setIsImportModalOpen(true)}
               className="px-3.5 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
@@ -175,9 +176,10 @@ export const PerformanceCollectionPage: React.FC = () => {
             </button>
             <button
               onClick={() => navigate('/performance/actuals')}
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'القيم والأدلة (Step 16) ➔' : 'Next: Actuals & Evidence (Step 16) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: القيم الفعلية والأدلة' : 'Next: Actuals & Evidence'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -408,6 +410,30 @@ export const PerformanceCollectionPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={15}
+        stageTitle="Performance Data Collection & Smart Import Validation"
+        stageTitleAr="جمع بيانات الأداء واستيراد السجلات الذكي"
+        prevStage={{
+          stage: 14,
+          title: "Strategy Approval & Publication",
+          titleAr: "اعتماد ونشر خط الأساس",
+          path: "/strategy/approval",
+        }}
+        nextStage={{
+          stage: 16,
+          title: "Actuals, Evidence & Audit Validation",
+          titleAr: "القيم الفعلية والأدلة والتدقيق",
+          path: "/performance/actuals",
+        }}
+        relatedLinks={[
+          { title: "KPI Dictionary", titleAr: "قاموس المؤشرات", path: "/kpis" },
+          { title: "Calculation Engine", titleAr: "محرك احتساب الأداء", path: "/performance" },
+          { title: "Corrective Actions", titleAr: "الإجراءات التصحيحية", path: "/actions" },
+        ]}
+      />
     </div>
   );
 };

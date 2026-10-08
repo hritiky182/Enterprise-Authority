@@ -391,3 +391,27 @@ export const ROLE_PERMISSIONS_MAP: Record<Role, RolePermissions> = {
     roleDescription: 'Standard stakeholder view with strategy formulation simulation capability.',
   },
 };
+
+export const ENTERPRISE_LIFECYCLE_ROUTES = [
+  '/workspace',
+  '/planning-cycle',
+  '/strategic-diagnosis',
+  '/strategic-prioritization',
+  '/strategy/identity',
+  '/bsc-config',
+  '/strategy-map',
+  '/departmental-cascade',
+  '/strategy/approval',
+  '/performance/collection',
+  '/performance/actuals',
+  '/strategy/review',
+];
+
+// Ensure all production strategy & governance modules are accessible across roles
+(Object.keys(ROLE_PERMISSIONS_MAP) as Role[]).forEach((role) => {
+  if (ROLE_PERMISSIONS_MAP[role]) {
+    ROLE_PERMISSIONS_MAP[role].allowedRoutes = Array.from(
+      new Set([...ROLE_PERMISSIONS_MAP[role].allowedRoutes, ...ENTERPRISE_LIFECYCLE_ROUTES])
+    );
+  }
+});

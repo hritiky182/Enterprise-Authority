@@ -18,6 +18,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface ObjectiveMapCard {
   id: string;
@@ -136,7 +137,7 @@ export const StrategyMapPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-blue-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 10 من 20 • مسار العرض' : 'STEP 10 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 10 من 20 • دورة حياة الاستراتيجية' : 'STAGE 10 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'خريطة الاستراتيجية وبطاقات الأهداف' : 'BSC Strategy Map & Objective Cards'}</span>
@@ -153,12 +154,13 @@ export const StrategyMapPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/kpis')}
-              className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى قاموس المؤشرات (Step 11) ➔' : 'Next: KPI Dictionary (Step 11) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: قاموس المؤشرات' : 'Next: KPI Dictionary'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -482,6 +484,30 @@ export const StrategyMapPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={10}
+        stageTitle="Directional BSC Strategy Map & Objective Cards"
+        stageTitleAr="خريطة استراتيجية بطاقة الأداء وبطاقات الأهداف الذكية"
+        prevStage={{
+          stage: 9,
+          title: "BSC Perspectives Config",
+          titleAr: "تهيئة محاور بطاقة الأداء",
+          path: "/bsc-config",
+        }}
+        nextStage={{
+          stage: 11,
+          title: "KPI Dictionary & Targets",
+          titleAr: "قاموس المؤشرات والمستهدفات",
+          path: "/kpis",
+        }}
+        relatedLinks={[
+          { title: "Corporate Objectives", titleAr: "الأهداف المؤسسية", path: "/objectives" },
+          { title: "Departmental Cascade", titleAr: "المواءمة الإدارية", path: "/departmental-cascade" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
     </div>
   );
 };

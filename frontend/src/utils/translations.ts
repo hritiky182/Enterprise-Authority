@@ -11,7 +11,23 @@ export const TRANSLATIONS: TranslationDictionary = {
   // Navigation Groups
   'CORE COMMAND': {
     en: 'CORE COMMAND',
-    ar: 'لوحة القيادة المركزية',
+    ar: 'القيادة المركزية',
+  },
+  'ORGANIZATION': {
+    en: 'ORGANIZATION',
+    ar: 'الهيكل والمنظومة',
+  },
+  'STRATEGY & PLANNING': {
+    en: 'STRATEGY & PLANNING',
+    ar: 'التخطيط الاستراتيجي',
+  },
+  'TACTICAL EXECUTION': {
+    en: 'TACTICAL EXECUTION',
+    ar: 'التنفيذ والمواءمة',
+  },
+  'PERFORMANCE & AUDIT': {
+    en: 'PERFORMANCE & AUDIT',
+    ar: 'الأداء والتدقيق',
   },
   'RISK & COMPLIANCE (GRC)': {
     en: 'RISK & COMPLIANCE (GRC)',
@@ -24,18 +40,6 @@ export const TRANSLATIONS: TranslationDictionary = {
   'OVERVIEW': {
     en: 'OVERVIEW',
     ar: 'نظرة عامة',
-  },
-  'STRATEGY & PERFORMANCE': {
-    en: 'STRATEGY & PERFORMANCE',
-    ar: 'الاستراتيجية والأداء',
-  },
-  'ENTERPRISE GOVERNANCE': {
-    en: 'ENTERPRISE GOVERNANCE',
-    ar: 'الحوكمة المؤسسية والمخاطر',
-  },
-  'EXECUTION': {
-    en: 'EXECUTION',
-    ar: 'التنفيذ والمتابعة',
   },
   'SYSTEM': {
     en: 'SYSTEM',
@@ -121,9 +125,81 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Reports',
     ar: 'التقارير وسجلات التصدير',
   },
+  'Personal Workspace': {
+    en: 'Personal Workspace',
+    ar: 'مساحة العمل الشخصية',
+  },
+  'Entity Setup': {
+    en: 'Entity Setup',
+    ar: 'إعداد الهيئة والهوية',
+  },
+  'Org Structure': {
+    en: 'Org Structure',
+    ar: 'الهيكل التنظيمي',
+  },
+  'Users': {
+    en: 'Users',
+    ar: 'المستخدمون والأدوار',
+  },
+  'Planning Cycle': {
+    en: 'Planning Cycle',
+    ar: 'دورة التخطيط السنوية',
+  },
+  'Strategic Diagnosis': {
+    en: 'Strategic Diagnosis',
+    ar: 'التشخيص الاستراتيجي (SWOT)',
+  },
+  'Choices & Prioritization': {
+    en: 'Choices & Prioritization',
+    ar: 'المفاضلة وتحديد الأولويات',
+  },
+  'Strategic Identity': {
+    en: 'Strategic Identity',
+    ar: 'الهوية المؤسسية والركائز',
+  },
+  'BSC Configuration': {
+    en: 'BSC Configuration',
+    ar: 'تهيئة بطاقة الأداء (BSC)',
+  },
+  'Strategy Map': {
+    en: 'Strategy Map',
+    ar: 'خريطة الاستراتيجية',
+  },
+  'Strategy Planning': {
+    en: 'Strategy Planning',
+    ar: 'صياغة الاستراتيجية والمواءمة',
+  },
+  'Strategy Matrix': {
+    en: 'Strategy Matrix',
+    ar: 'مصفوفة المواءمة الشاملة',
+  },
+  'Hierarchy Tree': {
+    en: 'Hierarchy Tree',
+    ar: 'شجرة الاستراتيجية المتسلسلة',
+  },
+  'Departmental Cascade': {
+    en: 'Departmental Cascade',
+    ar: 'المواءمة الإدارية التنازلية',
+  },
+  'Strategy Approval': {
+    en: 'Strategy Approval',
+    ar: 'اعتماد ونشر الاستراتيجية',
+  },
+  'Data Collection': {
+    en: 'Data Collection',
+    ar: 'جمع بيانات الأداء الفعلي',
+  },
+  'Actuals & Evidence': {
+    en: 'Actuals & Evidence',
+    ar: 'القيم الفعلية والأدلة',
+  },
+  'Strategy Review': {
+    en: 'Strategy Review',
+    ar: 'المراجعة الاستراتيجية والتعديل',
+  },
   'Administration': {
     en: 'Administration',
-    ar: 'إعدادات النظام والأمن',
+    ar: 'إدارة النظام والصلاحيات',
   },
 
   // Brand and Platform
@@ -197,10 +273,7 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Strategy Specialist',
     ar: 'أخصائي أول الاستراتيجية',
   },
-  'Strategy Planning': {
-    en: 'Strategy Planning',
-    ar: 'التخطيط الاستراتيجي',
-  },
+
 
   // Breadcrumbs & Common Routes
   'Executive Command Center': {
@@ -305,14 +378,7 @@ export const TRANSLATIONS: TranslationDictionary = {
     en: 'Objectives Directory',
     ar: 'دليل الأهداف',
   },
-  'Org Structure': {
-    en: 'Org Structure',
-    ar: 'الهيكل التنظيمي',
-  },
-  'Users': {
-    en: 'Users',
-    ar: 'المستخدمون والكوادر',
-  },
+
   'Export Spreadsheet': {
     en: 'Export Spreadsheet',
     ar: 'تصدير جدول البيانات',
@@ -1763,15 +1829,7 @@ export const TRANSLATIONS: TranslationDictionary = {
     ar: 'منظومة الاستراتيجية والحوكمة المؤسسية • منصة العرض التفاعلية للهيئة',
   },
 
-  // Strategy Entity Navigation & Actions
-  'Strategy Matrix': {
-    en: 'Strategy Matrix',
-    ar: 'مصفوفة الاستراتيجية',
-  },
-  'Hierarchy Tree': {
-    en: 'Hierarchy Tree',
-    ar: 'شجرة الركائز',
-  },
+
   'KPIs': {
     en: 'KPIs',
     ar: 'مؤشرات الأداء',

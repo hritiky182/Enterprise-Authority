@@ -23,6 +23,8 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface WorkspaceTask {
   id: string;
@@ -48,6 +50,7 @@ interface PendingApproval {
 }
 
 export const PersonalWorkspacePage: React.FC = () => {
+  const navigate = useNavigate();
   const {
     currentUser,
     users,
@@ -56,6 +59,7 @@ export const PersonalWorkspacePage: React.FC = () => {
     lang,
     toggleLanguage,
     t,
+    setDemoJourneyStep,
   } = useApp();
 
   const [tasks, setTasks] = useState<WorkspaceTask[]>([
@@ -170,7 +174,7 @@ export const PersonalWorkspacePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-blue-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 1 من 20 • مسار العرض' : 'STEP 1 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 1 من 20 • دورة حياة الاستراتيجية' : 'STAGE 1 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'مساحة العمل الشخصية' : 'Personal Workspace'}</span>
@@ -195,6 +199,17 @@ export const PersonalWorkspacePage: React.FC = () => {
             >
               <Globe className="w-4 h-4 text-blue-400" />
               <span>{lang === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'}</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setDemoJourneyStep(2);
+                navigate('/users');
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
+            >
+              <span>{lang === 'ar' ? 'المتابعة: إدارة المستخدمين' : 'Next: User Administration'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -460,6 +475,24 @@ export const PersonalWorkspacePage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={1}
+        stageTitle="Personal Workspace & Operational Governance Queue"
+        stageTitleAr="مساحة العمل الشخصية وطابور حوكمة العمليات"
+        nextStage={{
+          stage: 2,
+          title: "User Administration & RBAC",
+          titleAr: "إدارة المستخدمين والأدوار",
+          path: "/users",
+        }}
+        relatedLinks={[
+          { title: "Organization Hierarchy", titleAr: "الهيكل التنظيمي", path: "/org-structure" },
+          { title: "Roles & Permissions", titleAr: "مصفوفة الصلاحيات", path: "/admin" },
+          { title: "Planning Cycle", titleAr: "دورة التخطيط السنوية", path: "/planning-cycle" },
+        ]}
+      />
     </div>
   );
 };

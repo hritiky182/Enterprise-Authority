@@ -166,7 +166,7 @@ export const EntitySetupPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 1 • مسار الاستراتيجية' : 'STEP 1 • STRATEGY JOURNEY'}
+              {lang === 'ar' ? 'إعداد وهوية المنظومة' : 'ENTITY SETUP & BRANDING'}
             </span>
             <span className="text-slate-300">/</span>
             <span>{lang === 'ar' ? 'إعداد وهوية المنظومة' : 'Entity Identity & Branding'}</span>
@@ -629,7 +629,7 @@ export const EntitySetupPage: React.FC = () => {
               onClick={handleContinue}
               className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center space-x-2 cursor-pointer transition-all"
             >
-              <span>{lang === 'ar' ? 'اعتماد الهوية والانتقال للمرحلة 2: الهيكل والأدوار' : 'Apply Branding & Proceed to Step 2: Org Structure & Roles'}</span>
+              <span>{lang === 'ar' ? 'اعتماد الهوية والانتقال للهيكل التنظيمي' : 'Apply Branding & Proceed to Organization Structure'}</span>
               <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180 mr-1' : 'ml-1'}`} />
             </button>
           </div>

@@ -226,7 +226,7 @@ export const DemoJourneyBar: React.FC = () => {
           className="px-3.5 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white rounded-full text-xs font-semibold shadow-lg flex items-center gap-2 cursor-pointer transition-all border border-blue-400/30 hover:scale-105"
         >
           <Compass className="w-3.5 h-3.5 animate-spin-slow" />
-          <span>{lang === 'ar' ? 'تشغيل المسار الاستراتيجي التفاعلي (20 خطوة)' : 'Start Strategy Journey (20 Steps)'}</span>
+          <span>{lang === 'ar' ? 'دليل دورة حياة الاستراتيجية (20 مرحلة)' : 'Strategy Lifecycle Guide (20 Stages)'}</span>
         </button>
       </div>
     );
@@ -241,7 +241,7 @@ export const DemoJourneyBar: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
           <span className="font-mono font-bold text-blue-300 text-[11px]">
-            {lang === 'ar' ? `المرحلة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}:` : `STRATEGY JOURNEY • STAGE ${currentStep}/${DEMO_JOURNEY_STEPS.length}:`}
+            {lang === 'ar' ? `المرحلة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}:` : `STRATEGIC LIFECYCLE • STAGE ${currentStep}/${DEMO_JOURNEY_STEPS.length}:`}
           </span>
           <span className="font-semibold text-white truncate max-w-xs sm:max-w-md">
             {lang === 'ar' ? currentStepObj.titleAr : currentStepObj.title}
@@ -288,7 +288,7 @@ export const DemoJourneyBar: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-mono font-bold text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/50">
-                  {lang === 'ar' ? `المرحلة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}` : `STRATEGY WORKFLOW GUIDE • ${currentStep}/${DEMO_JOURNEY_STEPS.length}`}
+                  {lang === 'ar' ? `المرحلة ${currentStep} من ${DEMO_JOURNEY_STEPS.length}` : `STRATEGY LIFECYCLE • STAGE ${currentStep}/${DEMO_JOURNEY_STEPS.length}`}
                 </span>
                 <h3 className="font-bold text-xs sm:text-sm text-white">
                   {lang === 'ar' ? currentStepObj.titleAr : currentStepObj.title}

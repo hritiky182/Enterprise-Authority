@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface DepartmentalAlignment {
   deptId: string;
@@ -91,7 +92,7 @@ export const DepartmentalCascadePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-indigo-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 12 من 20 • مسار العرض' : 'STEP 12 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 12 من 20 • دورة حياة الاستراتيجية' : 'STAGE 12 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'المواءمة الإدارية التنازلية والصاعدة' : 'Departmental Cascading & Alignment'}</span>
@@ -108,7 +109,7 @@ export const DepartmentalCascadePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 setViewDirection(viewDirection === 'top-down' ? 'bottom-up' : 'top-down');
@@ -129,9 +130,10 @@ export const DepartmentalCascadePage: React.FC = () => {
             </button>
             <button
               onClick={() => navigate('/initiatives')}
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'المبادرات (Step 13) ➔' : 'Next: Initiatives (Step 13) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: المبادرات الاستراتيجية' : 'Next: Strategic Initiatives'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -255,6 +257,30 @@ export const DepartmentalCascadePage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={12}
+        stageTitle="Bidirectional Departmental Cascading & Shared KPI Ownership"
+        stageTitleAr="المواءمة الإدارية التنازلية والصاعدة والملكية المشتركة للمؤشرات"
+        prevStage={{
+          stage: 11,
+          title: "KPI Dictionary & Targets",
+          titleAr: "قاموس المؤشرات والمستهدفات",
+          path: "/kpis",
+        }}
+        nextStage={{
+          stage: 13,
+          title: "Initiatives & Execution Plans",
+          titleAr: "المبادرات وخطط التنفيذ",
+          path: "/initiatives",
+        }}
+        relatedLinks={[
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Strategy Approval", titleAr: "اعتماد الاستراتيجية", path: "/strategy/approval" },
+          { title: "Org Structure", titleAr: "الهيكل التنظيمي", path: "/org-structure" },
+        ]}
+      />
     </div>
   );
 };

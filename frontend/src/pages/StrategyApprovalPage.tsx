@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 type WorkflowStepState =
   | '1_draft'
@@ -54,7 +55,7 @@ export const StrategyApprovalPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-purple-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 14 من 20 • مسار العرض' : 'STEP 14 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 14 من 20 • دورة حياة الاستراتيجية' : 'STAGE 14 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'حوكمة الاعتماد ونشر خط الأساس' : 'Strategy Approval & Baseline Publication'}</span>
@@ -71,12 +72,13 @@ export const StrategyApprovalPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/performance/collection')}
-              className="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى جمع الأداء (Step 15) ➔' : 'Next: Performance Collection (Step 15) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: جمع بيانات الأداء' : 'Next: Performance Collection'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -367,6 +369,30 @@ export const StrategyApprovalPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={14}
+        stageTitle="Strategy Approval Governance & Controlled Baseline Locking"
+        stageTitleAr="حوكمة اعتماد الاستراتيجية وتأمين خط الأساس المحكوم"
+        prevStage={{
+          stage: 13,
+          title: "Initiatives & Execution Plans",
+          titleAr: "المبادرات وخطط التنفيذ",
+          path: "/initiatives",
+        }}
+        nextStage={{
+          stage: 15,
+          title: "Performance Data Collection",
+          titleAr: "جمع واستيراد بيانات الأداء",
+          path: "/performance/collection",
+        }}
+        relatedLinks={[
+          { title: "Strategy Review & Revision", titleAr: "المراجعة الاستراتيجية", path: "/strategy/review" },
+          { title: "Cascading Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Planning Cycle", titleAr: "دورة التخطيط", path: "/planning-cycle" },
+        ]}
+      />
     </div>
   );
 };

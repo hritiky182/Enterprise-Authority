@@ -26,6 +26,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const InitiativesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -357,11 +358,11 @@ export const InitiativesPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-            <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 6 • مسار الاستراتيجية' : 'STEP 6 • STRATEGY JOURNEY'}
+            <span className="font-bold uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+              {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع' : 'STRATEGIC PORTFOLIO & EXECUTION'}
             </span>
             <span className="text-slate-300">/</span>
-            <span>{lang === 'ar' ? 'المبادرات والمشاريع والذكاء الاصطناعي' : 'Strategic Programs & AI Copilot'}</span>
+            <span>{lang === 'ar' ? 'محافظ المشاريع ومحطات الإنجاز' : 'Implementation Roadmaps & AI Copilot'}</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع' : 'Strategic Initiatives & Projects'}
@@ -610,33 +611,29 @@ export const InitiativesPage: React.FC = () => {
         />
       )}
 
-      {/* Bottom Step Guide Banner */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            6/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 7: مصفوفة المواءمة الاستراتيجية الشاملة' : 'Step 7: Cascading Strategy Matrix & PDF/Excel Export'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(7);
-            navigate('/strategy');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'المتابعة إلى المصفوفة' : 'Proceed to Step 7 ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={13}
+        stageTitle="Strategic Initiatives & Execution Roadmaps"
+        stageTitleAr="المبادرات الاستراتيجية ومحطات الإنجاز التنفيذية"
+        prevStage={{
+          stage: 12,
+          title: "Departmental Cascading",
+          titleAr: "المواءمة الإدارية",
+          path: "/departmental-cascade",
+        }}
+        nextStage={{
+          stage: 14,
+          title: "Strategy Approval & Publication",
+          titleAr: "اعتماد ونشر خط الأساس",
+          path: "/strategy/approval",
+        }}
+        relatedLinks={[
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Corrective Actions", titleAr: "الخطط التصحيحية", path: "/actions" },
+          { title: "Performance Engine", titleAr: "محرك الأداء", path: "/performance" },
+        ]}
+      />
 
       {/* CREATE INITIATIVE MODAL WITH EMBEDDED AI COPILOT */}
       {isCreateModalOpen && (

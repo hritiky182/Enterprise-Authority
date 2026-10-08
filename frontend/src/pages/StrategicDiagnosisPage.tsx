@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface SwotItem {
   id: string;
@@ -149,7 +150,7 @@ export const StrategicDiagnosisPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-teal-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 6 من 20 • مسار العرض' : 'STEP 6 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 6 من 20 • دورة حياة الاستراتيجية' : 'STAGE 6 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'التشخيص الاستراتيجي' : 'Strategic Diagnosis'}</span>
@@ -166,12 +167,13 @@ export const StrategicDiagnosisPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/strategic-prioritization')}
-              className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى مصفوفة الأولويات (Step 7) ➔' : 'Next: Prioritization Matrix (Step 7) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: مصفوفة الأولويات' : 'Next: Prioritization Matrix'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -404,12 +406,36 @@ export const StrategicDiagnosisPage: React.FC = () => {
                 }}
                 className="px-3.5 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
               >
-                <span>{lang === 'ar' ? 'توجيه لمصفوفة المفاضلة (Step 7) ➔' : 'Forward to Prioritization Matrix (Step 7) ➔'}</span>
+                <span>{lang === 'ar' ? 'توجيه لمصفوفة المفاضلة ➔' : 'Forward to Prioritization Matrix ➔'}</span>
               </button>
             </div>
           </div>
         )}
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={6}
+        stageTitle="Strategic Diagnosis, Mandates & Issue Traceability"
+        stageTitleAr="التشخيص الاستراتيجي وحصر المرجعيات وتتبع القضايا"
+        prevStage={{
+          stage: 5,
+          title: "Planning Cycle & Governance",
+          titleAr: "دورة التخطيط السنوية",
+          path: "/planning-cycle",
+        }}
+        nextStage={{
+          stage: 7,
+          title: "Choices & Strategic Prioritization",
+          titleAr: "المفاضلة وتحديد الأولويات",
+          path: "/strategic-prioritization",
+        }}
+        relatedLinks={[
+          { title: "Planning Horizon", titleAr: "المدى الاستراتيجي", path: "/planning-cycle" },
+          { title: "Strategic Identity & Themes", titleAr: "الهوية المؤسسية والركائز", path: "/strategy/identity" },
+          { title: "BSC Configuration", titleAr: "تهيئة بطاقة الأداء", path: "/bsc-config" },
+        ]}
+      />
     </div>
   );
 };

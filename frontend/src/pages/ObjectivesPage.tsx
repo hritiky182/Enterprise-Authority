@@ -23,6 +23,7 @@ import {
   Edit2,
   Trash2,
 } from 'lucide-react';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const ObjectivesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -291,11 +292,11 @@ export const ObjectivesPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-            <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 4 • مسار الاستراتيجية' : 'STEP 4 • STRATEGY JOURNEY'}
+            <span className="font-bold uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+              {lang === 'ar' ? 'المستهدفات الاستراتيجية والتكتيكية' : 'STRATEGIC OBJECTIVES & OKRs'}
             </span>
             <span className="text-slate-300">/</span>
-            <span>{lang === 'ar' ? 'الأهداف الاستراتيجية (OKRs)' : 'Strategic Objectives'}</span>
+            <span>{lang === 'ar' ? 'سجل الأهداف والمواءمة المؤسسية' : 'Objectives Register & Governance'}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'الأهداف الاستراتيجية (OKRs)' : 'Strategic Objectives (OKRs)'}
@@ -429,33 +430,29 @@ export const ObjectivesPage: React.FC = () => {
         onRowClick={(obj) => openModal('objective', obj)}
       />
 
-      {/* Step Navigation Banner: Proceed to Step 5 */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            4/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 5: مؤشرات الأداء الرئيسية (KPIs Telemetry)' : 'Step 5: Key Performance Indicators (KPIs & Formulas)'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(5);
-            navigate('/kpis');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'الانتقال إلى المؤشرات' : 'Proceed to Step 5: KPIs ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={10}
+        stageTitle="Strategic Objectives Formulation & Multi-Perspective Alignment"
+        stageTitleAr="صياغة الأهداف الاستراتيجية والمواءمة متعددة المحاور"
+        prevStage={{
+          stage: 9,
+          title: "BSC Perspectives Config",
+          titleAr: "تهيئة محاور بطاقة الأداء",
+          path: "/bsc-config",
+        }}
+        nextStage={{
+          stage: 11,
+          title: "KPI Dictionary & Targets",
+          titleAr: "قاموس المؤشرات والمستهدفات",
+          path: "/kpis",
+        }}
+        relatedLinks={[
+          { title: "Strategy Map", titleAr: "خريطة الاستراتيجية", path: "/strategy-map" },
+          { title: "Departmental Cascade", titleAr: "المواءمة الإدارية", path: "/departmental-cascade" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
 
       {/* Create Objective Modal */}
       {isCreateModalOpen && (

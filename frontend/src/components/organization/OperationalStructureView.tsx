@@ -35,6 +35,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../common/StrategicLifecycleProgression';
 
 export const ALL_ASSIGNABLE_ROLES: Role[] = [
   'Strategy Specialist',
@@ -846,33 +847,29 @@ export const OperationalStructureView: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation Banner: Proceed to Step 3 */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            2/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STAGE • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 3: التخطيط الاستراتيجي وصياغة المواءمة' : 'Step 3: Strategy Planning & Horizon Mandate'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(3);
-            navigate('/strategy/create');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'الانتقال للتخطيط الاستراتيجي' : 'Proceed to Step 3 ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={3}
+        stageTitle="Enterprise Organization Structure & Governance Ownership"
+        stageTitleAr="الهيكل التنظيمي المؤسسي وتوزيع ملكية الحوكمة"
+        prevStage={{
+          stage: 2,
+          title: "User Administration",
+          titleAr: "إدارة المستخدمين والأدوار",
+          path: "/users",
+        }}
+        nextStage={{
+          stage: 4,
+          title: "Roles & Permissions Matrix",
+          titleAr: "مصفوفة الأدوار والصلاحيات",
+          path: "/admin",
+        }}
+        relatedLinks={[
+          { title: "Planning Cycle", titleAr: "دورة التخطيط السنوية", path: "/planning-cycle" },
+          { title: "Departmental Cascade", titleAr: "المواءمة الإدارية", path: "/departmental-cascade" },
+          { title: "Personal Workspace", titleAr: "مساحة العمل", path: "/workspace" },
+        ]}
+      />
 
       {/* MODAL 1: DEPARTMENT DETAILS & RBAC PERMISSIONS DRAWER */}
       {selectedDeptForModal && (

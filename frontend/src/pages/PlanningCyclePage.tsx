@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
   Calendar,
@@ -17,9 +18,11 @@ import {
   BadgeCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const PlanningCyclePage: React.FC = () => {
-  const { lang, t, strategyPlan } = useApp();
+  const navigate = useNavigate();
+  const { lang, t, strategyPlan, setDemoJourneyStep } = useApp();
 
   const [horizonYears, setHorizonYears] = useState({ start: 2026, end: 2030 });
   const [selectedCycle, setSelectedCycle] = useState<'FY2026' | 'FY2025'>('FY2026');
@@ -117,7 +120,7 @@ export const PlanningCyclePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-indigo-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 5 من 20 • مسار العرض' : 'STEP 5 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 5 من 20 • دورة حياة الاستراتيجية' : 'STAGE 5 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'دورة التخطيط السنوية' : 'Annual Strategy Planning Cycle'}</span>
@@ -134,7 +137,7 @@ export const PlanningCyclePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 setCompareMode(!compareMode);
@@ -152,6 +155,17 @@ export const PlanningCyclePage: React.FC = () => {
                   ? 'عرض مقارنة الخطتين'
                   : 'Compare Approved vs Draft'}
               </span>
+            </button>
+
+            <button
+              onClick={() => {
+                setDemoJourneyStep(6);
+                navigate('/strategic-diagnosis');
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
+            >
+              <span>{lang === 'ar' ? 'الانتقال: التشخيص الاستراتيجي' : 'Next: Strategic Diagnosis'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -426,6 +440,30 @@ export const PlanningCyclePage: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={5}
+        stageTitle="Strategic Horizon, Planning Cycle & Reporting Governance"
+        stageTitleAr="المدى الاستراتيجي ودورات التخطيط وحوكمة التقارير"
+        prevStage={{
+          stage: 4,
+          title: "Roles & Permissions Matrix",
+          titleAr: "مصفوفة الأدوار والصلاحيات",
+          path: "/admin",
+        }}
+        nextStage={{
+          stage: 6,
+          title: "Strategic Diagnosis & Traceability",
+          titleAr: "التشخيص الاستراتيجي وتتبع الأدلة",
+          path: "/strategic-diagnosis",
+        }}
+        relatedLinks={[
+          { title: "Strategic Identity & Themes", titleAr: "الهوية المؤسسية والركائز", path: "/strategy/identity" },
+          { title: "BSC Perspectives Config", titleAr: "تهيئة محاور بطاقة الأداء", path: "/bsc-config" },
+          { title: "Organization Structure", titleAr: "الهيكل التنظيمي", path: "/org-structure" },
+        ]}
+      />
     </div>
   );
 };

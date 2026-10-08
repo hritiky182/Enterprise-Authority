@@ -27,6 +27,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const KPIsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -424,11 +425,11 @@ export const KPIsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-            <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 5 • مسار الاستراتيجية' : 'STEP 5 • STRATEGY JOURNEY'}
+            <span className="font-bold uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+              {lang === 'ar' ? 'مؤشرات قياس الأداء المؤسسي' : 'PERFORMANCE TELEMETRY & DICTIONARY'}
             </span>
             <span className="text-slate-300">/</span>
-            <span>{lang === 'ar' ? 'سجل المؤشرات والذكاء الاصطناعي' : 'KPI Telemetry & AI Copilot'}</span>
+            <span>{lang === 'ar' ? 'سجل المؤشرات والمعادلات الرياضية' : 'KPI Register & Mathematical Formulas'}</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'مؤشرات الأداء الرئيسية (KPIs)' : 'Key Performance Indicators (KPIs)'}
@@ -557,33 +558,29 @@ export const KPIsPage: React.FC = () => {
         columns={columns}
       />
 
-      {/* Bottom Step Guide Banner */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            5/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 6: المبادرات الاستراتيجية والمشاريع (+ AI Copilot)' : 'Step 6: Strategic Initiatives & Projects (+ AI Copilot)'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(6);
-            navigate('/initiatives');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'المتابعة إلى المبادرات' : 'Proceed to Step 6 ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={11}
+        stageTitle="KPI Dictionary, Technical Formulas & Target Benchmarks"
+        stageTitleAr="قاموس المؤشرات والصيغ الحسابية والمستهدفات"
+        prevStage={{
+          stage: 10,
+          title: "Strategy Map & Cards",
+          titleAr: "خريطة الاستراتيجية",
+          path: "/strategy-map",
+        }}
+        nextStage={{
+          stage: 12,
+          title: "Departmental Cascading",
+          titleAr: "المواءمة الإدارية التنازلية",
+          path: "/departmental-cascade",
+        }}
+        relatedLinks={[
+          { title: "Strategic Initiatives", titleAr: "المبادرات الاستراتيجية", path: "/initiatives" },
+          { title: "Performance Collection", titleAr: "جمع الأداء", path: "/performance/collection" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
 
       {/* CREATE KPI MODAL WITH EMBEDDED AI COPILOT */}
       {isCreateModalOpen && (

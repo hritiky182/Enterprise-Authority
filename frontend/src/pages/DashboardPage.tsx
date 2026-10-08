@@ -33,6 +33,7 @@ import {
   Printer,
   Download,
 } from 'lucide-react';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 import { useNavigate } from 'react-router-dom';
 
 export const DashboardPage: React.FC = () => {
@@ -136,7 +137,7 @@ export const DashboardPage: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 9 • مسار الاستراتيجية' : 'STEP 9 • STRATEGY JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 19 من 20 • دورة حياة الاستراتيجية' : 'STAGE 19 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{t('ENTERPRISE EXECUTIVE COMMAND CENTER')}</span>
@@ -418,6 +419,30 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={19}
+        stageTitle="Executive Strategic Command Dashboard & Leadership Reporting"
+        stageTitleAr="لوحة القيادة الاستراتيجية التنفيذية والتقارير القيادية"
+        prevStage={{
+          stage: 18,
+          title: "Corrective Action Plans",
+          titleAr: "الخطط والإجراءات التصحيحية",
+          path: "/actions",
+        }}
+        nextStage={{
+          stage: 20,
+          title: "Strategy Review & Revision",
+          titleAr: "المراجعة الاستراتيجية والتعديل",
+          path: "/strategy/review",
+        }}
+        relatedLinks={[
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Performance Engine", titleAr: "محرك الأداء", path: "/performance" },
+          { title: "Personal Workspace", titleAr: "مساحة العمل", path: "/workspace" },
+        ]}
+      />
 
       {/* Executive Strategic Dossier & PDF Modal */}
       <ExecutiveBriefModal

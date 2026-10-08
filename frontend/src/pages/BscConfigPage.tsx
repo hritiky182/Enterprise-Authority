@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface BscPerspective {
   id: string;
@@ -123,7 +124,7 @@ export const BscConfigPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-indigo-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 9 من 20 • مسار العرض' : 'STEP 9 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 9 من 20 • دورة حياة الاستراتيجية' : 'STAGE 9 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'تهيئة بطاقة الأداء المتوازن (BSC)' : 'Balanced Scorecard (BSC) Configuration'}</span>
@@ -140,12 +141,13 @@ export const BscConfigPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/strategy-map')}
-              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى خريطة الاستراتيجية (Step 10) ➔' : 'Next: Strategy Map (Step 10) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: خريطة الاستراتيجية' : 'Next: Strategy Map'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -296,6 +298,30 @@ export const BscConfigPage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={9}
+        stageTitle="Balanced Scorecard (BSC) Configuration & 100% Weight Calibration"
+        stageTitleAr="تهيئة محاور بطاقة الأداء المتوازن وضبط الأوزان 100%"
+        prevStage={{
+          stage: 8,
+          title: "Strategic Identity & Themes",
+          titleAr: "الهوية المؤسسية والركائز",
+          path: "/strategy/identity",
+        }}
+        nextStage={{
+          stage: 10,
+          title: "Strategy Map & Objective Cards",
+          titleAr: "خريطة الاستراتيجية وبطاقات الأهداف",
+          path: "/strategy-map",
+        }}
+        relatedLinks={[
+          { title: "Corporate Objectives", titleAr: "الأهداف المؤسسية", path: "/objectives" },
+          { title: "KPI Dictionary", titleAr: "قاموس المؤشرات", path: "/kpis" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
     </div>
   );
 };

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface ReviewDecision {
   id: string;
@@ -89,7 +90,7 @@ export const StrategyReviewRevisionPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 20 من 20 • ختام مسار العرض' : 'STEP 20 OF 20 • DEMO JOURNEY FINALE'}
+                {lang === 'ar' ? 'المرحلة 20 من 20 • دورة حياة الاستراتيجية' : 'STAGE 20 OF 20 • STRATEGIC LIFECYCLE FINALE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'المراجعة الاستراتيجية والتعديل المحكوم' : 'Strategy Review & Controlled Revisions'}</span>
@@ -106,13 +107,13 @@ export const StrategyReviewRevisionPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/planning-cycle')}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>{lang === 'ar' ? 'حلقة التخطيط التالية (Cycle Loop) ➔' : 'Loop to Next Planning Cycle (Step 5) ➔'}</span>
+              <span>{lang === 'ar' ? 'دورة التخطيط السنوية التالية' : 'Next Planning Cycle'}</span>
             </button>
           </div>
         </div>
@@ -294,6 +295,30 @@ export const StrategyReviewRevisionPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={20}
+        stageTitle="Quarterly Strategy Review Decisions, Snapshot Freezing & Target Amendments"
+        stageTitleAr="المراجعة الدورية للاستراتيجية وتجميد اللقطة وتعديل المستهدفات المحكوم"
+        prevStage={{
+          stage: 19,
+          title: "Executive Command Dashboard",
+          titleAr: "لوحة القيادة التنفيذية",
+          path: "/",
+        }}
+        nextStage={{
+          stage: 5,
+          title: "Next Annual Planning Cycle",
+          titleAr: "دورة التخطيط السنوية التالية",
+          path: "/planning-cycle",
+        }}
+        relatedLinks={[
+          { title: "Personal Workspace", titleAr: "مساحة العمل الشخصية", path: "/workspace" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Performance Engine", titleAr: "محرك احتساب الأداء", path: "/performance" },
+        ]}
+      />
     </div>
   );
 };

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 interface StrategicOption {
   id: string;
@@ -167,7 +168,7 @@ export const StrategicPrioritizationPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-teal-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 7 من 20 • مسار العرض' : 'STEP 7 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 7 من 20 • دورة حياة الاستراتيجية' : 'STAGE 7 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'المفاضلة وتحديد الأولويات' : 'Strategic Choices & Prioritization'}</span>
@@ -184,12 +185,13 @@ export const StrategicPrioritizationPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/strategy/identity')}
-              className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى الهوية والركائز (Step 8) ➔' : 'Next: Identity & Themes (Step 8) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: الهوية والركائز' : 'Next: Strategic Identity'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -423,6 +425,30 @@ export const StrategicPrioritizationPage: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={7}
+        stageTitle="Multi-Criteria Strategic Choices & Prioritization"
+        stageTitleAr="المفاضلة وتحديد الأولويات متعددة المعايير"
+        prevStage={{
+          stage: 6,
+          title: "Strategic Diagnosis & Traceability",
+          titleAr: "التشخيص الاستراتيجي وتتبع الأدلة",
+          path: "/strategic-diagnosis",
+        }}
+        nextStage={{
+          stage: 8,
+          title: "Strategic Identity & Themes",
+          titleAr: "الهوية المؤسسية والركائز",
+          path: "/strategy/identity",
+        }}
+        relatedLinks={[
+          { title: "Strategic Diagnosis", titleAr: "التشخيص الاستراتيجي", path: "/strategic-diagnosis" },
+          { title: "BSC Perspectives Config", titleAr: "تهيئة محاور بطاقة الأداء", path: "/bsc-config" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
     </div>
   );
 };

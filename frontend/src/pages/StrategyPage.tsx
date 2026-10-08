@@ -17,6 +17,7 @@ import {
   ChevronRight,
   ShieldCheck,
 } from 'lucide-react';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const StrategyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export const StrategyPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 7 • مسار الاستراتيجية' : 'STEP 7 • STRATEGY JOURNEY'}
+              {lang === 'ar' ? 'المصفوفة الاستراتيجية المتكاملة' : 'STRATEGY ARCHITECTURE & CASCADE MATRIX'}
             </span>
             <span className="text-slate-300">/</span>
             <span>{t('Strategy Architecture & Cascading Matrix')}</span>
@@ -245,33 +246,29 @@ export const StrategyPage: React.FC = () => {
       {/* Primary View: Al-Ahsa Client Strategy Matrix */}
       <ClientStrategyMatrix />
 
-      {/* Step Navigation Banner: Proceed to Step 8 */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            7/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 8: متابعة الأداء والتصدير التنفيذي' : 'Step 8: Performance Monitoring & Export Dossier'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(8);
-            navigate('/performance');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'المتابعة إلى لوحة الأداء' : 'Proceed to Step 8: Performance ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={12}
+        stageTitle="Strategy Architecture & Multi-Pillar Cascading Matrix"
+        stageTitleAr="هندسة الاستراتيجية ومصفوفة المواءمة متعددة الركائز"
+        prevStage={{
+          stage: 11,
+          title: "KPI Dictionary & Targets",
+          titleAr: "قاموس المؤشرات والمستهدفات",
+          path: "/kpis",
+        }}
+        nextStage={{
+          stage: 13,
+          title: "Initiatives & Execution Plans",
+          titleAr: "المبادرات وخطط التنفيذ",
+          path: "/initiatives",
+        }}
+        relatedLinks={[
+          { title: "Strategy Approval", titleAr: "اعتماد الاستراتيجية", path: "/strategy/approval" },
+          { title: "Performance Engine", titleAr: "محرك الأداء", path: "/performance" },
+          { title: "Strategy Map", titleAr: "خريطة الاستراتيجية", path: "/strategy-map" },
+        ]}
+      />
 
       {/* Executive Strategic Dossier & PDF Modal */}
       <ExecutiveBriefModal

@@ -1184,7 +1184,7 @@ export const CreateStrategyPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
             <span className="font-bold uppercase">
-              {lang === 'ar' ? 'المرحلة 3 • مسار الاستراتيجية' : 'STEP 3 • STRATEGY JOURNEY'}
+              {lang === 'ar' ? 'التخطيط والمواءمة الاستراتيجية' : 'STRATEGIC CASCADE FORMULATION'}
             </span>
             <span className="text-slate-300">/</span>
             <span>

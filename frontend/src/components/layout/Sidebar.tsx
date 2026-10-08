@@ -24,6 +24,15 @@ import {
   Sparkles,
   Network,
   TrendingUp,
+  Calendar,
+  Search,
+  Sliders,
+  Compass,
+  GitMerge,
+  ShieldCheck,
+  History,
+  UploadCloud,
+  FileCheck,
 } from 'lucide-react';
 import { OrganizationLogo } from '../common/OrganizationLogo';
 
@@ -74,37 +83,59 @@ export const Sidebar: React.FC = () => {
       title: 'CORE COMMAND',
       items: [
         { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-4 h-4" />, end: true },
-        { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" /> },
-        { name: 'Org Structure', path: '/org-structure', icon: <Network className="w-4 h-4" /> },
+        { name: 'Personal Workspace', path: '/workspace', icon: <UserCheck className="w-4 h-4" />, end: true },
+      ],
+    },
+    {
+      title: 'ORGANIZATION',
+      items: [
+        { name: 'Entity Setup', path: '/organization/setup', icon: <Building2 className="w-4 h-4" />, end: true },
+        { name: 'Org Structure', path: '/org-structure', icon: <Network className="w-4 h-4" />, end: true },
         {
           name: 'Users',
           path: '/users',
           icon: <Users className="w-4 h-4" />,
           badge: `${users.length}`,
           badgeColor: 'bg-purple-600 text-white',
+          end: true,
         },
-        { name: 'Strategy Planning', path: '/strategy/create', icon: <Target className="w-4 h-4" /> },
+        { name: 'Administration', path: '/admin', icon: <Settings className="w-4 h-4" />, end: true },
+      ],
+    },
+    {
+      title: 'STRATEGY & PLANNING',
+      items: [
+        { name: 'Planning Cycle', path: '/planning-cycle', icon: <Calendar className="w-4 h-4" />, end: true },
+        { name: 'Strategic Diagnosis', path: '/strategic-diagnosis', icon: <Search className="w-4 h-4" />, end: true },
+        { name: 'Choices & Prioritization', path: '/strategic-prioritization', icon: <Sliders className="w-4 h-4" />, end: true },
+        { name: 'Strategic Identity', path: '/strategy/identity', icon: <Compass className="w-4 h-4" />, end: true },
+        { name: 'BSC Configuration', path: '/bsc-config', icon: <Layers className="w-4 h-4" />, end: true },
+        { name: 'Strategy Map', path: '/strategy-map', icon: <Layers className="w-4 h-4" />, end: true },
+        { name: 'Strategy Planning', path: '/strategy/create', icon: <Target className="w-4 h-4" />, end: true },
         { name: 'Strategy Matrix', path: '/strategy', icon: <Layers className="w-4 h-4" />, end: true },
-        {
-          name: 'Hierarchy Tree',
-          path: '/hierarchy-tree',
-          icon: <Layers className="w-4 h-4" />,
-          badge: `${themes.length}`,
-          badgeColor: 'bg-emerald-600 text-white',
-        },
+        { name: 'Strategy Approval', path: '/strategy/approval', icon: <ShieldCheck className="w-4 h-4" />, end: true },
+        { name: 'Strategy Review', path: '/strategy/review', icon: <History className="w-4 h-4" />, end: true },
+      ],
+    },
+    {
+      title: 'TACTICAL EXECUTION',
+      items: [
         {
           name: 'Objectives',
           path: '/objectives',
           icon: <Flag className="w-4 h-4" />,
           badge: `${objectives.length}`,
           badgeColor: 'bg-blue-600 text-white',
+          end: true,
         },
+        { name: 'Departmental Cascade', path: '/departmental-cascade', icon: <GitMerge className="w-4 h-4" />, end: true },
         {
           name: 'KPIs',
           path: '/kpis',
           icon: <BarChart3 className="w-4 h-4" />,
           badge: `${kpis.length}`,
           badgeColor: 'bg-indigo-600 text-white',
+          end: true,
         },
         {
           name: 'Initiatives',
@@ -112,8 +143,24 @@ export const Sidebar: React.FC = () => {
           icon: <Sparkles className="w-4 h-4" />,
           badge: `${initiatives.length}`,
           badgeColor: 'bg-amber-600 text-white',
+          end: true,
         },
-        { name: 'Performance', path: '/performance', icon: <TrendingUp className="w-4 h-4" /> },
+      ],
+    },
+    {
+      title: 'PERFORMANCE & AUDIT',
+      items: [
+        { name: 'Data Collection', path: '/performance/collection', icon: <UploadCloud className="w-4 h-4" />, end: true },
+        { name: 'Actuals & Evidence', path: '/performance/actuals', icon: <FileCheck className="w-4 h-4" />, end: true },
+        { name: 'Performance', path: '/performance', icon: <TrendingUp className="w-4 h-4" />, end: true },
+        {
+          name: 'Action Plans',
+          path: '/actions',
+          icon: <ListTodo className="w-4 h-4" />,
+          badge: criticalActionsCount > 0 ? `${criticalActionsCount}` : undefined,
+          badgeColor: 'bg-amber-500 text-slate-900',
+          end: true,
+        },
       ],
     },
     // RISK & COMPLIANCE (GRC) - preserved in codebase, hidden via JS flag per user request
@@ -133,26 +180,6 @@ export const Sidebar: React.FC = () => {
         { name: 'Compliance', path: '/compliance', icon: <CheckCircle2 className="w-4 h-4" /> },
         { name: 'Business Continuity', path: '/bcm', icon: <Activity className="w-4 h-4" /> },
       ],
-    },
-    {
-      title: 'EXECUTION & KNOWLEDGE',
-      items: [
-        {
-          name: 'Action Plans',
-          path: '/actions',
-          icon: <ListTodo className="w-4 h-4" />,
-          badge: criticalActionsCount > 0 ? `${criticalActionsCount}` : undefined,
-          badgeColor: 'bg-amber-500 text-slate-900',
-        },
-        // Tasks, Documents, and Reports preserved in codebase, hidden via JS flag per user request
-        { name: 'Tasks', path: '/tasks', icon: <CheckSquare className="w-4 h-4" />, hidden: true },
-        { name: 'Documents', path: '/documents', icon: <FileText className="w-4 h-4" />, hidden: true },
-        { name: 'Reports', path: '/reports', icon: <FileSpreadsheet className="w-4 h-4" />, hidden: true },
-      ],
-    },
-    {
-      title: 'SYSTEM',
-      items: [{ name: 'Administration', path: '/admin', icon: <Settings className="w-4 h-4" /> }],
     },
   ];
 

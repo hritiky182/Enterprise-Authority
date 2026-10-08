@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 type ActualValidationState =
   | 'draft'
@@ -59,7 +60,7 @@ export const ActualsEvidenceValidationPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-rose-400 mb-1">
               <span className="font-bold uppercase text-emerald-400">
-                {lang === 'ar' ? 'المرحلة 16 من 20 • مسار العرض' : 'STEP 16 OF 20 • DEMO JOURNEY'}
+                {lang === 'ar' ? 'المرحلة 16 من 20 • دورة حياة الاستراتيجية' : 'STAGE 16 OF 20 • STRATEGIC LIFECYCLE'}
               </span>
               <span className="text-slate-500">/</span>
               <span>{lang === 'ar' ? 'اعتماد النتائج والأدلة الإثباتية' : 'Actuals, Evidence & Independent Validation'}</span>
@@ -76,12 +77,13 @@ export const ActualsEvidenceValidationPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate('/performance')}
-              className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md cursor-pointer group"
             >
-              <span>{lang === 'ar' ? 'الانتقال إلى احتساب الأداء (Step 17) ➔' : 'Next: Calculation Engine (Step 17) ➔'}</span>
+              <span>{lang === 'ar' ? 'المتابعة: احتساب وتحليل الأداء' : 'Next: Performance Engine'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -358,6 +360,30 @@ export const ActualsEvidenceValidationPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={16}
+        stageTitle="KPI Actual Submission, Evidence Dossier & Independent Audit"
+        stageTitleAr="إدخال الفعليات وإرفاق الأدلة وتدقيق المراجع المستقل"
+        prevStage={{
+          stage: 15,
+          title: "Performance Data Collection",
+          titleAr: "جمع واستيراد بيانات الأداء",
+          path: "/performance/collection",
+        }}
+        nextStage={{
+          stage: 17,
+          title: "Performance Calculation Engine",
+          titleAr: "محرك احتساب الأداء والتحليل",
+          path: "/performance",
+        }}
+        relatedLinks={[
+          { title: "Corrective Actions", titleAr: "الخطط التصحيحية", path: "/actions" },
+          { title: "Executive Dashboard", titleAr: "لوحة القيادة التنفيذية", path: "/" },
+          { title: "Data Collection Hub", titleAr: "مركز جمع البيانات", path: "/performance/collection" },
+        ]}
+      />
     </div>
   );
 };

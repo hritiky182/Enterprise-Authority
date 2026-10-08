@@ -32,6 +32,7 @@ import {
 import { toast } from 'sonner';
 import { ImportKpiModal } from '../components/modals/ImportKpiModal';
 import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
+import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
 export const PerformancePage: React.FC = () => {
   const navigate = useNavigate();
@@ -162,7 +163,7 @@ export const PerformancePage: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
               <span className="font-bold uppercase">
-                {lang === 'ar' ? 'المرحلة 8 • مسار الاستراتيجية' : 'STEP 8 • STRATEGY JOURNEY'}
+                {lang === 'ar' ? 'محرك احتساب وتحليلات الأداء' : 'PERFORMANCE CALCULATION ENGINE & ANALYTICS'}
               </span>
               <span className="text-slate-300">/</span>
               <span>{lang === 'ar' ? 'مراقبة الأداء المؤسسي والتصدير' : 'Performance Monitoring & Export'}</span>
@@ -334,33 +335,29 @@ export const PerformancePage: React.FC = () => {
         columns={kpiColumns}
       />
 
-      {/* Step Navigation Banner: Proceed to Step 9 */}
-      <div className="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 rounded-2xl border border-blue-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-            8/9
-          </div>
-          <div>
-            <span className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-              {lang === 'ar' ? 'المرحلة التالية في مسار الاستراتيجية' : 'NEXT STEP • STRATEGY JOURNEY'}
-            </span>
-            <h4 className="font-bold text-xs text-slate-900">
-              {lang === 'ar' ? 'المرحلة 9: لوحة القيادة التنفيذية والتقارير' : 'Step 9: Executive Command Dashboard & Reports'}
-            </h4>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setDemoJourneyStep(9);
-            navigate('/');
-          }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <span>{lang === 'ar' ? 'المتابعة إلى لوحة القيادة' : 'Proceed to Step 9: Executive Dashboard ➔'}</span>
-        </button>
-      </div>
+      {/* Enterprise Strategic Lifecycle Progression */}
+      <StrategicLifecycleProgression
+        currentStage={17}
+        stageTitle="Enterprise Performance Calculation Engine & KPI Analytics"
+        stageTitleAr="محرك احتساب الأداء المؤسسي وتحليلات المؤشرات"
+        prevStage={{
+          stage: 16,
+          title: "Actuals & Evidence Validation",
+          titleAr: "القيم الفعلية وتدقيق الأدلة",
+          path: "/performance/actuals",
+        }}
+        nextStage={{
+          stage: 18,
+          title: "Corrective Action Plans",
+          titleAr: "الخطط والإجراءات التصحيحية",
+          path: "/actions",
+        }}
+        relatedLinks={[
+          { title: "Executive Dashboard", titleAr: "لوحة القيادة التنفيذية", path: "/" },
+          { title: "Strategy Review", titleAr: "المراجعة الاستراتيجية", path: "/strategy/review" },
+          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+        ]}
+      />
 
       {/* Import KPI Modal */}
       <ImportKpiModal
