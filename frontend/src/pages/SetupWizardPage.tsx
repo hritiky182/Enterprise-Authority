@@ -633,7 +633,7 @@ export const SetupWizardPage: React.FC = () => {
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-100" />
             <span>{lang === 'ar' ? '✨ تعبئة الرحلة الكاملة بالبيانات' : '✨ Fill All Demo Data'}</span>
-          </button> */}
+          </button>
 
           <button
             onClick={() => navigate('/')}
@@ -641,7 +641,7 @@ export const SetupWizardPage: React.FC = () => {
             className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-medium cursor-pointer transition-colors"
           >
             {lang === 'ar' ? 'تخطي إلى لوحة القيادة' : 'Skip to Dashboard'}
-          </button>
+          </button> */}
         </div>
       </header>
 
