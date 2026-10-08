@@ -23,63 +23,69 @@ import {
 import { Role, User } from '../types';
 import { OrganizationLogo } from '../components/common/OrganizationLogo';
 
+const ADMIN_USER: User = {
+  id: 'usr-admin',
+  name: 'Eng. Khaled Al-Otaibi',
+  nameAr: 'م. خالد العتيبي',
+  title: 'Authorized Administrator & Strategy Director',
+  titleAr: 'المشرف المعتمد ومدير عام الاستراتيجية',
+  email: 'admin@ahda.gov.sa',
+  role: 'Administrator',
+  department: 'Strategy & Enterprise Architecture',
+  departmentAr: 'الإدارة العامة للاستراتيجية والبنية المؤسسية',
+  avatar: '',
+  gender: 'man',
+};
+
 export const LoginPage: React.FC = () => {
   const { login, lang, setLanguage, t, organization, setDemoJourneyStep } = useApp();
   const navigate = useNavigate();
 
-  const [selectedRole] = useState<Role>('Strategy Specialist');
-  const [email, setEmail] = useState(STRATEGY_SPECIALIST_USER.email);
+  const [email, setEmail] = useState('admin@ahda.gov.sa');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const matchedUser: User = STRATEGY_SPECIALIST_USER;
+  const matchedUser: User = ADMIN_USER;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const userToLogin: User = {
-      ...STRATEGY_SPECIALIST_USER,
+      ...ADMIN_USER,
       email,
     };
     login(userToLogin);
-    // Directly launch into the specialist journey starting with Step 1: Entity Identity & Branding
+    // Directly launch into the Step Form with sidebar starting from Chapter 1: Organization Setup
     setDemoJourneyStep(1);
-    navigate('/organization/setup');
+    navigate('/setup-wizard');
   };
 
   const journeySteps = [
     {
-      step: '01',
-      title: lang === 'ar' ? 'تعريف هوية المنظومة' : 'Entity Identity & Branding',
-      desc: lang === 'ar' ? 'الاسم، الشعار، الألوان، الرؤية، والرسالة' : 'Name, emblem logo, colors, vision & mission',
+      step: 'CH 01',
+      title: lang === 'ar' ? 'تهيئة وهوية المنظومة' : 'Entity Setup & Branding',
+      desc: lang === 'ar' ? 'الاسم، الشعار، الألوان، الرؤية والرسالة' : 'Name, emblem, colors, vision & mission',
       icon: <Building2 className="w-3.5 h-3.5 text-emerald-400" />,
       active: true,
     },
     {
-      step: '02',
-      title: lang === 'ar' ? 'الهيكل التنظيمي وأدوار الموظفين' : 'Org Structure & Personnel Roles',
-      desc: lang === 'ar' ? 'الهيكل المتسلسل، إضافة الموظفين وتعيين الأدوار' : 'Hierarchy, adding personnel & role assignments',
+      step: 'CH 02',
+      title: lang === 'ar' ? 'الهيكل التنظيمي والصلاحيات' : 'Org Hierarchy & Roles',
+      desc: lang === 'ar' ? 'القيادة، القطاعات، الإدارات، ومصفوفة الصلاحيات' : 'CEO, sectors, units & permissions matrix',
       icon: <Network className="w-3.5 h-3.5 text-blue-400" />,
       active: false,
     },
     {
-      step: '03',
-      title: lang === 'ar' ? 'التخطيط الاستراتيجي' : 'Strategy Planning & Mandate',
-      desc: lang === 'ar' ? 'اسم الاستراتيجية، المدى الزمني، ووثيقة التكليف' : 'Strategy Name, Duration, and Executive Mandate',
-      icon: <Target className="w-3.5 h-3.5 text-amber-400" />,
-      active: false,
-    },
-    {
-      step: '04',
-      title: lang === 'ar' ? 'مواءمة المكونات' : 'Define & Link Components',
+      step: 'CH 03',
+      title: lang === 'ar' ? 'إدارة وسلسلة الاستراتيجية' : 'Strategy Hierarchy',
       desc: lang === 'ar' ? 'الركائز ➔ الأهداف ➔ المؤشرات ➔ المبادرات' : 'Pillars ➔ Objectives ➔ KPIs ➔ Initiatives',
-      icon: <Layers className="w-3.5 h-3.5 text-indigo-400" />,
+      icon: <Layers className="w-3.5 h-3.5 text-amber-400" />,
       active: false,
     },
     {
-      step: '05',
-      title: lang === 'ar' ? 'متابعة الأداء والتصدير' : 'Performance & Reports',
-      desc: lang === 'ar' ? 'متابعة المستهدفات وتصدير تقرير PDF و CSV' : 'Scorecards, PDF Dossier & CSV export',
+      step: 'CH 04',
+      title: lang === 'ar' ? 'المتابعة ولوحات الأداء والتقارير' : 'Monitoring & Reporting',
+      desc: lang === 'ar' ? 'لوحة القيادة، بطاقة الأداء، وتصدير PDF و Excel' : 'Scorecards, dashboard & PDF/Excel exports',
       icon: <TrendingUp className="w-3.5 h-3.5 text-teal-400" />,
       active: false,
     },
@@ -177,43 +183,43 @@ export const LoginPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-blue-950/60 border border-blue-800/60 shadow-lg text-start">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] font-mono uppercase tracking-wider text-blue-300 font-bold bg-blue-900/50 px-2 py-0.5 rounded-full border border-blue-700/50">
-                {lang === 'ar' ? 'الدور المعتمد بالمنظومة' : 'SYSTEM ROLE'}
+                {lang === 'ar' ? 'الدور المعتمد بالمنظومة' : 'ACTIVE SYSTEM ROLE'}
               </span>
               <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{lang === 'ar' ? 'صلاحيات كاملة للاستراتيجية' : 'Full Strategy RBAC'}</span>
+                <span>{lang === 'ar' ? 'صلاحيات الإشراف الكاملة' : 'Administrator Authority'}</span>
               </span>
             </div>
 
             <div className="flex items-center gap-3.5">
               <div className="w-12 h-12 rounded-xl bg-blue-900/60 border-2 border-blue-500/50 flex items-center justify-center text-blue-300 shadow-sm shrink-0">
-                <Target className="w-6 h-6 text-blue-400" />
+                <ShieldCheck className="w-6 h-6 text-blue-400" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-white truncate">
-                    {lang === 'ar' ? 'أخصائي الاستراتيجية' : 'Strategy Specialist'}
+                    {lang === 'ar' ? 'المشرف المعتمد للنظام' : 'Authorized Administrator'}
                   </h4>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-950 text-blue-300 border border-blue-800 font-bold">
-                    {t('Strategy Specialist')}
+                    Administrator
                   </span>
                 </div>
                 <p className="text-xs text-slate-300 mt-0.5 truncate">
-                  {lang === 'ar' ? 'التخطيط الاستراتيجي والأداء المؤسسي' : 'Strategic Planning & Performance Management'}
+                  {lang === 'ar' ? 'إدارة المنظومة والتخطيط الاستراتيجي' : 'System Administration & Strategic Planning'}
                 </p>
                 <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">
-                  {matchedUser.department} • strategy.specialist@ahda.gov.sa
+                  {matchedUser.department} • admin@ahda.gov.sa
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 5-Phase Specialist Workflow Starting at Step 1: Entity Branding */}
+          {/* 4-Chapter Journey Workflow */}
           <div className="space-y-2 pt-1 text-start">
             <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400">
-              {lang === 'ar' ? 'مراحل العمل الاستراتيجي المتكامل:' : 'Strategic Execution Workflow:'}
+              {lang === 'ar' ? 'مراحل رحلة العرض الأربعة (MOM Journey):' : '4-Chapter Strategic Journey Flow:'}
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               {journeySteps.map((step, idx) => (
                 <div
                   key={step.step}
@@ -243,11 +249,11 @@ export const LoginPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Lock className="w-4 h-4 text-blue-400" />
-                <span>{lang === 'ar' ? 'تسجيل دخول المنظومة' : 'Enterprise Sign In'}</span>
+                <span>{lang === 'ar' ? 'تسجيل دخول المشرف' : 'Administrator Sign In'}</span>
               </h3>
               <p className="text-xs text-slate-400 mt-1">
-                {lang === 'ar' ? 'الدور المعتمد:' : 'Active Role:'}{' '}
-                <span className="text-blue-300 font-semibold">{t('Strategy Specialist')}</span>
+                {lang === 'ar' ? 'الدور المعتمد:' : 'Persona:'}{' '}
+                <span className="text-blue-300 font-semibold">{t('Administrator')}</span>
               </p>
             </div>
             <OrganizationLogo logoId={organization.logo} logoUrl={organization.logoUrl} size="sm" />

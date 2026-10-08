@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { Breadcrumbs } from './Breadcrumbs';
 import {
@@ -11,12 +12,14 @@ import {
   Shield,
   LogOut,
   UserCheck,
+  Sparkles,
 } from 'lucide-react';
 import { Role } from '../../types';
 import { ROLE_PERMISSIONS_MAP } from '../../utils/permissions';
 import { UserAvatar } from '../common/UserAvatar';
 
 export const Header: React.FC = () => {
+  const navigate = useNavigate();
   const {
     currentUser,
     switchUserRole,
@@ -78,6 +81,16 @@ export const Header: React.FC = () => {
             </span>
           )}
         </div>
+
+        {/* Setup Wizard Launcher */}
+        <button
+          onClick={() => navigate('/setup-wizard')}
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50/70 hover:bg-blue-100/90 text-blue-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+          title={lang === 'ar' ? 'معالج تأسيس المنظومة والاستراتيجية' : 'Launch Setup Wizard'}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+          <span>{lang === 'ar' ? 'معالج التأسيس' : 'Setup Wizard'}</span>
+        </button>
 
         {/* Global Search trigger */}
         <button

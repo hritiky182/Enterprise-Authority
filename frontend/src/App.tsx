@@ -42,6 +42,7 @@ import { StrategyApprovalPage } from './pages/StrategyApprovalPage';
 import { PerformanceCollectionPage } from './pages/PerformanceCollectionPage';
 import { ActualsEvidenceValidationPage } from './pages/ActualsEvidenceValidationPage';
 import { StrategyReviewRevisionPage } from './pages/StrategyReviewRevisionPage';
+import { SetupWizardPage } from './pages/SetupWizardPage';
 import { ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 
 const AccessDeniedView: React.FC<{ path: string }> = ({ path }) => {
@@ -84,6 +85,7 @@ const AccessDeniedView: React.FC<{ path: string }> = ({ path }) => {
 };
 
 const DEMO_JOURNEY_ROUTES = [
+  '/setup-wizard',
   '/workspace',
   '/planning-cycle',
   '/strategic-diagnosis',
@@ -121,6 +123,16 @@ const AppLayout: React.FC = () => {
     return <LoginPage />;
   }
 
+  // If on setup wizard, render the dedicated step form with its sidebar full-screen
+  if (location.pathname === '/setup-wizard') {
+    return <SetupWizardPage />;
+  }
+
+  // If user lands on '/' and has not completed setup wizard yet, navigate to step form
+  if (location.pathname === '/' && localStorage.getItem('eda_setup_wizard_done') !== 'true') {
+    return <Navigate to="/setup-wizard" replace />;
+  }
+
   const isRtl = lang === 'ar';
 
   return (
@@ -142,6 +154,7 @@ const AppLayout: React.FC = () => {
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
           <Routes>
             <Route path="/" element={<ProtectedRoute path="/" element={<DashboardPage />} />} />
+            <Route path="/setup-wizard" element={<ProtectedRoute path="/setup-wizard" element={<SetupWizardPage />} />} />
             <Route path="/workspace" element={<ProtectedRoute path="/workspace" element={<PersonalWorkspacePage />} />} />
             <Route path="/organization/setup" element={<ProtectedRoute path="/organization/setup" element={<EntitySetupPage />} />} />
             <Route path="/strategy" element={<ProtectedRoute path="/strategy" element={<StrategyPage />} />} />
