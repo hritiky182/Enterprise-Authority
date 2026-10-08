@@ -135,22 +135,20 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setLanguage('en')}
-              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-mono ${
-                lang === 'en'
-                  ? 'bg-blue-900 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-mono ${lang === 'en'
+                ? 'bg-blue-900 text-white font-bold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+                }`}
             >
               EN
             </button>
             <button
               type="button"
               onClick={() => setLanguage('ar')}
-              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-sans ${
-                lang === 'ar'
-                  ? 'bg-blue-900 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-sans ${lang === 'ar'
+                ? 'bg-blue-900 text-white font-bold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+                }`}
             >
               عربي
             </button>
@@ -217,17 +215,16 @@ export const LoginPage: React.FC = () => {
           {/* 4-Chapter Journey Workflow */}
           <div className="space-y-2 pt-1 text-start">
             <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400">
-              {lang === 'ar' ? 'مراحل رحلة العرض الأربعة (MOM Journey):' : '4-Chapter Strategic Journey Flow:'}
+              {lang === 'ar' ? 'مراحل رحلة العرض الأربعة :' : ' Strategic Journey Flow:'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               {journeySteps.map((step, idx) => (
                 <div
                   key={step.step}
-                  className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${
-                    idx === 0
-                      ? 'bg-blue-950/60 border-blue-700/80 shadow-sm ring-1 ring-blue-600/40'
-                      : 'bg-slate-900/50 border-slate-800/80'
-                  }`}
+                  className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${idx === 0
+                    ? 'bg-blue-950/60 border-blue-700/80 shadow-sm ring-1 ring-blue-600/40'
+                    : 'bg-slate-900/50 border-slate-800/80'
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] font-mono font-bold text-slate-400">{step.step}</span>
@@ -265,18 +262,16 @@ export const LoginPage: React.FC = () => {
               <label className="block text-xs font-medium text-slate-300">{t('Enterprise Work Email')}</label>
               <div className="relative">
                 <Mail
-                  className={`w-4 h-4 absolute ${
-                    lang === 'ar' ? 'right-3.5' : 'left-3.5'
-                  } top-1/2 -translate-y-1/2 text-slate-500`}
+                  className={`w-4 h-4 absolute ${lang === 'ar' ? 'right-3.5' : 'left-3.5'
+                    } top-1/2 -translate-y-1/2 text-slate-500`}
                 />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full ${
-                    lang === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'
-                  } py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-mono`}
+                  className={`w-full ${lang === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'
+                    } py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-mono`}
                   placeholder="name@enterprise.com"
                 />
               </div>
@@ -292,25 +287,22 @@ export const LoginPage: React.FC = () => {
               </div>
               <div className="relative">
                 <Key
-                  className={`w-4 h-4 absolute ${
-                    lang === 'ar' ? 'right-3.5' : 'left-3.5'
-                  } top-1/2 -translate-y-1/2 text-slate-500`}
+                  className={`w-4 h-4 absolute ${lang === 'ar' ? 'right-3.5' : 'left-3.5'
+                    } top-1/2 -translate-y-1/2 text-slate-500`}
                 />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full ${
-                    lang === 'ar' ? 'pr-10 pl-10' : 'pl-10 pr-10'
-                  } py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-mono`}
+                  className={`w-full ${lang === 'ar' ? 'pr-10 pl-10' : 'pl-10 pr-10'
+                    } py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-mono`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute ${
-                    lang === 'ar' ? 'left-3.5' : 'right-3.5'
-                  } top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300`}
+                  className={`absolute ${lang === 'ar' ? 'left-3.5' : 'right-3.5'
+                    } top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300`}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -341,9 +333,8 @@ export const LoginPage: React.FC = () => {
                   : 'Sign In as Strategy Specialist'}
               </span>
               <ArrowRight
-                className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${
-                  lang === 'ar' ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${lang === 'ar' ? 'rotate-180' : ''
+                  }`}
               />
             </button>
           </form>

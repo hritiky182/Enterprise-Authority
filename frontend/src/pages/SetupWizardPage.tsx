@@ -625,7 +625,7 @@ export const SetupWizardPage: React.FC = () => {
 
         <div className="flex items-center gap-2">
           {/* Quick 1-Click Auto Fill Demo Data */}
-          <button
+          {/* <button
             onClick={fillAllDemoData}
             type="button"
             className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105"
@@ -633,7 +633,7 @@ export const SetupWizardPage: React.FC = () => {
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-100" />
             <span>{lang === 'ar' ? '✨ تعبئة الرحلة الكاملة بالبيانات' : '✨ Fill All Demo Data'}</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => navigate('/')}
@@ -652,7 +652,7 @@ export const SetupWizardPage: React.FC = () => {
           <div className="space-y-6">
             <div>
               <div className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider mb-1">
-                {lang === 'ar' ? 'مراحل رحلة التأسيس الأربعة' : '4-CHAPTER DEMO JOURNEY'}
+                {lang === 'ar' ? 'مراحل رحلة التأسيس الأربعة' : ' DEMO JOURNEY'}
               </div>
               <h2 className="text-sm font-bold text-slate-900">
                 {lang === 'ar' ? 'مراحل إعداد المنظومة والاستراتيجية' : 'End-to-End Strategic Flow'}
@@ -669,22 +669,20 @@ export const SetupWizardPage: React.FC = () => {
                   <button
                     key={item.step}
                     onClick={() => setCurrentStep(item.step)}
-                    className={`w-full text-start p-3 rounded-xl transition-all cursor-pointer flex items-start gap-3 border ${
-                      isCurrent
-                        ? 'bg-blue-50/80 border-blue-200 shadow-xs text-blue-900'
-                        : isPassed
+                    className={`w-full text-start p-3 rounded-xl transition-all cursor-pointer flex items-start gap-3 border ${isCurrent
+                      ? 'bg-blue-50/80 border-blue-200 shadow-xs text-blue-900'
+                      : isPassed
                         ? 'bg-slate-50/60 border-slate-200/70 text-slate-700 hover:bg-slate-100'
                         : 'bg-white border-transparent text-slate-400 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold font-mono transition-colors ${
-                        isCurrent
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : isPassed
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold font-mono transition-colors ${isCurrent
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : isPassed
                           ? 'bg-emerald-600 text-white'
                           : 'bg-slate-100 text-slate-500'
-                      }`}
+                        }`}
                     >
                       {isPassed ? <Check className="w-3.5 h-3.5" /> : item.step}
                     </div>
@@ -692,9 +690,8 @@ export const SetupWizardPage: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span
-                          className={`text-xs font-bold truncate ${
-                            isCurrent ? 'text-blue-900' : isPassed ? 'text-slate-800' : 'text-slate-500'
-                          }`}
+                          className={`text-xs font-bold truncate ${isCurrent ? 'text-blue-900' : isPassed ? 'text-slate-800' : 'text-slate-500'
+                            }`}
                         >
                           {lang === 'ar' ? item.titleAr : item.title}
                         </span>
@@ -911,11 +908,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={item.id}
                             type="button"
                             onClick={() => setOrgLogo(item.id)}
-                            className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-2 cursor-pointer ${
-                              isSelected
-                                ? 'bg-white border-blue-600 shadow-xs ring-2 ring-blue-500/20'
-                                : 'bg-white/60 border-slate-200 hover:bg-white'
-                            }`}
+                            className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-2 cursor-pointer ${isSelected
+                              ? 'bg-white border-blue-600 shadow-xs ring-2 ring-blue-500/20'
+                              : 'bg-white/60 border-slate-200 hover:bg-white'
+                              }`}
                           >
                             <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
                               <Icon className="w-5 h-5" />
@@ -941,11 +937,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={theme.id}
                             type="button"
                             onClick={() => setOrgThemeColor(theme.id)}
-                            className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-white border-slate-900 shadow-xs ring-2 ring-slate-400'
-                                : 'bg-white/60 border-slate-200 hover:bg-white text-slate-700'
-                            }`}
+                            className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${isSelected
+                              ? 'bg-white border-slate-900 shadow-xs ring-2 ring-slate-400'
+                              : 'bg-white/60 border-slate-200 hover:bg-white text-slate-700'
+                              }`}
                           >
                             <div className={`w-4 h-4 rounded-full ${theme.bg}`} />
                             <span>{theme.name}</span>
@@ -1401,11 +1396,10 @@ export const SetupWizardPage: React.FC = () => {
               type="button"
               disabled={currentStep === 1}
               onClick={handlePrevStep}
-              className={`px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
-                currentStep === 1
-                  ? 'text-slate-300 bg-slate-50 border border-slate-200/50 cursor-not-allowed'
-                  : 'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-2xs'
-              }`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${currentStep === 1
+                ? 'text-slate-300 bg-slate-50 border border-slate-200/50 cursor-not-allowed'
+                : 'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-2xs'
+                }`}
             >
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
               <span>{lang === 'ar' ? 'الخطوة السابقة' : 'Previous Step'}</span>
