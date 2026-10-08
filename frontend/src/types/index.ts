@@ -26,6 +26,7 @@ export interface User {
   department: string;
   departmentAr?: string | undefined;
   avatar: string;
+  gender?: 'man' | 'woman';
 }
 
 export interface Sector {
@@ -372,20 +373,26 @@ export interface ActionItem {
   id: string;
   code: string;
   title: string;
-  titleAr?: string;
+  titleAr?: string | undefined;
   source: ActionSource;
   sourceRefId: string;
   sourceRefTitle: string;
-  sourceRefTitleAr?: string;
+  sourceRefTitleAr?: string | undefined;
   owner: string;
   department: string;
-  departmentAr?: string;
+  departmentAr?: string | undefined;
   priority: 'Critical' | 'High' | 'Medium' | 'Low';
   dueDate: string;
   progress: number;
   status: 'Not Started' | 'In Progress' | 'Under Review' | 'Completed';
   description: string;
-  descriptionAr?: string;
+  descriptionAr?: string | undefined;
+  linkedObjectiveId?: string | undefined;
+  linkedObjectiveTitle?: string | undefined;
+  linkedObjectiveTitleAr?: string | undefined;
+  linkedInitiativeId?: string | undefined;
+  linkedInitiativeTitle?: string | undefined;
+  linkedInitiativeTitleAr?: string | undefined;
 }
 
 export interface TaskItem {

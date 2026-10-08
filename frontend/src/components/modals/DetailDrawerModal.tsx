@@ -48,11 +48,13 @@ export const DetailDrawerModal: React.FC = () => {
 
   // State for Create Action form
   const [newActionTitle, setNewActionTitle] = useState('');
-  const [newActionSource, setNewActionSource] = useState<'Strategy' | 'ERM' | 'Cyber' | 'Governance' | 'Compliance' | 'BCM'>('ERM');
+  const [newActionSource, setNewActionSource] = useState<'Strategy' | 'ERM' | 'Cyber' | 'Governance' | 'Compliance' | 'BCM'>('Strategy');
   const [newActionPriority, setNewActionPriority] = useState<'Critical' | 'High' | 'Medium' | 'Low'>('High');
   const [newActionDueDate, setNewActionDueDate] = useState('2026-10-15');
   const [newActionOwner, setNewActionOwner] = useState(currentUser.name);
   const [newActionDesc, setNewActionDesc] = useState('');
+  const [newActionObjectiveId, setNewActionObjectiveId] = useState('');
+  const [newActionInitiativeId, setNewActionInitiativeId] = useState('');
 
   // State for Create KPI form
   const [kpiObjId, setKpiObjId] = useState('');
@@ -112,18 +114,29 @@ export const DetailDrawerModal: React.FC = () => {
   const handleCreateActionSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newActionTitle.trim()) return;
+
+    const selectedObj = objectives.find((o) => o.id === newActionObjectiveId);
+    const selectedInit = initiatives.find((i) => i.id === newActionInitiativeId);
+
     addAction({
-      title: newActionTitle,
+      title: newActionTitle.trim(),
       source: newActionSource,
-      sourceRefId: 'REF-2026',
-      sourceRefTitle: 'Strategic & Governance Initiative',
-      owner: newActionOwner,
+      sourceRefId: selectedObj?.code || 'REF-2026',
+      sourceRefTitle: selectedObj?.title || 'Cross-Domain Action Item',
+      sourceRefTitleAr: selectedObj?.titleAr,
+      owner: newActionOwner.trim() || currentUser.name,
       department: currentUser.department,
       priority: newActionPriority,
       dueDate: newActionDueDate,
       progress: 0,
       status: 'Not Started',
-      description: newActionDesc,
+      description: newActionDesc.trim(),
+      linkedObjectiveId: selectedObj?.id,
+      linkedObjectiveTitle: selectedObj?.title,
+      linkedObjectiveTitleAr: selectedObj?.titleAr,
+      linkedInitiativeId: selectedInit?.id,
+      linkedInitiativeTitle: selectedInit?.title,
+      linkedInitiativeTitleAr: selectedInit?.titleAr,
     });
   };
 
@@ -454,6 +467,48 @@ export const DetailDrawerModal: React.FC = () => {
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Linked Strategic Objective & Linked Initiative */}
+              <div className="p-3.5 bg-blue-50/60 rounded-xl border border-blue-200/80 space-y-3">
+                <div className="text-[11px] font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-blue-700" />
+                  <span>Strategic Alignment Links (Objective & Initiative)</span>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Linked Strategic Objective <span className="text-slate-400 font-normal">(Target Impact)</span>
+                  </label>
+                  <select
+                    value={newActionObjectiveId}
+                    onChange={(e) => setNewActionObjectiveId(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-900"
+                  >
+                    <option value="">-- Direct Operational Measure (None) --</option>
+                    {objectives.map((obj) => (
+                      <option key={obj.id} value={obj.id}>
+                        {obj.code} • {obj.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Linked Strategic Initiative <span className="text-slate-400 font-normal">(Parent Execution Plan)</span>
+                  </label>
+                  <select
+                    value={newActionInitiativeId}
+                    onChange={(e) => setNewActionInitiativeId(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-900"
+                  >
+                    <option value="">-- Direct Standalone Action (None) --</option>
+                    {initiatives.map((init) => (
+                      <option key={init.id} value={init.id}>
+                        {init.code} • {init.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { User, Role } from '../types';
+import { UserAvatar } from '../components/common/UserAvatar';
+import { RolesPermissionsMatrix } from '../components/organization/RolesPermissionsMatrix';
 import {
   Users,
   UserPlus,
@@ -60,6 +62,7 @@ export const UsersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoleFilter, setSelectedRoleFilter] = useState<string>('all');
   const [selectedDeptFilter, setSelectedDeptFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'directory' | 'matrix'>('directory');
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -109,7 +112,8 @@ export const UsersPage: React.FC = () => {
       titleAr: newUserTitleAr.trim() || undefined,
       department: newUserDepartment,
       role: newUserRole,
-      avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
+      avatar: '',
+      gender: 'man',
     });
 
     setIsAddModalOpen(false);
@@ -238,11 +242,37 @@ export const UsersPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* View Toggle */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setViewMode('directory')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
+                viewMode === 'directory'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {lang === 'ar' ? 'دليل الكوادر' : 'User Directory'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('matrix')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
+                viewMode === 'matrix'
+                  ? 'bg-purple-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {lang === 'ar' ? 'مصفوفة الصلاحيات (Matrix)' : 'Permissions Matrix'}
+            </button>
+          </div>
+
           <button
             type="button"
             onClick={handleExportUsers}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>{lang === 'ar' ? 'تصدير الدليل' : 'Export CSV'}</span>
@@ -251,7 +281,7 @@ export const UsersPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            className="inline-flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
           >
             <UserPlus className="w-4 h-4 group-hover:scale-110 transition-transform" />
             <span>{lang === 'ar' ? 'إضافة مستخدم وتعيين دور' : 'Add User & Assign Role'}</span>
@@ -259,8 +289,12 @@ export const UsersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {viewMode === 'matrix' ? (
+        <RolesPermissionsMatrix />
+      ) : (
+        <>
+          {/* KPI Stats Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
           <div className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
             {lang === 'ar' ? 'إجمالي الكوادر' : 'Total Personnel'}
@@ -417,15 +451,11 @@ export const UsersPage: React.FC = () => {
                       {/* User Info */}
                       <td className={`py-3.5 ${lang === 'ar' ? 'pr-5 pl-3' : 'pl-5 pr-3'}`}>
                         <div className="flex items-center gap-3">
-                          <img
-                            src={u.avatar}
-                            alt={u.name}
-                            className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0"
-                            onError={(e) => {
-                              // fallback avatar if broken url
-                              (e.target as HTMLImageElement).src =
-                                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80';
-                            }}
+                          <UserAvatar
+                            name={lang === 'ar' ? u.nameAr || u.name : u.name}
+                            gender={u.gender}
+                            role={u.role}
+                            size="md"
                           />
                           <div className="min-w-0">
                             <div className="font-bold text-slate-900 flex items-center gap-2">
@@ -542,6 +572,8 @@ export const UsersPage: React.FC = () => {
           </table>
         </div>
       </div>
+      </>
+      )}
 
       {/* MODAL 1: Add New User & Assign Role */}
       {isAddModalOpen && (
@@ -680,6 +712,34 @@ export const UsersPage: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div className="col-span-2 p-2.5 bg-purple-50/60 rounded-xl border border-purple-200/70 text-[11px] text-purple-900 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <Shield className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+                    <span>{lang === 'ar' ? `صلاحيات ${t(newUserRole)}:` : `Granted Rights for ${newUserRole}:`}</span>
+                    <span className="font-mono font-bold text-purple-950">
+                      {newUserRole === 'Administrator' || newUserRole === 'Authority Board & CEO'
+                        ? (lang === 'ar' ? 'عرض • تعديل • مراجعة • اعتماد • نشر • تصدير' : 'View • Edit • Review • Approve • Publish • Export')
+                        : newUserRole === 'Strategy Manager' || newUserRole === 'Strategy Specialist'
+                        ? (lang === 'ar' ? 'عرض • تعديل • رفع • تصدير (محصور بنطاق الاستراتيجية)' : 'View • Edit • Submit • Export (Strategy Scope)')
+                        : newUserRole === 'GRC & Enterprise Risk'
+                        ? (lang === 'ar' ? 'عرض • تعديل • تدقيق • تصدير (محصور بـ GRC والمخاطر)' : 'View • Edit • Audit • Export (GRC & Risk Scope)')
+                        : newUserRole === 'BCM Manager'
+                        ? (lang === 'ar' ? 'عرض • تعديل • جاهزية BIA • تصدير (محصور بـ BCM)' : 'View • Edit • BIA Readiness • Export (BCM Scope)')
+                        : (lang === 'ar' ? 'عرض • تدقيق ومراجعة • تصدير' : 'View • Review • Export')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddModalOpen(false);
+                      setViewMode('matrix');
+                    }}
+                    className="text-[10px] text-purple-700 underline font-semibold hover:text-purple-950 cursor-pointer"
+                  >
+                    {lang === 'ar' ? 'المصفوفة الكاملة' : 'Full Matrix'}
+                  </button>
                 </div>
               </div>
 
@@ -827,6 +887,34 @@ export const UsersPage: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div className="col-span-2 p-2.5 bg-blue-50/60 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <Shield className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+                    <span>{lang === 'ar' ? `صلاحيات ${t(editRole)}:` : `Granted Rights for ${editRole}:`}</span>
+                    <span className="font-mono font-bold text-blue-950">
+                      {editRole === 'Administrator' || editRole === 'Authority Board & CEO'
+                        ? (lang === 'ar' ? 'عرض • تعديل • مراجعة • اعتماد • نشر • تصدير' : 'View • Edit • Review • Approve • Publish • Export')
+                        : editRole === 'Strategy Manager' || editRole === 'Strategy Specialist'
+                        ? (lang === 'ar' ? 'عرض • تعديل • رفع • تصدير (محصور بنطاق الاستراتيجية)' : 'View • Edit • Submit • Export (Strategy Scope)')
+                        : editRole === 'GRC & Enterprise Risk'
+                        ? (lang === 'ar' ? 'عرض • تعديل • تدقيق • تصدير (محصور بـ GRC والمخاطر)' : 'View • Edit • Audit • Export (GRC & Risk Scope)')
+                        : editRole === 'BCM Manager'
+                        ? (lang === 'ar' ? 'عرض • تعديل • جاهزية BIA • تصدير (محصور بـ BCM)' : 'View • Edit • BIA Readiness • Export (BCM Scope)')
+                        : (lang === 'ar' ? 'عرض • تدقيق ومراجعة • تصدير' : 'View • Review • Export')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingUser(null);
+                      setViewMode('matrix');
+                    }}
+                    className="text-[10px] text-blue-700 underline font-semibold hover:text-blue-950 cursor-pointer"
+                  >
+                    {lang === 'ar' ? 'المصفوفة الكاملة' : 'Full Matrix'}
+                  </button>
                 </div>
               </div>
 

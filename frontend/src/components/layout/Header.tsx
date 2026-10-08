@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Role } from '../../types';
 import { ROLE_PERMISSIONS_MAP } from '../../utils/permissions';
+import { UserAvatar } from '../common/UserAvatar';
 
 export const Header: React.FC = () => {
   const {
@@ -187,17 +188,12 @@ export const Header: React.FC = () => {
             onClick={() => setShowRoleDropdown(!showRoleDropdown)}
             className="flex items-center gap-2 pl-2 pr-1.5 py-1 rounded-lg border border-slate-200/80 hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            {currentUser.avatar ? (
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-7 h-7 rounded-full object-cover border border-blue-500/50"
-              />
-            ) : (
-              <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center border border-blue-200">
-                <Shield className="w-3.5 h-3.5 text-blue-700" />
-              </div>
-            )}
+            <UserAvatar
+              name={lang === 'ar' ? currentUser.nameAr || currentUser.name : currentUser.name}
+              gender={currentUser.gender}
+              role={currentUser.role}
+              size="sm"
+            />
             <div className="hidden lg:block text-start">
               <div className="text-xs font-bold text-slate-900 leading-tight">
                 {t(currentUser.role)}

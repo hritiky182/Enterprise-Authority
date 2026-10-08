@@ -848,7 +848,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       title: u.title || 'Corporate Officer',
       department: u.department || 'Strategic Development Office',
       role: u.role || 'Viewer',
-      avatar: u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256',
+      avatar: '',
+      gender: (u.gender as any) || 'man',
     }));
     setUsers((prev) => {
       const updated = [...prev, ...formatted];

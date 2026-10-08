@@ -23,6 +23,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserAvatar } from '../components/common/UserAvatar';
 import { useNavigate } from 'react-router-dom';
 import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 
@@ -290,11 +291,12 @@ export const PersonalWorkspacePage: React.FC = () => {
                     : 'bg-slate-50/80 border-slate-200 hover:bg-white hover:border-slate-300'
                 }`}
               >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                  isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
-                }`}>
-                  {u.avatar || u.name.slice(0, 2).toUpperCase()}
-                </div>
+                <UserAvatar
+                  name={lang === 'ar' ? u.nameAr || u.name : u.name}
+                  gender={u.gender}
+                  role={u.role}
+                  size="sm"
+                />
                 <div className="truncate flex-1">
                   <div className="text-xs font-bold text-slate-900 truncate">
                     {lang === 'ar' ? u.nameAr || u.name : u.name}

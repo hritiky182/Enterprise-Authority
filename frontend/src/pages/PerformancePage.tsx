@@ -25,9 +25,17 @@ import {
   Building,
   Target,
   TrendingUp,
+  TrendingDown,
   Upload,
   Download,
   FileText,
+  MessageSquare,
+  Plus,
+  MoreVertical,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  Search,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImportKpiModal } from '../components/modals/ImportKpiModal';
@@ -36,84 +44,108 @@ import { StrategicLifecycleProgression } from '../components/common/StrategicLif
 
 export const PerformancePage: React.FC = () => {
   const navigate = useNavigate();
-  const { kpis, objectives, themes, setDemoJourneyStep, lang, t } = useApp();
+  const { kpis, objectives, themes, lang, t } = useApp();
+
+  const [activeTab, setActiveTab] = useState<'summary' | 'grid'>('summary');
+  const [selectedPerspective, setSelectedPerspective] = useState<'Financial' | 'Customer' | 'Internal' | 'Capacity'>('Financial');
+  const [selectedPeriod, setSelectedPeriod] = useState('December 2026');
+  const [comments, setComments] = useState<string[]>([
+    'Fiscal year target trajectory demonstrates resilient recovery across heritage tourism revenues.',
+  ]);
+  const [newComment, setNewComment] = useState('');
+  const [isAddingComment, setIsAddingComment] = useState(false);
 
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedQuarter, setSelectedQuarter] = useState('Q3');
   const [selectedDept, setSelectedDept] = useState('all');
-  const [selectedTheme, setSelectedTheme] = useState('all');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
-  const handleExportKpiCSV = () => {
-    const headers = [
-      'Code',
-      'KPI Name (EN)',
-      'KPI Name (AR)',
-      'Strategic Objective',
-      'Owner / Lead',
-      'Department',
-      'Target Horizon',
-      'Unit',
-      'Actual Value',
-      'Achievement %',
-      'Status',
-      'Frequency',
-      'Calculation Method',
-    ];
+  // Corporater-style trend data
+  const corporaterTrendData = [
+    { month: 'Jun', score: 98 },
+    { month: 'Jul', score: 92 },
+    { month: 'Aug', score: 90 },
+    { month: 'Sep', score: 81 },
+    { month: 'Oct', score: 82 },
+    { month: 'Nov', score: 85 },
+    { month: 'Dec', score: 88 },
+  ];
 
-    const rows = filteredKpis.map((k) => [
+  // Perspective specific objectives
+  const perspectiveObjectives = {
+    Financial: [
+      { id: 'po-1', name: 'Ensure Financial Sustainability & Fiscal Resilience', nameAr: 'ضمان الاستدامة والمرونة المالية للمنظومة', priority: 'warning', status: 'critical' },
+      { id: 'po-2', name: 'Increase Regional Heritage Tourism Value Added', nameAr: 'تعظيم القيمة المضافة لقطاع السياحة التراثية', priority: 'warning', status: 'warning' },
+      { id: 'po-3', name: 'Attract Private Capital Co-Investment in Agri-Oasis', nameAr: 'جذب الاستثمارات المشتركة للقطاع الخاص بواحة النخيل', priority: 'warning', status: 'critical' },
+    ],
+    Customer: [
+      { id: 'po-4', name: 'Ensure World-Class Visitor Satisfaction & Safety', nameAr: 'ضمان أعلى معايير رضا وسلامة زوار المحافظة', priority: 'on-track', status: 'on-track' },
+      { id: 'po-5', name: 'Elevate Quality of Life Index for Al-Ahsa Residents', nameAr: 'الارتقاء بمؤشر جودة الحياة للمواطنين والمقيمين', priority: 'warning', status: 'warning' },
+      { id: 'po-6', name: 'Expand Regional Cultural Identity Pride', nameAr: 'تعزيز الفخر بالهوية الثقافية والتراثية الحية', priority: 'on-track', status: 'on-track' },
+    ],
+    Internal: [
+      { id: 'po-7', name: 'Consolidate Unified Spatial Planning Regulations', nameAr: 'توحيد ضوابط وأنظمة التخطيط المكاني الشامل', priority: 'warning', status: 'critical' },
+      { id: 'po-8', name: 'Rehabilitate UNESCO Irrigation Canal Network', nameAr: 'تأهيل وتطوير شبكات قنوات الري المسجلة باليونسكو', priority: 'critical', status: 'critical' },
+      { id: 'po-9', name: 'Accelerate Enterprise Smart Process Digitization', nameAr: 'تسريع أتمتة العمليات والخدمات المؤسسية الذكية', priority: 'on-track', status: 'on-track' },
+    ],
+    Capacity: [
+      { id: 'po-10', name: 'Attract and Develop High-Impact Saudi Leadership', nameAr: 'استقطاب وتطوير القيادات والكفاءات الوطنية المتميزة', priority: 'on-track', status: 'on-track' },
+      { id: 'po-11', name: 'Achieve Institutional Governance & ISO Standards', nameAr: 'تحقيق التميز في الحوكمة المؤسسية ومعايير الآيزو', priority: 'warning', status: 'warning' },
+      { id: 'po-12', name: 'Build Institutional Business Continuity Capacity', nameAr: 'بناء القدرات والجاهزية المؤسسية لاستمرارية الأعمال', priority: 'on-track', status: 'on-track' },
+    ],
+  }[selectedPerspective];
+
+  // Perspective specific KPIs
+  const perspectiveKpis = {
+    Financial: [
+      { name: 'Municipal Revenue Diversification Index', nameAr: 'مؤشر تنويع الإيرادات البلدية', responsible: 'Dr. Reem Al-Qahtani', actual: 'SAR 18,859,631', priority: 'warning', status: 'warning' },
+      { name: 'Return on Capital Investment (ROCE %)', nameAr: 'العائد على رأس المال المستثمر', responsible: 'Eng. Abdulaziz Al-Hassan', actual: '101%', priority: 'on-track', status: 'on-track' },
+      { name: 'Visitor Economic Yield / Yield Per Tourist', nameAr: 'العائد الاقتصادي لكل زائر', responsible: 'Eng. Fahad Al-Subaie', actual: 'SAR 2,420', priority: 'critical', status: 'critical' },
+    ],
+    Customer: [
+      { name: 'Visitor Satisfaction Net Promoter Score (NPS)', nameAr: 'صافي نقاط الترويج ورضا الزوار', responsible: 'Noura Al-Shammari', actual: '+68 NPS', priority: 'on-track', status: 'on-track' },
+      { name: 'Quality of Life Resident Benchmark Index', nameAr: 'مؤشر جودة الحياة لسكان المحافظة', responsible: 'Dr. Reem Al-Qahtani', actual: '78.5 / 100', priority: 'warning', status: 'warning' },
+    ],
+    Internal: [
+      { name: 'Spatial Permitting Cycle Time Efficiency', nameAr: 'متوسط زمن إصدار الموافقات التخطيطية', responsible: 'Eng. Tariq Al-Mansoor', actual: '14 Days', priority: 'warning', status: 'critical' },
+      { name: 'Irrigation Water Canal Circulation Rate', nameAr: 'نسبة جريان المياه بقنوات الري التراثية', responsible: 'Abdullah Al-Ghamdi', actual: '72%', priority: 'critical', status: 'critical' },
+    ],
+    Capacity: [
+      { name: 'Specialized Strategy Capability Fill Ratio', nameAr: 'نسبة استقطاب الكفاءات التخصصية بالهيئة', responsible: 'Eng. Khaled Al-Otaibi', actual: '94%', priority: 'on-track', status: 'on-track' },
+      { name: 'ISO 22301 & 9001 Audit Compliance Score', nameAr: 'نسبة الالتزام بمعايير الأيزو والجودة', responsible: 'Haya Al-Mulhim', actual: '96.5%', priority: 'on-track', status: 'on-track' },
+    ],
+  }[selectedPerspective];
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    setComments((prev) => [newComment.trim(), ...prev]);
+    setNewComment('');
+    setIsAddingComment(false);
+    toast.success(lang === 'ar' ? 'تمت إضافة التقييم بنجاح' : 'Comment added to scorecard assessment');
+  };
+
+  const handleExportKpiCSV = () => {
+    const headers = ['Code', 'Name', 'Target', 'Actual', 'Achievement', 'Status'];
+    const rows = kpis.map((k) => [
       `"${k.code}"`,
-      `"${k.name.replace(/"/g, '""')}"`,
-      `"${(k.nameAr || '').replace(/"/g, '""')}"`,
-      `"${(k.objectiveTitle || '').replace(/"/g, '""')}"`,
-      `"${k.owner.replace(/"/g, '""')}"`,
-      `"${(k.department || '').replace(/"/g, '""')}"`,
+      `"${k.name}"`,
       `"${k.target}"`,
-      `"${k.unit || '%'}"`,
       `"${k.actual}"`,
       `"${k.achievementPct}%"`,
       `"${k.status}"`,
-      `"${k.frequency || 'Annual'}"`,
-      `"${(k.formula || '').replace(/"/g, '""')}"`,
     ]);
-
-    const csvContent =
-      'data:text/csv;charset=utf-8,\uFEFF' +
-      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `AHDA_Performance_Scorecard_${selectedYear}_${selectedQuarter}.csv`);
+    link.setAttribute('download', `AHDA_Scorecard_${selectedPerspective}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    toast.success(
-      lang === 'ar'
-        ? 'تم تصدير تقرير الأداء بنجاح (ملف CSV تفصيلي)'
-        : 'Performance report exported successfully (CSV scorecard)'
-    );
+    toast.success('Scorecard CSV exported successfully');
   };
-
-  const deptPerformanceData = [
-    { department: 'Strategic Dev (SDO)', score: 94.2, target: 90 },
-    { department: 'Risk & Resilience (ERRD)', score: 91.8, target: 90 },
-    { department: 'Cyber & IT (CITG)', score: 96.5, target: 92 },
-    { department: 'Urban Planning (MIUP)', score: 82.4, target: 88 },
-    { header: 'Heritage & Tourism (CHET)', score: 89.5, target: 85 },
-    { department: 'Audit & Legal (IALA)', score: 95.0, target: 90 },
-  ];
-
-  const filteredKpis = kpis.filter((k) => {
-    if (selectedDept !== 'all') {
-      const matchedDept = DEPARTMENTS.find((d) => d.id === selectedDept);
-      if (matchedDept && !k.owner.includes(matchedDept.head.split(' ')[1] || '')) {
-        // filter loosely for matching department
-      }
-    }
-    return true;
-  });
 
   const kpiColumns: Column<KPI>[] = [
     {
@@ -157,215 +189,418 @@ export const PerformancePage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in">
-      {/* Title + Filter Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 mb-1">
-              <span className="font-bold uppercase">
-                {lang === 'ar' ? 'محرك احتساب وتحليلات الأداء' : 'PERFORMANCE CALCULATION ENGINE & ANALYTICS'}
-              </span>
-              <span className="text-slate-300">/</span>
-              <span>{lang === 'ar' ? 'مراقبة الأداء المؤسسي والتصدير' : 'Performance Monitoring & Export'}</span>
-            </div>
-            <h1 className="text-xl font-bold text-slate-900">
-              {lang === 'ar' ? 'تحليلات أداء الإدارات ومؤشرات الأداء (KPIs)' : 'Departmental & KPI Performance Analytics'}
-            </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {lang === 'ar'
-                ? 'تصفية بيانات الأداء حسب السنة المالية، والربع السنوي، والإدارة، والركيزة الاستراتيجية.'
-                : 'Filter performance data by fiscal year, quarter, enterprise department, and strategic theme.'}
-            </p>
+      {/* Top Header & Breadcrumbs (Corporater Style Image 3) */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-mono text-slate-500 mb-1">
+            <span>Corporate</span>
+            <span>&gt;</span>
+            <span>Corporate Scorecard</span>
+            <span>&gt;</span>
+            <span className="text-blue-700 font-bold">{selectedPerspective}</span>
           </div>
-
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsExecutiveBriefOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-gradient-to-r from-slate-900 to-blue-950 hover:from-slate-800 hover:to-blue-900 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
-            >
-              <FileText className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-              <span>{lang === 'ar' ? 'تقرير الإدارة التنفيذية (PDF)' : 'Executive Brief (PDF)'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleExportKpiCSV}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
-            >
-              <Download className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
-              <span>{lang === 'ar' ? 'تصدير بيانات الأداء (CSV)' : 'Export Report (CSV)'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsImportModalOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer group"
-            >
-              <Upload className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>{lang === 'ar' ? 'استيراد بيانات المؤشرات' : 'Import KPI Data'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Global Filter Bar */}
-        <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs">
-          <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <Calendar className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'السنة:' : 'Year:'}</span>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="bg-transparent font-mono font-bold text-slate-900 focus:outline-none"
-            >
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-            </select>
-          </div>
-
-          <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الفترة:' : 'Period:'}</span>
-            <select
-              value={selectedQuarter}
-              onChange={(e) => setSelectedQuarter(e.target.value)}
-              className="bg-transparent font-mono font-bold text-slate-900 focus:outline-none"
-            >
-              <option value="Q1">{lang === 'ar' ? 'الربع الأول (يناير - مارس)' : 'Q1 (Jan-Mar)'}</option>
-              <option value="Q2">{lang === 'ar' ? 'الربع الثاني (أبريل - يونيو)' : 'Q2 (Apr-Jun)'}</option>
-              <option value="Q3">{lang === 'ar' ? 'الربع الثالث (يوليو - سبتمبر)' : 'Q3 (Jul-Sep)'}</option>
-              <option value="Q4">{lang === 'ar' ? 'الربع الرابع (أكتوبر - ديسمبر)' : 'Q4 (Oct-Dec)'}</option>
-            </select>
-          </div>
-
-          <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <Building className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الإدارة:' : 'Department:'}</span>
-            <select
-              value={selectedDept}
-              onChange={(e) => setSelectedDept(e.target.value)}
-              className="bg-transparent font-semibold text-slate-900 focus:outline-none"
-            >
-              <option value="all">{lang === 'ar' ? 'جميع الإدارات (6)' : 'All Departments (6)'}</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.code} - {lang === 'ar' ? (d.nameAr || d.name) : d.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center space-x-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <Target className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-slate-700">{lang === 'ar' ? 'الركيزة:' : 'Theme:'}</span>
-            <select
-              value={selectedTheme}
-              onChange={(e) => setSelectedTheme(e.target.value)}
-              className="bg-transparent font-semibold text-slate-900 focus:outline-none"
-            >
-              <option value="all">{lang === 'ar' ? `جميع الركائز (${themes.length})` : `All Themes (${themes.length})`}</option>
-              {themes.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.code} - {lang === 'ar' ? (t.titleAr || t.title) : t.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Department Scores Comparison Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <h3 className="panel-title text-slate-900 mb-1">
-            {lang === 'ar' ? 'أداء الإدارات مقابل المستهدفات' : 'Department Performance vs Targets'}
-          </h3>
-          <p className="text-xs text-slate-500 mb-4">
+          <h1 className="text-xl font-bold text-slate-900">
+            {lang === 'ar' ? 'ملخص الأداء المؤسسي (Performance Summary)' : 'Performance Summary'}
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
             {lang === 'ar'
-              ? `${selectedYear} ${selectedQuarter} النتيجة الفعلية مقابل المستهدف المعياري لمؤشرات الأداء`
-              : `${selectedYear} ${selectedQuarter} Actual Score vs KPI Benchmark Target`}
+              ? 'متابعة أداء الأهداف ومؤشرات القياس عبر منظور بطاقة الأداء المتوازن مع سجل التقييم النوعي.'
+              : 'Holistic performance presentation with period trend line, quick metrics, and qualitative assessments.'}
           </p>
-
-          <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={deptPerformanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="department" tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} />
-                <YAxis domain={[50, 100]} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
-                <Legend />
-                <Bar dataKey="score" name={lang === 'ar' ? 'النتيجة الفعلية %' : 'Actual Score %'} fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="target" name={lang === 'ar' ? 'المستهدف المعياري %' : 'Benchmark Target %'} fill="#94a3b8" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <h3 className="panel-title text-slate-900 mb-1">
-            {lang === 'ar' ? 'مسار الأداء الشهري منذ بداية العام' : 'YTD Monthly Performance Trend'}
-          </h3>
-          <p className="text-xs text-slate-500 mb-4">
-            {lang === 'ar' ? 'مسار النتائج عبر القطاعات المتعددة يناير - أغسطس 2026' : 'Multi-domain scoring trajectory Jan - Aug 2026'}
-          </p>
-
-          <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={PERFORMANCE_MONTHLY_TRENDS}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
-                <Legend />
-                <Line type="monotone" dataKey="strategy" name={lang === 'ar' ? 'الاستراتيجية' : 'Strategy'} stroke="#10b981" strokeWidth={2.5} />
-                <Line type="monotone" dataKey="risk" name={lang === 'ar' ? 'معالجة المخاطر' : 'Risk Mitigation'} stroke="#f59e0b" strokeWidth={2} />
-                <Line type="monotone" dataKey="compliance" name={lang === 'ar' ? 'الالتزام' : 'Compliance'} stroke="#3b82f6" strokeWidth={2} />
-                <Line type="monotone" dataKey="bcm" name={lang === 'ar' ? 'جاهزية BCM' : 'BCM Readiness'} stroke="#8b5cf6" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+        {/* View Switcher & Period Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Perspective Selector Pills */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+            {(['Financial', 'Customer', 'Internal', 'Capacity'] as const).map((p) => (
+              <button
+                key={p}
+                onClick={() => setSelectedPerspective(p)}
+                className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                  selectedPerspective === p
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
           </div>
+
+          {/* Tab Mode Toggle */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+            <button
+              onClick={() => setActiveTab('summary')}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                activeTab === 'summary'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Scorecard Summary
+            </button>
+            <button
+              onClick={() => setActiveTab('grid')}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                activeTab === 'grid'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Detailed KPI Grid
+            </button>
+          </div>
+
+          <button
+            onClick={handleExportKpiCSV}
+            className="p-2 border border-slate-200 hover:bg-slate-50 rounded-xl text-slate-700 cursor-pointer"
+            title="Export CSV Scorecard"
+          >
+            <Download className="w-4 h-4 text-emerald-600" />
+          </button>
         </div>
       </div>
 
-      {/* KPI Performance Table */}
-      <DataTable
-        title={lang === 'ar' ? 'بطاقة الأداء التفصيلية لمؤشرات الأداء الرئيسية (KPIs)' : 'Key Performance Indicator (KPI) Detailed Scorecard'}
-        subtitle={lang === 'ar' ? 'مستويات إنجاز المستهدفات الفردية عبر كافة البرامج التشغيلية المؤسسية' : 'Individual metric target achievements across all enterprise operational programs'}
-        data={filteredKpis}
-        columns={kpiColumns}
-      />
+      {/* ============================================================== */}
+      {/* 1. CORPORATER PERFORMANCE SUMMARY VIEW (DIRECT MATCH IMAGE 3)   */}
+      {/* ============================================================== */}
+      {activeTab === 'summary' && (
+        <div className="space-y-6">
+          {/* Top Section: Trend Line Chart & Quick Stats & Description Panel */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Left 2 Columns: KPI Achievement Over Period + Quick Statistics */}
+            <div className="xl:col-span-2 space-y-6">
+              {/* Line Chart: KPIS ACHIEVEMENT OVER THE PERIOD */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                    KPIS ACHIEVEMENT OVER THE PERIOD
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-slate-400">Monthly Index</span>
+                    <button className="text-slate-400 hover:text-slate-600 p-1">
+                      <MoreVertical className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
 
-      {/* Enterprise Strategic Lifecycle Progression */}
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={corporaterTrendData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={11} domain={[70, 110]} tickLine={false} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#0f172a',
+                          borderRadius: '8px',
+                          color: '#fff',
+                          fontSize: '12px',
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="score"
+                        stroke="#1e3a8a"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#1e3a8a', strokeWidth: 1, stroke: '#fff' }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Quick Statistics (2x2 Grid with Left Accent Borders matching Image 3) */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                    QUICK STATISTICS
+                  </h3>
+                  <MoreVertical className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-50/50 p-4 rounded-xl border-l-4 border-l-rose-600 border border-slate-200/70">
+                    <span className="text-xs text-slate-500 font-sans block">Overall Objectives</span>
+                    <div className="text-2xl font-bold font-sans text-slate-900 mt-1">74%</div>
+                  </div>
+
+                  <div className="bg-slate-50/50 p-4 rounded-xl border-l-4 border-l-amber-500 border border-slate-200/70">
+                    <span className="text-xs text-slate-500 font-sans block">Overall KPIs</span>
+                    <div className="text-2xl font-bold font-sans text-slate-900 mt-1">74%</div>
+                  </div>
+
+                  <div className="bg-slate-50/50 p-4 rounded-xl border-l-4 border-l-rose-600 border border-slate-200/70">
+                    <span className="text-xs text-slate-500 font-sans block">Overall Initiatives</span>
+                    <div className="text-2xl font-bold font-sans text-slate-900 mt-1">52%</div>
+                  </div>
+
+                  <div className="bg-slate-50/50 p-4 rounded-xl border-l-4 border-l-rose-600 border border-slate-200/70">
+                    <span className="text-xs text-slate-500 font-sans block">Risks Treated</span>
+                    <div className="text-2xl font-bold font-sans text-slate-900 mt-1">34%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: DESCRIPTION Panel (Exact Match Image 3) */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between space-y-5">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                    DESCRIPTION
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <MoreVertical className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                <div className="space-y-3 text-xs font-sans">
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">NAME</span>
+                    <span className="font-bold text-slate-900 text-sm">{selectedPerspective}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">PRIORITY</span>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
+                      <span className="font-medium text-slate-700">Medium / High Strategic Priority</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">STATUS</span>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-2xs" />
+                      <span className="font-medium text-slate-700">Action Plan Required</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">TREND</span>
+                    <div className="flex items-center gap-1 text-rose-600 font-bold mt-0.5 font-mono">
+                      <TrendingDown className="w-3.5 h-3.5" />
+                      <span>Degrading (-3.2%)</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">WEIGHT</span>
+                    <span className="font-mono font-bold text-slate-800">10.00</span>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100">
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block">MODIFIED BY</span>
+                    <span className="text-slate-700 font-medium">Administrator</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-mono uppercase block">LAST MODIFIED</span>
+                    <span className="text-slate-500 font-mono text-[11px]">May 19, 2026, 1:32:33 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Assessment Section (Image 3) */}
+              <div className="pt-4 border-t border-slate-100 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                    KEY ASSESSMENT
+                  </span>
+                  <button
+                    onClick={() => setIsAddingComment(true)}
+                    className="p-1 hover:bg-slate-100 rounded text-slate-600 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {comments.map((c, i) => (
+                    <div key={i} className="p-2.5 bg-slate-50 rounded-xl text-xs text-slate-700 border border-slate-200/60 leading-relaxed font-sans">
+                      {c}
+                    </div>
+                  ))}
+                </div>
+
+                {isAddingComment && (
+                  <form onSubmit={handleAddComment} className="space-y-2 pt-2">
+                    <textarea
+                      rows={2}
+                      required
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Add an assessment note..."
+                      className="w-full p-2 border border-slate-200 rounded-lg text-xs"
+                    />
+                    <div className="flex justify-end gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingComment(false)}
+                        className="px-2.5 py-1 text-xs text-slate-500"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-semibold"
+                      >
+                        Save Note
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section: RELATED OBJECTIVES & RELATED KPIS Tables (Exact Match Image 3) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* RELATED OBJECTIVES */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                  RELATED OBJECTIVES
+                </h3>
+                <Search className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase">
+                    <tr>
+                      <th className="py-2.5 px-3">NAME</th>
+                      <th className="py-2.5 px-3 text-center w-24">PRIORITY</th>
+                      <th className="py-2.5 px-3 text-center w-20">STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    {perspectiveObjectives.map((obj) => (
+                      <tr key={obj.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3 px-3">
+                          <span className="font-semibold text-slate-900">{lang === 'ar' ? obj.nameAr : obj.name}</span>
+                        </td>
+                        <td className="py-3 px-3 text-center">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full inline-block ${
+                              obj.priority === 'on-track'
+                                ? 'bg-emerald-500'
+                                : obj.priority === 'warning'
+                                ? 'bg-amber-500'
+                                : 'bg-rose-500'
+                            }`}
+                          />
+                        </td>
+                        <td className="py-3 px-3 text-center">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full inline-block ${
+                              obj.status === 'on-track'
+                                ? 'bg-emerald-500'
+                                : obj.status === 'warning'
+                                ? 'bg-amber-500'
+                                : 'bg-rose-500'
+                            }`}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* RELATED KPIS */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 font-mono">
+                  RELATED KPIS
+                </h3>
+                <Search className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase">
+                    <tr>
+                      <th className="py-2.5 px-3">NAME</th>
+                      <th className="py-2.5 px-3">RESPONSIBLE</th>
+                      <th className="py-2.5 px-3 text-end">ACTUAL</th>
+                      <th className="py-2.5 px-3 text-center w-20">PRIORITY</th>
+                      <th className="py-2.5 px-3 text-center w-16">STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    {perspectiveKpis.map((k, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3 px-3">
+                          <span className="font-semibold text-slate-900">{lang === 'ar' ? k.nameAr : k.name}</span>
+                        </td>
+                        <td className="py-3 px-3 text-slate-600 font-medium">{k.responsible}</td>
+                        <td className="py-3 px-3 text-end font-mono font-bold text-slate-900">{k.actual}</td>
+                        <td className="py-3 px-3 text-center">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full inline-block ${
+                              k.priority === 'on-track' ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`}
+                          />
+                        </td>
+                        <td className="py-3 px-3 text-center">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full inline-block ${
+                              k.status === 'on-track'
+                                ? 'bg-emerald-500'
+                                : k.status === 'warning'
+                                ? 'bg-amber-500'
+                                : 'bg-rose-500'
+                            }`}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* 2. DETAILED KPI SCORECARD & GRID TAB                           */}
+      {/* ============================================================== */}
+      {activeTab === 'grid' && (
+        <div className="space-y-6">
+          <DataTable
+            title={lang === 'ar' ? 'سجل قياس مؤشرات الأداء الاستراتيجية' : 'Strategic KPI Performance Register'}
+            subtitle={lang === 'ar' ? 'القيم الفعلية والمستهدفات السنوية ونسب الإنجاز' : 'Actuals, baselines, targets and variance calculations'}
+            data={kpis}
+            columns={kpiColumns}
+          />
+        </div>
+      )}
+
+      {/* Lifecycle Flow Progression */}
       <StrategicLifecycleProgression
         currentStage={17}
-        stageTitle="Enterprise Performance Calculation Engine & KPI Analytics"
-        stageTitleAr="محرك احتساب الأداء المؤسسي وتحليلات المؤشرات"
-        prevStage={{
-          stage: 16,
-          title: "Actuals & Evidence Validation",
-          titleAr: "القيم الفعلية وتدقيق الأدلة",
-          path: "/performance/actuals",
-        }}
-        nextStage={{
-          stage: 18,
-          title: "Corrective Action Plans",
-          titleAr: "الخطط والإجراءات التصحيحية",
-          path: "/actions",
-        }}
+        stageTitle="Performance Monitoring"
+        stageTitleAr="متابعة وتحليل الأداء"
+        prevStage={{ stage: 16, title: 'Actuals & Evidence Validation', titleAr: 'اعتماد القيم الفعلية والشواهد', path: '/performance/actuals' }}
+        nextStage={{ stage: 18, title: 'Corrective Actions', titleAr: 'الخطط التصحيحية', path: '/actions' }}
         relatedLinks={[
-          { title: "Executive Dashboard", titleAr: "لوحة القيادة التنفيذية", path: "/" },
-          { title: "Strategy Review", titleAr: "المراجعة الاستراتيجية", path: "/strategy/review" },
-          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
+          { title: "Actuals Collection", titleAr: "جمع القيم الفعلية", path: "/performance/collection" },
+          { title: "Evidence Validation", titleAr: "اعتماد الشواهد", path: "/performance/actuals" },
+          { title: "Corrective Actions", titleAr: "الخطط التصحيحية", path: "/actions" },
         ]}
       />
 
-      {/* Import KPI Modal */}
       <ImportKpiModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
       />
 
-      {/* Executive Brief Dossier Modal */}
       <ExecutiveBriefModal
         isOpen={isExecutiveBriefOpen}
         onClose={() => setIsExecutiveBriefOpen(false)}

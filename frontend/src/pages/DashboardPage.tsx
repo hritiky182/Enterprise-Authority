@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { StatCard } from '../components/common/StatCard';
 import { Heatmap5x5 } from '../components/common/Heatmap5x5';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
-import { RiskItem, StrategicInitiative } from '../types';
+import { RiskItem, StrategicInitiative, KPI, ActionItem } from '../types';
 import { PERFORMANCE_MONTHLY_TRENDS } from '../data/mockData';
 import { ExecutiveBriefModal } from '../components/modals/ExecutiveBriefModal';
 import {
@@ -15,6 +15,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
   PieChart,
   Pie,
   Cell,
@@ -32,9 +36,20 @@ import {
   Sparkles,
   Printer,
   Download,
+  Building,
+  Users,
+  Compass,
+  Crown,
+  FileCheck2,
+  Clock,
+  Gauge,
+  Briefcase,
+  AlertTriangle,
 } from 'lucide-react';
 import { StrategicLifecycleProgression } from '../components/common/StrategicLifecycleProgression';
 import { useNavigate } from 'react-router-dom';
+
+type DashboardLevel = 'executive' | 'strategy' | 'grc' | 'bcm' | 'department';
 
 export const DashboardPage: React.FC = () => {
   const {
@@ -45,7 +60,7 @@ export const DashboardPage: React.FC = () => {
     actions,
     bcmProcesses,
     openModal,
-    setSelectedFilter,
+    currentUser,
     permissions,
     lang,
     t,
@@ -54,85 +69,83 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isExecutiveBriefOpen, setIsExecutiveBriefOpen] = useState(false);
 
-  const openRisks = risks.filter((r) => r.status !== 'Closed');
-  const criticalRisks = risks.filter((r) => r.inherentScore >= 16);
+  // Auto-detect dashboard level based on user role, or let them switch
+  const initialLevel: DashboardLevel = useMemo(() => {
+    const role = currentUser.role;
+    if (role === 'Strategy Specialist' || role === 'Strategy Manager') return 'strategy';
+    if (role === 'GRC & Enterprise Risk' || role === 'Risk Manager' || role === 'Compliance Manager') return 'grc';
+    if (role === 'BCM Manager') return 'bcm';
+    if (role === 'Sector Director General' || role === 'Department Manager') return 'department';
+    return 'executive';
+  }, [currentUser.role]);
+
+  const [activeLevel, setActiveLevel] = useState<DashboardLevel>(initialLevel);
+
+  // KPIs & Objectives calculations
   const onTrackObjectives = objectives.filter((o) => o.status === 'on-track' || o.status === 'achieved');
+  const criticalRisks = risks.filter((r) => r.inherentScore >= 16);
   const criticalActions = actions.filter((a) => a.priority === 'Critical');
 
-  const riskTableColumns: Column<RiskItem>[] = [
+  // BSC 4 Perspectives calculation for Corporate Scorecard (Corporater Style Image 2)
+  const bscPerspectives = [
     {
-      header: 'Risk Code',
-      accessorKey: 'code',
-      sortable: true,
-      width: '120px',
-      cell: (r) => <span className="font-mono font-bold text-slate-900">{r.code}</span>,
+      id: 'financial',
+      name: 'Financial & Investment',
+      nameAr: 'المنظور المالي والاستثماري',
+      score: 84,
+      trend: 'up',
+      color: 'blue',
+      objectives: [
+        { name: 'Maximize Regional Tourism GDP Contribution', nameAr: 'تعظيم مساهمة الناتج السياحي في الاقتصاد الإقليمي', status: 'on-track' },
+        { name: 'Attract SAR 12B+ in Private Sector Capital', nameAr: 'جذب أكثر من 12 مليار ريال استثمارات للقطاع الخاص', status: 'on-track' },
+        { name: 'Accelerate Municipal Revenue Diversification', nameAr: 'تنويع الإيرادات الذاتية للبلديات والمرافق', status: 'critical' },
+      ],
     },
     {
-      header: 'Title & Narrative',
-      accessorKey: 'title',
-      sortable: true,
-      cell: (r) => (
-        <div>
-          <div className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
-            {r.title}
-          </div>
-          <div className="text-[11px] text-slate-500 font-mono">{t(r.department)}</div>
-        </div>
-      ),
+      id: 'customer',
+      name: 'Stakeholders & Residents',
+      nameAr: 'منظور أصحاب المصلحة والمستفيدين',
+      score: 89,
+      trend: 'up',
+      color: 'teal',
+      objectives: [
+        { name: 'Enhance Regional Quality of Life Index', nameAr: 'رفع مؤشر جودة الحياة ومستوى رضا سكان الواحة', status: 'on-track' },
+        { name: 'Deliver World-Class Heritage Visitor Experience', nameAr: 'تقديم تجربة زيارة تراثية وسياحية بمعايير عالمية', status: 'on-track' },
+        { name: 'Foster Community Artisan Co-Ops', nameAr: 'تمكين الحرفيين والجمعيات التعاونية المحلية', status: 'warning' },
+      ],
     },
     {
-      header: 'Category',
-      accessorKey: 'category',
-      sortable: true,
-      cell: (r) => (
-        <span className="text-xs px-2 py-0.5 rounded font-mono bg-slate-100 text-slate-700">
-          {r.category}
-        </span>
-      ),
+      id: 'internal',
+      name: 'Internal Spatial & Processes',
+      nameAr: 'منظور العمليات والتخطيط المكاني',
+      score: 76,
+      trend: 'down',
+      color: 'indigo',
+      objectives: [
+        { name: 'Consolidate Unified Spatial Planning Permitting', nameAr: 'توحيد ضوابط التخطيط المكاني وتصاريح البناء', status: 'warning' },
+        { name: 'Rehabilitate Historic Canal Networks', nameAr: 'إعادة تأهيل وصيانة قنوات الري التراثية', status: 'critical' },
+        { name: 'Deploy Regional GIS Digital Twin', nameAr: 'تشغيل التوأم الرقمي الإقليمي ونظم المعلومات الجغرافية', status: 'on-track' },
+      ],
     },
     {
-      header: 'Inherent',
-      accessorKey: 'inherentScore',
-      sortable: true,
-      width: '90px',
-      cell: (r) => (
-        <StatusBadge
-          status={`Score ${r.inherentScore}`}
-          variant="risk"
-        />
-      ),
+      id: 'capacity',
+      name: 'Organizational Capacity & Innovation',
+      nameAr: 'منظور القدرات المؤسسية والابتكار',
+      score: 92,
+      trend: 'up',
+      color: 'purple',
+      objectives: [
+        { name: 'Recruit & Retain High-Caliber Saudi Talent', nameAr: 'استقطاب وتمكين الكفاءات الوطنية المتخصصة', status: 'on-track' },
+        { name: 'Attain ISO 9001 & 22301 Certifications', nameAr: 'الحصول على شهادات الجودة واستمرارية الأعمال الدولية', status: 'on-track' },
+        { name: 'Institutionalize Continuous Strategy Governance', nameAr: 'مأسسة حوكمة ودورات مراجعة وتحديث الاستراتيجية', status: 'on-track' },
+      ],
     },
-    {
-      header: 'Residual',
-      accessorKey: 'residualScore',
-      sortable: true,
-      width: '90px',
-      cell: (r) => (
-        <span className="font-mono font-bold text-slate-900 text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-          {r.residualScore}
-        </span>
-      ),
-    },
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      sortable: true,
-      cell: (r) => <StatusBadge status={r.status} />,
-    },
-  ];
-
-  const objectivePieData = [
-    { name: t('Achieved'), value: objectives.filter((o) => o.status === 'achieved').length, color: '#1d4ed8' },
-    { name: t('On Track'), value: objectives.filter((o) => o.status === 'on-track').length, color: '#3b82f6' },
-    { name: t('At Risk'), value: objectives.filter((o) => o.status === 'at-risk').length, color: '#f59e0b' },
-    { name: t('Behind'), value: objectives.filter((o) => o.status === 'behind').length, color: '#f43f5e' },
   ];
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in">
-      {/* Banner / Authority Welcome */}
+      {/* Top Welcome Banner with Level Identifier */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 rounded-2xl p-6 text-white shadow-xl border border-slate-800 relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/20 via-transparent to-transparent pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1">
@@ -142,309 +155,516 @@ export const DashboardPage: React.FC = () => {
               <span className="text-slate-500">/</span>
               <span>{t('ENTERPRISE EXECUTIVE COMMAND CENTER')}</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-sans">
-              {t('Strategic & Risk Governance Dashboard')}
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              {activeLevel === 'strategy'
+                ? (lang === 'ar' ? 'لوحة تحكم إدارة الاستراتيجية والأداء' : 'Strategy Specialist & Performance Command')
+                : activeLevel === 'grc'
+                ? (lang === 'ar' ? 'لوحة تحكم الحوكمة والمخاطر والالتزام (GRC)' : 'GRC & Enterprise Risk Governance Dashboard')
+                : activeLevel === 'bcm'
+                ? (lang === 'ar' ? 'لوحة تحكم استمرارية الأعمال والجاهزية (BCM)' : 'Business Continuity & Disaster Resilience Dashboard')
+                : activeLevel === 'department'
+                ? (lang === 'ar' ? 'لوحة تحكم الإدارات التشغيلية' : 'Departmental Operations & Scorecard Dashboard')
+                : (lang === 'ar' ? 'مركز القيادة الاستراتيجية والتنفيذية للهيئة' : 'Executive Leadership & Strategy Governance Dashboard')}
             </h1>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {t('Integrated real-time oversight of Institutional Performance (88.4%), NCA ECC Compliance (96.5%), 5×5 Enterprise Risk Exposure & BCM Operational Readiness.')}
+              {activeLevel === 'strategy'
+                ? (lang === 'ar'
+                  ? 'رؤية مركزة على صياغة ومتابعة الأهداف والمؤشرات والمبادرات ومواءمة بطاقة الأداء دون تداخل مع بيانات المخاطر أو استمرارية الأعمال.'
+                  : 'Isolated, uncluttered oversight of Strategic Objectives, KPIs, Initiatives, and Balanced Scorecards for strategy practitioners.')
+                : activeLevel === 'grc'
+                ? (lang === 'ar'
+                  ? 'رصد وإدارة سجل المخاطر المؤسسية ومصفوفة 5×5 ونسب معالجة المخاطر ومستوى الالتزام بضوابط الأمن والأنظمة الوطنية.'
+                  : 'Enterprise Risk Management (ERM), 5x5 heatmap, mitigation treatment, and regulatory compliance audit oversight.')
+                : activeLevel === 'bcm'
+                ? (lang === 'ar'
+                  ? 'تحليل الأثر على الأعمال (BIA) ومؤشرات RTO/RPO واختبارات الجاهزية التشغيلية للطوارئ واستمرارية الخدمات.'
+                  : 'Business Impact Analysis (BIA), critical process recovery, RTO/RPO metrics, and emergency response readiness.')
+                : (lang === 'ar'
+                  ? 'لوحة القيادة الموحدة: استعراض شامل للأداء المؤسسي (88.4%)، والالتزام التنظيمي (96.5%)، ومصفوفة المخاطر، والخطط التصحيحية.'
+                  : 'Unified executive oversight of Institutional Performance (88.4%), Compliance (96.5%), Enterprise Risk & BCM readiness.')}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setIsExecutiveBriefOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
             >
-              <Printer className="w-4 h-4 text-emerald-300" />
-              <span>{lang === 'ar' ? 'تقرير تنفيذي (PDF/طباعة)' : 'Executive Brief (PDF)'}</span>
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>{lang === 'ar' ? 'الموجز التنفيذي الذكي' : 'Executive AI Brief'}</span>
             </button>
+            <button
+              onClick={() => navigate('/performance')}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md flex items-center space-x-1.5 transition-colors cursor-pointer"
+            >
+              <span>{lang === 'ar' ? 'تحليل الأداء التفصيلي' : 'Deep Performance View'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+            </button>
+          </div>
+        </div>
 
-            {permissions.canCreateRisk && (
-              <button
-                onClick={() => openModal('create_risk')}
-                className="px-3.5 py-2 rounded-xl bg-rose-600 text-white font-semibold text-xs hover:bg-rose-700 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <ShieldAlert className="w-4 h-4" />
-                {t('Log Risk')}
-              </button>
-            )}
-            {permissions.canCreateAction && (
-              <button
-                onClick={() => openModal('create_action')}
-                className="px-3.5 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-500 transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <ListTodo className="w-4 h-4" />
-                {t('New Action Plan')}
-              </button>
-            )}
+        {/* Persona / Level Switcher Navigation Bar */}
+        <div className="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-1.5 text-slate-400 font-mono">
+            <span>{lang === 'ar' ? 'تخصيص العرض حسب المستوى:' : 'Role-Tailored View Level:'}</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950/70 p-1 rounded-xl border border-slate-800">
+            {[
+              { id: 'executive', label: 'CEO / Board', labelAr: 'الرئيس التنفيذي / القيادة', icon: Crown },
+              { id: 'strategy', label: 'Strategy Specialist', labelAr: 'أخصائي الاستراتيجية', icon: Target },
+              { id: 'grc', label: 'GRC Specialist', labelAr: 'أخصائي الحوكمة والمخاطر', icon: ShieldAlert },
+              { id: 'bcm', label: 'BCM Specialist', labelAr: 'أخصائي استمرارية الأعمال', icon: Activity },
+              { id: 'department', label: 'Department Lead', labelAr: 'مدراء الإدارات', icon: Building },
+            ].map((lvl) => {
+              const Icon = lvl.icon;
+              const isSelected = activeLevel === lvl.id;
+              return (
+                <button
+                  key={lvl.id}
+                  onClick={() => setActiveLevel(lvl.id as DashboardLevel)}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{lang === 'ar' ? lvl.labelAr : lvl.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Top 8 Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Overall Institutional Performance"
-          value="88.4%"
-          subtext="Target: 85.0% (+3.4% Surplus)"
-          trend={{ value: '+4.2%', direction: 'up', label: 'vs last Qtr' }}
-          icon={<TrendingUp className="w-5 h-5 text-blue-600" />}
-          badgeText="EXCEEDING TARGET"
-          badgeColor="blue"
-          accentColor="bg-blue-600"
-          onClick={() => navigate('/performance')}
-        />
+      {/* ============================================================== */}
+      {/* 1. STRATEGY SPECIALIST & MANAGER LEVEL DASHBOARD (UNCROWDED)   */}
+      {/* ============================================================== */}
+      {activeLevel === 'strategy' && (
+        <div className="space-y-6">
+          {/* Quick Statistics Strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-blue-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Overall Objectives'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">
+                {Math.round((onTrackObjectives.length / Math.max(1, objectives.length)) * 100)}%
+              </div>
+              <span className="text-xs text-slate-500">{objectives.length} Objectives Defined</span>
+            </div>
 
-        <StatCard
-          title="Strategic Objectives On-Track"
-          value={`${onTrackObjectives.length} / ${objectives.length}`}
-          subtext="12 High Impact Strategic Goals"
-          trend={{ value: '83.3%', direction: 'up', label: 'Completion index' }}
-          icon={<Target className="w-5 h-5 text-blue-600" />}
-          badgeText="ON TRACK"
-          badgeColor="blue"
-          accentColor="bg-blue-600"
-          onClick={() => navigate('/strategy')}
-        />
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-amber-500 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'مؤشرات الأداء (KPIs)' : 'Overall KPIs'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">74%</div>
+              <span className="text-xs text-slate-500">{kpis.length} Indicators Monitored</span>
+            </div>
 
-        <StatCard
-          title="Active Enterprise Risks"
-          value={openRisks.length}
-          subtext={`${criticalRisks.length} Critical (Score ≥16)`}
-          trend={{ value: '-2 Risks', direction: 'down', label: 'post-mitigation' }}
-          icon={<ShieldAlert className="w-5 h-5 text-rose-600" />}
-          badgeText={criticalRisks.length > 0 ? 'CRITICAL EXPOSURE' : 'MODERATE'}
-          badgeColor={criticalRisks.length > 0 ? 'rose' : 'amber'}
-          accentColor="bg-rose-500"
-          onClick={() => navigate('/enterprise-risk')}
-        />
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-emerald-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'المبادرات النشطة' : 'Overall Initiatives'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">52%</div>
+              <span className="text-xs text-slate-500">{initiatives.length} Strategic Programs</span>
+            </div>
 
-        <StatCard
-          title="NCA ECC Cybersecurity Compliance"
-          value="96.5%"
-          subtext="108 of 112 Mandatory Controls"
-          trend={{ value: '+2.1%', direction: 'up', label: 'Audit verified' }}
-          icon={<CheckCircle2 className="w-5 h-5 text-blue-600" />}
-          badgeText="HIGH COMPLIANCE"
-          badgeColor="blue"
-          accentColor="bg-blue-600"
-          onClick={() => navigate('/compliance')}
-        />
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-purple-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'المواءمة المؤسسية' : 'Strategy Alignment'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">88.4%</div>
+              <span className="text-xs text-slate-500">Cascade Realization Rate</span>
+            </div>
+          </div>
 
-        <StatCard
-          title="Active Strategic Initiatives"
-          value={initiatives.length}
-          subtext="Total Allocated: SAR 385.0M"
-          trend={{ value: '72% Spent', direction: 'neutral', label: 'SAR 277.2M' }}
-          icon={<Layers className="w-5 h-5 text-blue-600" />}
-          badgeText="IN EXECUTION"
-          badgeColor="blue"
-          onClick={() => navigate('/strategy')}
-        />
-
-        <StatCard
-          title="Pending Action Items"
-          value={actions.length}
-          subtext={`${criticalActions.length} Critical Priority`}
-          trend={{ value: '14 Completed', direction: 'up', label: 'this month' }}
-          icon={<ListTodo className="w-5 h-5 text-amber-600" />}
-          badgeText="ACTIVE EXECUTION"
-          badgeColor="amber"
-          onClick={() => navigate('/actions')}
-        />
-
-        <StatCard
-          title="BCM Operational Readiness"
-          value="91.6%"
-          subtext="12 Mission Critical Processes"
-          trend={{ value: '100% Tested', direction: 'up', label: 'Q3 Tabletop' }}
-          icon={<Activity className="w-5 h-5 text-blue-600" />}
-          badgeText="ISO 22301 READY"
-          badgeColor="blue"
-          onClick={() => navigate('/bcm')}
-        />
-
-        <StatCard
-          title="Regulatory Audit Findings"
-          value="4 Open"
-          subtext="0 High Severity Findings"
-          trend={{ value: '-3 Closed', direction: 'up', label: 'remediated' }}
-          icon={<Shield className="w-5 h-5 text-blue-600" />}
-          badgeText="AUDIT CLEAN"
-          badgeColor="blue"
-          onClick={() => navigate('/compliance')}
-        />
-      </div>
-
-      {/* Main Center Grid: Heatmap + Strategic Trend Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Heatmap Section */}
-        <div className="lg:col-span-7 space-y-4">
-          <Heatmap5x5
-            risks={risks}
-            onSelectCell={(lh, imp) => {
-              setSelectedFilter({});
-              navigate('/enterprise-risk');
-            }}
-          />
-        </div>
-
-        {/* Strategic Performance Trend Chart */}
-        <div className="lg:col-span-5 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-          <div>
-            <div className="flex items-center justify-between">
+          {/* Corporater-style Corporate Scorecard: 4 Perspectives Side-by-Side (Image 2) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="panel-title text-slate-900">{t('Institutional OKR Trajectory')}</h3>
-                <p className="text-xs text-slate-500">{t('2026 Monthly Strategy Execution vs Target')}</p>
+                <h2 className="text-lg font-bold text-slate-900">
+                  {lang === 'ar' ? 'بطاقة الأداء المؤسسي المتوازن (Corporate Scorecard)' : 'Corporate Balanced Scorecard'}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {lang === 'ar'
+                    ? 'الأداء المحقق ومؤشرات الأهداف عبر المحاور الأربعة لبطاقة الأداء المتوازن (BSC).'
+                    : 'Performance achievement and objectives status across the 4 Balanced Scorecard perspectives.'}
+                </p>
               </div>
               <button
-                onClick={() => navigate('/performance')}
-                className="text-xs font-semibold text-blue-700 hover:underline flex items-center gap-1 cursor-pointer"
+                onClick={() => navigate('/strategy-map')}
+                className="px-3.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1.5"
               >
-                <span>{t('Analytics')}</span>
-                <ArrowRight className={`w-3.5 h-3.5 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+                <Compass className="w-3.5 h-3.5" />
+                <span>{lang === 'ar' ? 'خريطة الاستراتيجية' : 'Strategy Map View'}</span>
               </button>
             </div>
 
-            <div className="h-56 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {bscPerspectives.map((p) => (
+                <div key={p.id} className="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:shadow-xs transition-shadow">
+                  <div>
+                    {/* Perspective Header */}
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+                          {lang === 'ar' ? p.nameAr : p.name}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">BSC Perspective</div>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-xs shadow-2xs font-mono">
+                        {p.score}%
+                      </div>
+                    </div>
+
+                    {/* Objectives List with Status Dots */}
+                    <div className="space-y-2.5 mt-3">
+                      {p.objectives.map((obj, idx) => (
+                        <div key={idx} className="flex items-start gap-2.5 text-xs">
+                          <span
+                            className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+                              obj.status === 'on-track'
+                                ? 'bg-emerald-500'
+                                : obj.status === 'warning'
+                                ? 'bg-amber-500'
+                                : 'bg-rose-500'
+                            }`}
+                          />
+                          <span className="text-slate-800 font-medium leading-snug">
+                            {lang === 'ar' ? obj.nameAr : obj.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    <span>Target: 100%</span>
+                    <span className="font-bold text-blue-700">Variance: -{100 - p.score}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Strategic Initiatives & KPI Variance Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Strategic Initiatives Progression */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                  <span>{lang === 'ar' ? 'المبادرات الاستراتيجية ذات الأولوية' : 'Priority Strategic Initiatives'}</span>
+                </div>
+                <button
+                  onClick={() => navigate('/initiatives')}
+                  className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'عرض الكل' : 'View all'}
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {initiatives.slice(0, 4).map((init) => (
+                  <div key={init.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-slate-900">{lang === 'ar' && init.titleAr ? init.titleAr : init.title}</div>
+                      <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        {init.progress}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div className="bg-emerald-600 h-full" style={{ width: `${init.progress}%` }} />
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                      <span>{t(init.department)}</span>
+                      <span>SAR {((init.budgetSAR || 0) / 1000000).toFixed(1)}M Budget</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Strategic KPI Variance Table */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
+                  <Target className="w-4 h-4 text-blue-600" />
+                  <span>{lang === 'ar' ? 'انحراف مؤشرات الأداء الرئيسية' : 'Key Strategic KPI Variances'}</span>
+                </div>
+                <button
+                  onClick={() => navigate('/kpis')}
+                  className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer"
+                >
+                  {lang === 'ar' ? 'عرض الكل' : 'View all'}
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase">
+                    <tr>
+                      <th className="py-2 px-3">{lang === 'ar' ? 'المؤشر' : 'Indicator'}</th>
+                      <th className="py-2 px-3 text-center">{lang === 'ar' ? 'الفعلي' : 'Actual'}</th>
+                      <th className="py-2 px-3 text-center">{lang === 'ar' ? 'المستهدف' : 'Target'}</th>
+                      <th className="py-2 px-3 text-center">{lang === 'ar' ? 'الحالة' : 'Status'}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    {kpis.slice(0, 5).map((k) => (
+                      <tr key={k.id} className="hover:bg-slate-50/60">
+                        <td className="py-2.5 px-3">
+                          <div className="font-semibold text-slate-900">{lang === 'ar' && k.nameAr ? k.nameAr : k.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{k.code}</div>
+                        </td>
+                        <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-900">{k.actual} {k.unit}</td>
+                        <td className="py-2.5 px-3 text-center font-mono text-slate-500">{k.target} {k.unit}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <StatusBadge status={k.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* 2. GRC SPECIALIST LEVEL DASHBOARD                              */}
+      {/* ============================================================== */}
+      {activeLevel === 'grc' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard
+              title={lang === 'ar' ? 'إجمالي المخاطر المسجلة' : 'Total Identified Risks'}
+              value={risks.length}
+              icon={<ShieldAlert className="w-5 h-5 text-amber-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'المخاطر الحرجة' : 'Critical Exposure Risks'}
+              value={criticalRisks.length}
+              icon={<AlertTriangle className="w-5 h-5 text-rose-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'نسبة معالجة المخاطر' : 'Risks Treated Rate'}
+              value="34%"
+              icon={<CheckCircle2 className="w-5 h-5 text-blue-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'الالتزام بضوابط NCA' : 'NCA ECC Compliance'}
+              value="96.5%"
+              icon={<Shield className="w-5 h-5 text-emerald-600" />}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+              <Heatmap5x5 risks={risks} />
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-bold text-sm text-slate-900">{lang === 'ar' ? 'سجل المخاطر المؤسسية الحرجة' : 'Critical Enterprise Risks'}</h3>
+                <button onClick={() => navigate('/risk')} className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer">
+                  {lang === 'ar' ? 'سجل المخاطر الكامل' : 'Open Risk Register'}
+                </button>
+              </div>
+              <div className="space-y-2.5">
+                {risks.slice(0, 5).map((r) => (
+                  <div key={r.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 flex items-center justify-between gap-3 text-xs">
+                    <div>
+                      <div className="font-bold text-slate-900">{r.title}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{r.code} • {t(r.department)}</div>
+                    </div>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">
+                      Score {r.inherentScore}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* 3. BCM SPECIALIST LEVEL DASHBOARD                              */}
+      {/* ============================================================== */}
+      {activeLevel === 'bcm' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard
+              title={lang === 'ar' ? 'العمليات الحيوية (BIA)' : 'Critical BIA Processes'}
+              value={bcmProcesses.length}
+              icon={<Activity className="w-5 h-5 text-blue-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'متوسط زمن التعافي (RTO)' : 'Average Recovery RTO'}
+              value="4.2 hrs"
+              icon={<Clock className="w-5 h-5 text-indigo-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'قنوات الطوارئ البديلة' : 'Failover Systems Active'}
+              value="100%"
+              icon={<CheckCircle2 className="w-5 h-5 text-emerald-600" />}
+            />
+            <StatCard
+              title={lang === 'ar' ? 'تمارين الجاهزية المنفذة' : 'ISO 22301 Drills'}
+              value="3 / 4"
+              icon={<Shield className="w-5 h-5 text-purple-600" />}
+            />
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-sm text-slate-900">{lang === 'ar' ? 'سجل العمليات الحيوية وتحليل الأثر على الأعمال (BIA)' : 'Critical BIA Processes & Recovery Targets'}</h3>
+              <button onClick={() => navigate('/bcm')} className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer">
+                {lang === 'ar' ? 'مركز استمرارية الأعمال الكامل' : 'Open BCM Center'}
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase">
+                  <tr>
+                    <th className="py-2.5 px-3">Process Name</th>
+                    <th className="py-2.5 px-3">RTO Target</th>
+                    <th className="py-2.5 px-3">RPO Target</th>
+                    <th className="py-2.5 px-3">Criticality</th>
+                    <th className="py-2.5 px-3">Readiness</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700">
+                  {bcmProcesses.map((p) => (
+                    <tr key={p.id} className="hover:bg-slate-50/60">
+                      <td className="py-3 px-3 font-semibold text-slate-900">{p.processName}</td>
+                      <td className="py-3 px-3 font-mono text-slate-600">{p.rtoHours} hrs</td>
+                      <td className="py-3 px-3 font-mono text-slate-600">{p.rpoHours} hrs</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                          {p.criticality}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          Verified ISO
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* 4. EXECUTIVE / CEO LEVEL DASHBOARD (IMAGE 3 STRUCTURE)         */}
+      {/* ============================================================== */}
+      {(activeLevel === 'executive' || activeLevel === 'department') && (
+        <div className="space-y-6">
+          {/* Quick Statistics Strip (Image 3 Direct Alignment) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-rose-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Overall Objectives'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">74%</div>
+              <span className="text-xs text-slate-500">Corporate Scorecard</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-amber-500 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'مؤشرات الأداء المؤسسية' : 'Overall KPIs'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">74%</div>
+              <span className="text-xs text-slate-500">Authority Health Score</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-rose-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'المبادرات الاستراتيجية' : 'Overall Initiatives'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">52%</div>
+              <span className="text-xs text-slate-500">Pace of Execution</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border-l-4 border-l-rose-600 border border-slate-200/80 shadow-xs">
+              <span className="text-[11px] font-mono text-slate-500 uppercase font-semibold">
+                {lang === 'ar' ? 'المخاطر المعالجة' : 'Risks Treated'}
+              </span>
+              <div className="text-3xl font-bold font-mono text-slate-900 mt-1">34%</div>
+              <span className="text-xs text-slate-500">ERM Mitigation Rate</span>
+            </div>
+          </div>
+
+          {/* Performance Monthly Trends Chart */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="font-bold text-sm text-slate-900">
+                  {lang === 'ar' ? 'تحقيق مؤشرات الأداء عبر الأشهر (KPIs Achievement Over Period)' : 'KPIs Achievement Over The Period'}
+                </h3>
+                <span className="text-xs text-slate-500">June – December 2026 Trend Analysis</span>
+              </div>
+              <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                Current: 88.4%
+              </span>
+            </div>
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={PERFORMANCE_MONTHLY_TRENDS}>
                   <defs>
-                    <linearGradient id="colorStrategy" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                    <linearGradient id="execPerformance" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#1d4ed8" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#1d4ed8" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={11} domain={[70, 100]} tickLine={false} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: '#0f172a',
-                      color: '#fff',
                       borderRadius: '8px',
+                      color: '#fff',
                       fontSize: '12px',
                     }}
                   />
                   <Area
                     type="monotone"
-                    dataKey="strategy"
-                    name={t('Strategy Progress %')}
-                    stroke="#2563eb"
-                    fillOpacity={1}
-                    fill="url(#colorStrategy)"
+                    dataKey="score"
+                    stroke="#1d4ed8"
                     strokeWidth={2.5}
+                    fillOpacity={1}
+                    fill="url(#execPerformance)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
-            <span>{t('Target Index: 85.0%')}</span>
-            <span className="text-blue-700 font-bold">{t('Current Actual: 88.4%')}</span>
-          </div>
         </div>
-      </div>
+      )}
 
-      {/* Bottom Grid: High Inherent Risks Table & Initiatives Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8">
-          <DataTable
-            data={openRisks.slice(0, 5)}
-            columns={riskTableColumns}
-            title="Priority Enterprise Risks (Requires Leadership Attention)"
-            subtitle="Top inherent score risks monitored by ERM Risk Management Committee"
-            searchPlaceholder="Search priority risks..."
-            onRowClick={(r) => openModal('risk', r)}
-            primaryAction={
-              permissions.canCreateRisk
-                ? {
-                    label: 'Register Risk',
-                    onClick: () => openModal('create_risk'),
-                    icon: <ShieldAlert className="w-3.5 h-3.5" />,
-                  }
-                : undefined
-            }
-          />
-        </div>
-
-        {/* Objective Status Distribution */}
-        <div className="lg:col-span-4 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-          <div>
-            <div className="flex items-center justify-between">
-              <h3 className="panel-title text-slate-900">{t('Strategic Objectives Portfolio')}</h3>
-              <button
-                onClick={() => navigate('/strategy')}
-                className="text-xs font-semibold text-blue-700 hover:underline cursor-pointer"
-              >
-                {t('View Tree')}
-              </button>
-            </div>
-
-            <div className="h-44 mt-2 relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={objectivePieData}
-                    innerRadius={50}
-                    outerRadius={70}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {objectivePieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute text-center pointer-events-none">
-                <div className="text-xl font-bold font-mono text-slate-900">{objectives.length}</div>
-                <div className="text-[10px] text-slate-400 font-mono uppercase">{t('Objectives')}</div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-2">
-              {objectivePieData.map((d, i) => (
-                <div key={i} className="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-100">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-                    <span className="text-slate-600 text-[11px]">{d.name}</span>
-                  </div>
-                  <span className="font-bold text-slate-900">{d.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Enterprise Strategic Lifecycle Progression */}
+      {/* Lifecycle Flow Progression */}
       <StrategicLifecycleProgression
         currentStage={19}
-        stageTitle="Executive Strategic Command Dashboard & Leadership Reporting"
-        stageTitleAr="لوحة القيادة الاستراتيجية التنفيذية والتقارير القيادية"
-        prevStage={{
-          stage: 18,
-          title: "Corrective Action Plans",
-          titleAr: "الخطط والإجراءات التصحيحية",
-          path: "/actions",
-        }}
-        nextStage={{
-          stage: 20,
-          title: "Strategy Review & Revision",
-          titleAr: "المراجعة الاستراتيجية والتعديل",
-          path: "/strategy/review",
-        }}
+        stageTitle="Executive Dashboard"
+        stageTitleAr="لوحة القيادة التنفيذية"
+        prevStage={{ stage: 18, title: 'Corrective Actions', titleAr: 'الخطط التصحيحية', path: '/actions' }}
+        nextStage={{ stage: 20, title: 'Strategic Review & Revision', titleAr: 'المراجعة وتحديث الاستراتيجية', path: '/strategy/review' }}
         relatedLinks={[
-          { title: "Strategy Matrix", titleAr: "مصفوفة الاستراتيجية", path: "/strategy" },
-          { title: "Performance Engine", titleAr: "محرك الأداء", path: "/performance" },
-          { title: "Personal Workspace", titleAr: "مساحة العمل", path: "/workspace" },
+          { title: "Performance Scorecard", titleAr: "بطاقة الأداء", path: "/performance" },
+          { title: "Strategy Map", titleAr: "خريطة الاستراتيجية", path: "/strategy-map" },
+          { title: "Strategic Review", titleAr: "المراجعة الاستراتيجية", path: "/strategy/review" },
         ]}
       />
 
-      {/* Executive Strategic Dossier & PDF Modal */}
       <ExecutiveBriefModal
         isOpen={isExecutiveBriefOpen}
         onClose={() => setIsExecutiveBriefOpen(false)}

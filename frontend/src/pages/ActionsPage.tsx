@@ -4,7 +4,7 @@ import { StatCard } from '../components/common/StatCard';
 import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { ActionItem } from '../types';
-import { ListTodo, Plus, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { ListTodo, Plus, CheckCircle2, AlertTriangle, Clock, Target, Sparkles } from 'lucide-react';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 export const ActionsPage: React.FC = () => {
@@ -30,10 +30,44 @@ export const ActionsPage: React.FC = () => {
       sortable: true,
       cell: (a) => (
         <div>
-          <div className="font-semibold text-slate-900">{a.title}</div>
+          <div className="font-semibold text-slate-900">{lang === 'ar' && a.titleAr ? a.titleAr : a.title}</div>
           <div className="text-[10px] text-slate-400 font-mono">
-            {lang === 'ar' ? 'المصدر:' : 'Source:'} <span className="font-bold text-slate-700">{a.source}</span> • {a.sourceRefTitle}
+            {lang === 'ar' ? 'المصدر:' : 'Source:'} <span className="font-bold text-slate-700">{a.source}</span> • {lang === 'ar' && a.sourceRefTitleAr ? a.sourceRefTitleAr : a.sourceRefTitle}
           </div>
+        </div>
+      ),
+    },
+    {
+      header: lang === 'ar' ? 'الهدف الاستراتيجي المرتبط' : 'Linked Objective',
+      accessorKey: 'linkedObjectiveTitle',
+      sortable: true,
+      cell: (a) => (
+        <div className="max-w-[210px]">
+          {a.linkedObjectiveTitle ? (
+            <div className="flex items-center gap-1.5 text-xs text-blue-700 font-medium bg-blue-50 px-2 py-1 rounded-md border border-blue-200/60" title={a.linkedObjectiveTitle}>
+              <Target className="w-3.5 h-3.5 shrink-0 text-blue-600" />
+              <span className="truncate">{lang === 'ar' && a.linkedObjectiveTitleAr ? a.linkedObjectiveTitleAr : a.linkedObjectiveTitle}</span>
+            </div>
+          ) : (
+            <span className="text-[11px] text-slate-400 italic font-mono">{lang === 'ar' ? 'مواءمة تشغيلية مباشرة' : 'Direct Alignment'}</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: lang === 'ar' ? 'المبادرة المرتبطة' : 'Linked Initiative',
+      accessorKey: 'linkedInitiativeTitle',
+      sortable: true,
+      cell: (a) => (
+        <div className="max-w-[210px]">
+          {a.linkedInitiativeTitle ? (
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200/60" title={a.linkedInitiativeTitle}>
+              <Sparkles className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+              <span className="truncate">{lang === 'ar' && a.linkedInitiativeTitleAr ? a.linkedInitiativeTitleAr : a.linkedInitiativeTitle}</span>
+            </div>
+          ) : (
+            <span className="text-[11px] text-slate-400 italic font-mono">{lang === 'ar' ? 'مبادرة مخصصة' : 'Dedicated'}</span>
+          )}
         </div>
       ),
     },

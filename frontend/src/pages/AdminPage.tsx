@@ -5,6 +5,8 @@ import { DataTable, Column } from '../components/common/DataTable';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { User, Role } from '../types';
 import { OperationalStructureView } from '../components/organization/OperationalStructureView';
+import { RolesPermissionsMatrix } from '../components/organization/RolesPermissionsMatrix';
+import { UserAvatar } from '../components/common/UserAvatar';
 import {
   Settings,
   Users,
@@ -64,9 +66,9 @@ export const AdminPage: React.FC = () => {
       sortable: true,
       cell: (u) => (
         <div className="flex items-center space-x-3">
-          <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+          <UserAvatar name={u.name} nameAr={u.nameAr} gender={u.gender} role={u.role} size="sm" />
           <div>
-            <div className="font-semibold text-slate-900">{t(u.name)}</div>
+            <div className="font-semibold text-slate-900">{lang === 'ar' ? u.nameAr || u.name : u.name}</div>
             <div className="text-[10px] text-slate-400 font-mono">{u.email}</div>
           </div>
         </div>
@@ -280,32 +282,7 @@ export const AdminPage: React.FC = () => {
       )}
 
       {activeTab === 'roles' && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-          <h3 className="panel-title text-slate-900">{lang === 'ar' ? 'مصفوفة صلاحيات الأدوار المؤسسية' : 'Role Permissions Matrix'}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {rolesList.map((r) => (
-              <div key={r} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-slate-900">{t(r)}</span>
-                  {currentUser.role === r && (
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono">
-                      {lang === 'ar' ? 'الحالي' : 'Current'}
-                    </span>
-                  )}
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  {lang === 'ar' ? `صلاحيات كاملة مهيأة للتحكم بالوصول لدور ${t(r)}.` : `Full permissions configured for ${r.toLowerCase()} access control.`}
-                </div>
-                <button
-                  onClick={() => switchUserRole(r)}
-                  className="w-full mt-2 py-1.5 rounded bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 cursor-pointer"
-                >
-                  {lang === 'ar' ? 'محاكاة هذا الدور' : 'Switch Role Profile'}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <RolesPermissionsMatrix />
       )}
 
       {activeTab === 'departments' && <OperationalStructureView />}

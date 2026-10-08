@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { AUTHORITY_SECTORS } from '../../data/mockData';
 import { Department, Sector, Role, User } from '../../types';
+import { UserAvatar } from '../common/UserAvatar';
 import {
   Building2,
   Users,
@@ -966,10 +967,10 @@ export const OperationalStructureView: React.FC = () => {
                         className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover" />
+                          <UserAvatar name={user.name} nameAr={user.nameAr} gender={user.gender} role={user.role} size="xs" />
                           <div>
-                            <div className="font-semibold text-slate-900">{user.name}</div>
-                            <div className="text-[10px] text-slate-400 font-mono">{user.role}</div>
+                            <div className="font-semibold text-slate-900">{lang === 'ar' ? user.nameAr || user.name : user.name}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{t(user.role)}</div>
                           </div>
                         </div>
 

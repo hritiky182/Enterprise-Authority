@@ -32,6 +32,7 @@ import {
   Flag,
   Zap,
   Cpu,
+  Compass,
 } from 'lucide-react';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { toast } from 'sonner';
@@ -1201,7 +1202,14 @@ export const CreateStrategyPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/strategic-diagnosis"
+            className="px-3.5 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Compass className="w-4 h-4 text-blue-600" />
+            <span>{lang === 'ar' ? 'تشخيص SWOT & PESTEL' : 'SWOT & PESTEL Diagnosis'}</span>
+          </Link>
           <Link
             to="/strategy"
             className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
