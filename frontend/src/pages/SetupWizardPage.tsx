@@ -43,6 +43,8 @@ import {
   ChevronRight,
   Award,
   BookOpen,
+  Upload,
+  User,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { OrganizationLogo } from '../components/common/OrganizationLogo';
@@ -432,6 +434,7 @@ export const SetupWizardPage: React.FC = () => {
 
   // ==========================================
   // DEMO DATA AUTO-FILL HANDLERS (Per-step & All-in-one)
+  // Clean text without duplicate emoji
   // ==========================================
   const fillStep1DemoData = () => {
     setOrgName('Al-Ahsa Development Authority');
@@ -1297,9 +1300,9 @@ export const SetupWizardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* ============================================================== */}
-      {/* TOP HEADER BAR */}
+      {/* TOP HEADER BAR (Sleek Dark Navigation) */}
       {/* ============================================================== */}
-      <header className="h-16 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-40">
+      <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400">
             <Compass className="w-5 h-5 animate-spin-slow" />
@@ -1322,11 +1325,11 @@ export const SetupWizardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Demo Fill All */}
+          {/* Quick Demo Fill All - Single Sparkles icon, no duplicate emoji */}
           <button
             type="button"
             onClick={fillAllDemoData}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
             title="Pre-load complete AHDA reference data across all 9 steps"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
@@ -1338,7 +1341,7 @@ export const SetupWizardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors cursor-pointer"
             title="Skip to Dashboard"
           >
             <span>{lang === 'ar' ? 'لوحة التحكم' : 'Dashboard'}</span>
@@ -1348,10 +1351,10 @@ export const SetupWizardPage: React.FC = () => {
       </header>
 
       {/* ============================================================== */}
-      {/* MAIN CONTAINER: SIDEBAR + STEP WORKSPACE */}
+      {/* MAIN CONTAINER: DARK SIDEBAR + CLEAN WHITE WORKSPACE */}
       {/* ============================================================== */}
       <div className="flex-1 flex flex-col lg:flex-row">
-        {/* LEFT / RIGHT PROGRESS SIDEBAR */}
+        {/* LEFT / RIGHT PROGRESS SIDEBAR (REMAINS DARK AS REQUESTED) */}
         <aside className="w-full lg:w-80 bg-slate-900 border-b lg:border-b-0 lg:border-e border-slate-800 p-4 sm:p-6 shrink-0 flex flex-col justify-between">
           <div className="space-y-6">
             <div>
@@ -1379,16 +1382,16 @@ export const SetupWizardPage: React.FC = () => {
                     onClick={() => setCurrentStep(c.step)}
                     className={`w-full text-start p-2.5 rounded-xl flex items-start gap-3 transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-blue-600/20 text-white border border-blue-500/40 shadow-sm'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-900/40'
                         : isPast
-                        ? 'text-slate-300 hover:bg-slate-800/60'
-                        : 'text-slate-500 hover:bg-slate-800/40'
+                        ? 'text-slate-300 hover:bg-slate-800/80'
+                        : 'text-slate-400 hover:bg-slate-800/50'
                     }`}
                   >
                     <div
                       className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center font-mono text-xs font-bold transition-all ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-md shadow-blue-600/40'
+                          ? 'bg-white/20 text-white'
                           : isPast
                           ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                           : 'bg-slate-800 text-slate-500'
@@ -1402,9 +1405,9 @@ export const SetupWizardPage: React.FC = () => {
                         <span className={`text-xs font-bold truncate ${isActive ? 'text-white' : 'text-slate-200'}`}>
                           {lang === 'ar' ? c.titleAr : c.title}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500">Ch.{c.chapter}</span>
+                        <span className="text-[10px] font-mono text-slate-400">Ch.{c.chapter}</span>
                       </div>
-                      <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                      <p className={`text-[11px] line-clamp-1 mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
                         {lang === 'ar' ? c.subtitleAr : c.subtitle}
                       </p>
                     </div>
@@ -1425,1621 +1428,290 @@ export const SetupWizardPage: React.FC = () => {
           </div>
         </aside>
 
-        {/* WORKSPACE STEP CONTENT */}
-        <main className="flex-1 p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto w-full">
-          {/* ========================================================== */}
-          {/* STEP 1: ORGANIZATION SETUP (Chapter 1) */}
-          {/* ========================================================== */}
-          {currentStep === 1 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              {/* Step Banner */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 1 • STEP 1 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'تهيئة وهوية المنظومة' : 'Entity Setup'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'تأسيس وهوية المنظومة / الجهة' : 'Organization Setup & Official Identity'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'حدد الاسم الرسمي، الشعار، ألوان الهوية، الرؤية، الرسالة، ورؤساء المنظومة كما في صفحة إعدادات الجهة.'
-                      : 'Configure official name, emblem logo, branding colors, mission statement, and executive leadership.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep1DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة هوية الأحساء' : '✨ Fill Demo Identity'}</span>
-                </button>
-              </div>
-
-              {/* Form Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Entity Name EN */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'اسم الجهة بالإنجليزية' : 'Official Entity Name (English)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                    placeholder="e.g. Al-Ahsa Development Authority"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Entity Name AR */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'اسم الجهة بالعربية' : 'Official Entity Name (Arabic)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={orgNameAr}
-                    onChange={(e) => setOrgNameAr(e.target.value)}
-                    placeholder="مثال: هيئة تطوير محافظة الأحساء"
-                    dir="rtl"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Short Code */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرمز المختصر' : 'Short Code / Acronym'}
-                  </label>
-                  <input
-                    type="text"
-                    value={orgShortCode}
-                    onChange={(e) => setOrgShortCode(e.target.value)}
-                    placeholder="e.g. AHDA"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
-                  />
-                </div>
-
-                {/* Color Theme Selector */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'نسق وألوان الهوية' : 'Branding Theme Color'}
-                  </label>
-                  <div className="flex items-center gap-2 pt-0.5">
-                    {COLOR_THEMES.map((th) => (
-                      <button
-                        key={th.id}
-                        type="button"
-                        onClick={() => setOrgThemeColor(th.id)}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
-                          orgThemeColor === th.id
-                            ? 'bg-slate-700 border-white text-white shadow-md'
-                            : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:border-slate-600'
-                        }`}
-                      >
-                        <span className={`w-3 h-3 rounded-full ${th.bg}`} />
-                        <span className="text-[11px]">{th.name.split(' ')[1] || th.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Leadership: Board Chair */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'رئيس مجلس الإدارة' : 'Chairman of the Board'}
-                  </label>
-                  <input
-                    type="text"
-                    value={orgBoardChair}
-                    onChange={(e) => setOrgBoardChair(e.target.value)}
-                    placeholder="e.g. HRH Prince Saud bin Talal bin Badr Al Saud"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Leadership: CEO */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرئيس التنفيذي' : 'Chief Executive Officer (CEO)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={orgCeo}
-                    onChange={(e) => setOrgCeo(e.target.value)}
-                    placeholder="e.g. Dr. Faisal Al-Husseini"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              {/* Logo Selection & Custom Upload */}
-              <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">
-                    {lang === 'ar' ? 'شعار المنظومة الرسمي' : 'Official Organization Emblem / Logo'}
-                  </span>
-                  {orgLogoUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setOrgLogoUrl('')}
-                      className="text-[11px] text-red-400 hover:underline cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'إلغاء الشعار المرفوع' : 'Remove Custom Logo'}
-                    </button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {PRESET_LOGOS.map((pl) => (
-                    <button
-                      key={pl.id}
-                      type="button"
-                      onClick={() => {
-                        setOrgLogo(pl.id);
-                        setOrgLogoUrl('');
-                      }}
-                      className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
-                        orgLogo === pl.id && !orgLogoUrl
-                          ? 'bg-blue-600/20 border-blue-500 text-white shadow-md'
-                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700/60'
-                      }`}
-                    >
-                      <pl.icon className="w-6 h-6 text-blue-400" />
-                      <span className="text-[11px] text-center font-medium">
-                        {lang === 'ar' ? pl.nameAr : pl.name}
+        {/* RIGHT WORKSPACE (PROFESSIONAL CLEAN WHITE CANVAS) */}
+        <main className="flex-1 bg-slate-50 text-slate-900 flex flex-col justify-between min-h-screen">
+          <div className="p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto w-full flex-1">
+            {/* ========================================================== */}
+            {/* STEP 1: ORGANIZATION SETUP (Chapter 1) */}
+            {/* ========================================================== */}
+            {currentStep === 1 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                {/* Step Banner */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 1 • STEP 1 OF 9
                       </span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Upload File Input */}
-                <div className="pt-2 flex items-center gap-3">
-                  <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-slate-200 cursor-pointer transition-colors border border-slate-600">
-                    <span>{lang === 'ar' ? '📤 رفع شعار مخصص (PNG/SVG)' : '📤 Upload Custom Logo'}</span>
-                    <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                  </label>
-                  {orgLogoUrl && (
-                    <span className="text-xs text-emerald-400 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      {lang === 'ar' ? 'تم تجهيز الشعار المخصص' : 'Custom logo active'}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Vision & Mission Statements */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرؤية المؤسسية (English)' : 'Vision Statement (English)'}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={orgVision}
-                    onChange={(e) => setOrgVision(e.target.value)}
-                    placeholder="Enter long-term institutional vision..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرؤية المؤسسية (العربية)' : 'Vision Statement (Arabic)'}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={orgVisionAr}
-                    onChange={(e) => setOrgVisionAr(e.target.value)}
-                    placeholder="أدخل نص الرؤية المؤسسية..."
-                    dir="rtl"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرسالة المؤسسية (English)' : 'Mission Statement (English)'}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={orgMission}
-                    onChange={(e) => setOrgMission(e.target.value)}
-                    placeholder="Enter strategic mandate and mission..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'الرسالة المؤسسية (العربية)' : 'Mission Statement (Arabic)'}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={orgMissionAr}
-                    onChange={(e) => setOrgMissionAr(e.target.value)}
-                    placeholder="أدخل نص الرسالة المؤسسية..."
-                    dir="rtl"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              {/* Core Values Tags */}
-              <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-700/60 space-y-2.5">
-                <label className="block text-xs font-semibold text-slate-300">
-                  {lang === 'ar' ? 'القيم المؤسسية الجوهرية' : 'Core Values & Cultural Principles'}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newValueInput}
-                    onChange={(e) => setNewValueInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddValue())}
-                    placeholder={lang === 'ar' ? 'أضف قيمة جديدة (مثال: الاستدامة البيئية)' : 'Add a core value...'}
-                    className="flex-1 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddValue}
-                    className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-                {orgValues.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {orgValues.map((val, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-700/80 border border-slate-600 text-slate-200 text-xs"
-                      >
-                        <span>{val}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveValue(idx)}
-                          className="text-slate-400 hover:text-red-400"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 2: ORGANIZATIONAL STRUCTURE & PERMISSIONS (Chapter 2) */}
-          {/* ========================================================== */}
-          {currentStep === 2 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 2 • STEP 2 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'الهيكل التنظيمي والصلاحيات' : 'Org Hierarchy'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'الهيكل الإداري والقطاعات ومصفوفة الصلاحيات' : 'Sectors, Departments & Permissions Matrix'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'بناء القطاعات التنفيذية، الإدارات التشغيلية، ومصفوفة صلاحيات الأدوار (تعديل، اعتماد، مراجعة، استعراض).'
-                      : 'Structure organizational sectors, operational departments, and fine-grained roles & permissions matrix.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep2DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة هيكل المنظومة' : '✨ Fill Demo Structure'}</span>
-                </button>
-              </div>
-
-              {/* Leadership Tier */}
-              <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 space-y-3">
-                <span className="text-xs font-bold text-slate-200">
-                  {lang === 'ar' ? 'المستوى القيادي الأعلى (مجلس الإدارة ومكتب الرئيس)' : 'Executive Leadership Tier'}
-                </span>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      {lang === 'ar' ? 'الرئيس التنفيذي / الإدارة العليا' : 'CEO Office & Executive Title'}
-                    </label>
-                    <input
-                      type="text"
-                      value={leadershipCeoTitle}
-                      onChange={(e) => setLeadershipCeoTitle(e.target.value)}
-                      placeholder="e.g. Dr. Faisal Al-Husseini - Chief Executive Officer"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      {lang === 'ar' ? 'نائب الرئيس التنفيذي للاستراتيجية' : 'Deputy CEO / VP for Strategy'}
-                    </label>
-                    <input
-                      type="text"
-                      value={leadershipDeputyCeo}
-                      onChange={(e) => setLeadershipDeputyCeo(e.target.value)}
-                      placeholder="e.g. Eng. Mansour Al-Ghamdi - Deputy CEO"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Sectors Builder Form */}
-              <form onSubmit={handleAddSector} className="p-4 rounded-2xl bg-slate-800/40 border border-slate-700/70 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">
-                    {lang === 'ar' ? 'إضافة قطاع تنفيذي جديد (+ القطاعات)' : '+ Add Executive Sector'}
-                  </span>
-                  <span className="text-[10px] font-mono text-blue-400">
-                    {customSectors.length} {lang === 'ar' ? 'قطاعات مسجلة' : 'Sectors Registered'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-[10px] text-slate-400 mb-1">{lang === 'ar' ? 'رمز القطاع' : 'Sector Code'}</label>
-                    <input
-                      type="text"
-                      value={sectorFormCode}
-                      onChange={(e) => setSectorFormCode(e.target.value)}
-                      placeholder="e.g. SUD"
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="block text-[10px] text-slate-400 mb-1">{lang === 'ar' ? 'اسم القطاع (EN/AR)' : 'Sector Name'}</label>
-                    <input
-                      type="text"
-                      value={sectorFormName}
-                      onChange={(e) => setSectorFormName(e.target.value)}
-                      placeholder="e.g. Spatial & Urban Development Sector"
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-slate-400 mb-1">{lang === 'ar' ? 'رئيس القطاع' : 'Sector Head'}</label>
-                    <input
-                      type="text"
-                      value={sectorFormHead}
-                      onChange={(e) => setSectorFormHead(e.target.value)}
-                      placeholder="e.g. Eng. Fahad Al-Subaie"
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>{lang === 'ar' ? 'إضافة القطاع' : 'Add Sector'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created Sectors Cards */}
-              {customSectors.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {customSectors.map((sec) => (
-                    <div
-                      key={sec.id}
-                      className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start justify-between"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
-                            {sec.code}
-                          </span>
-                          <span className="text-xs font-bold text-white">{sec.name}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-400">{sec.head}</p>
-                        {sec.departments.length > 0 && (
-                          <div className="flex flex-wrap gap-1 pt-1">
-                            {sec.departments.map((d, i) => (
-                              <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                                {d}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setCustomSectors(customSectors.filter((s) => s.id !== sec.id))}
-                        className="text-slate-500 hover:text-red-400 p-1"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'تهيئة وهوية المنظومة' : 'Entity Setup'}</span>
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Roles & Permissions Matrix Table */}
-              <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-xs font-bold text-white">
-                      {lang === 'ar' ? 'مصفوفة حوكمة الأدوار والصلاحيات (Permissions Matrix)' : 'Roles & Permissions Matrix'}
-                    </span>
-                    <p className="text-[11px] text-slate-400">
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'تأسيس وهوية المنظومة / الجهة' : 'Organization Setup & Official Identity'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
                       {lang === 'ar'
-                        ? 'تخصيص الصلاحيات الدقيقة لكل دور (تعديل/إضافة، اعتماد، مراجعة، استعراض فقط) لمنع التداخل بين الاستراتيجية والمخاطر.'
-                        : 'Granular permissions matrix separating Strategy, KPIs, Risk, and Governance per persona.'}
+                        ? 'حدد الاسم الرسمي، الشعار، ألوان الهوية، الرؤية، الرسالة، ورؤساء المنظومة كما في صفحة إعدادات الجهة.'
+                        : 'Configure official name, emblem logo, branding colors, mission statement, and executive leadership.'}
                     </p>
                   </div>
-                </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-700">
-                  <table className="w-full text-start text-xs">
-                    <thead className="bg-slate-800/90 text-slate-300 border-b border-slate-700 font-semibold">
-                      <tr>
-                        <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'الدور الوظيفي' : 'Role / Persona'}</th>
-                        <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'الاستراتيجية والأهداف' : 'Strategy & OKRs'}</th>
-                        <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'مؤشرات الأداء' : 'KPI Tracking'}</th>
-                        <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'المخاطر وBCM' : 'Risk & BCM'}</th>
-                        <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'إدارة المنظومة' : 'Governance'}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800/70 text-slate-300">
-                      {permissionMatrix.map((pm, i) => (
-                        <tr key={i} className="hover:bg-slate-800/40">
-                          <td className="py-2 px-3 font-medium text-white flex items-center gap-1.5">
-                            <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                            <span>{lang === 'ar' ? pm.roleAr : pm.role}</span>
-                          </td>
-                          <td className="py-2 px-3">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {pm.strategy}
-                            </span>
-                          </td>
-                          <td className="py-2 px-3">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-teal-500/20 text-teal-300 border border-teal-500/30">
-                              {pm.kpis}
-                            </span>
-                          </td>
-                          <td className="py-2 px-3">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                              {pm.risk}
-                            </span>
-                          </td>
-                          <td className="py-2 px-3">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                              {pm.governance}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 3: STRATEGIC PILLARS (Chapter 3.1) */}
-          {/* "first we should create the Strategic Pillar" */}
-          {/* ========================================================== */}
-          {currentStep === 3 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 3 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'تأسيس الركائز الاستراتيجية الكبرى (Pillars / Themes)' : 'Create Strategic Pillars & Themes'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الخطوة الأولى في الاستراتيجية: تأسيس المحاور والركائز الكبرى (الرمز، العنوان، الوزن النسبي، والوصف).'
-                      : 'Step 1 in strategy creation: Establish overarching strategic themes & pillars before defining goals.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep3DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة ركائز الأحساء الأربع' : '✨ Fill Demo Pillars'}</span>
-                </button>
-              </div>
-
-              {/* Add Strategic Pillar Form */}
-              <form onSubmit={handleAddPillar} className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
-                <span className="text-xs font-bold text-white block">
-                  {lang === 'ar' ? '+ إضافة ركيزة استراتيجية جديدة' : '+ Add Strategic Pillar'}
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'رمز الركيزة' : 'Pillar Code'}
-                    </label>
-                    <input
-                      type="text"
-                      value={pillarFormCode}
-                      onChange={(e) => setPillarFormCode(e.target.value)}
-                      placeholder="e.g. 01 or PL-01"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'عنوان الركيزة (English)' : 'Pillar Title (English)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={pillarFormTitle}
-                      onChange={(e) => setPillarFormTitle(e.target.value)}
-                      placeholder="e.g. Economic Diversification & Tourism Growth"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'الوزن النسبي %' : 'Strategic Weight %'}
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={100}
-                      value={pillarFormWeight}
-                      onChange={(e) => setPillarFormWeight(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'عنوان الركيزة (العربية)' : 'Pillar Title (Arabic)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={pillarFormTitleAr}
-                      onChange={(e) => setPillarFormTitleAr(e.target.value)}
-                      placeholder="مثال: النمو الاقتصادي وتطوير السياحة"
-                      dir="rtl"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'اللون المميز للركيزة' : 'Pillar Accent Color'}
-                    </label>
-                    <div className="flex items-center gap-2 pt-1">
-                      {['blue', 'teal', 'emerald', 'indigo', 'purple', 'amber'].map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => setPillarFormColor(c)}
-                          className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
-                            pillarFormColor === c ? 'border-white scale-110' : 'border-transparent opacity-70'
-                          } ${
-                            c === 'blue'
-                              ? 'bg-blue-600'
-                              : c === 'teal'
-                              ? 'bg-teal-600'
-                              : c === 'emerald'
-                              ? 'bg-emerald-600'
-                              : c === 'indigo'
-                              ? 'bg-indigo-600'
-                              : c === 'purple'
-                              ? 'bg-purple-600'
-                              : 'bg-amber-600'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-4">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'وصف الركيزة ونطاق الأثر' : 'Pillar Description & Strategic Scope'}
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={pillarFormDesc}
-                      onChange={(e) => setPillarFormDesc(e.target.value)}
-                      placeholder="Explain the overarching purpose and systemic scope of this pillar..."
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إضافة الركيزة' : 'Add Strategic Pillar'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created Pillars Cards */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-300 block">
-                  {lang === 'ar' ? 'الركائز الاستراتيجية المسجلة:' : 'Configured Strategic Pillars:'} ({customPillars.length})
-                </span>
-
-                {customPillars.length === 0 ? (
-                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/50">
-                    <Target className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">
-                      {lang === 'ar'
-                        ? 'لم يتم إضافة ركائز بعد. استخدم النموذج أعلاه أو اضغط زر "✨ تعبئة ركائز الأحساء الأربع".'
-                        : 'No pillars added yet. Use the form above or click "✨ Fill Demo Pillars".'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {customPillars.map((p) => (
-                      <div
-                        key={p.id}
-                        className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 hover:border-slate-600 transition-all flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {p.code}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                                {p.weight}% {lang === 'ar' ? 'وزن' : 'weight'}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => setCustomPillars(customPillars.filter((item) => item.id !== p.id))}
-                                className="text-slate-500 hover:text-red-400 p-1"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                          <h3 className="font-bold text-sm text-white">{p.title}</h3>
-                          {p.titleAr && <p className="text-xs text-slate-400 mt-0.5" dir="rtl">{p.titleAr}</p>}
-                          {p.desc && <p className="text-xs text-slate-400 mt-2 line-clamp-2">{p.desc}</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 4: STRATEGIC GOALS (Chapter 3.2) */}
-          {/* "then Strategic Goals" */}
-          {/* ========================================================== */}
-          {currentStep === 4 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 4 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'الأهداف العامة' : 'Strategic Goals'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'صياغة الأهداف العامة (Strategic Goals)' : 'Formulate Overarching Strategic Goals'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الخطوة الثانية في الاستراتيجية: إنشاء الأهداف العامة وربطها بالركائز الاستراتيجية المحددة في الخطوة السابقة.'
-                      : 'Step 2: Define overarching goals and attach them to the strategic pillars created in step 3.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep4DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة الأهداف العامة' : '✨ Fill Demo Goals'}</span>
-                </button>
-              </div>
-
-              {/* Add Goal Form */}
-              <form onSubmit={handleAddGoal} className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
-                <span className="text-xs font-bold text-white block">
-                  {lang === 'ar' ? '+ إضافة هدف عام جديد وربطه بركيزة' : '+ Add Strategic Goal'}
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'رمز الهدف العام' : 'Goal Code'}
-                    </label>
-                    <input
-                      type="text"
-                      value={goalFormCode}
-                      onChange={(e) => setGoalFormCode(e.target.value)}
-                      placeholder="e.g. SG-1.1"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'الركيزة التابع لها' : 'Parent Pillar'}
-                    </label>
-                    <select
-                      value={goalFormPillarCode}
-                      onChange={(e) => setGoalFormPillarCode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {customPillars.length === 0 ? (
-                        <option value="01">Pillar 01 (Default)</option>
-                      ) : (
-                        customPillars.map((p) => (
-                          <option key={p.id} value={p.code}>
-                            {p.code} - {p.title}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'عنوان الهدف العام (English)' : 'Goal Title (English)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={goalFormTitle}
-                      onChange={(e) => setGoalFormTitle(e.target.value)}
-                      placeholder="e.g. Establish Al-Ahsa as Global Oasis Tourism Destination"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'عنوان الهدف العام (العربية)' : 'Goal Title (Arabic)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={goalFormTitleAr}
-                      onChange={(e) => setGoalFormTitleAr(e.target.value)}
-                      placeholder="مثال: ترسيخ الأحساء كوجهة عالمية رائدة لسياحة الواحات"
-                      dir="rtl"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      {lang === 'ar' ? 'وصف الهدف العام' : 'Goal Strategic Mandate'}
-                    </label>
-                    <input
-                      type="text"
-                      value={goalFormDesc}
-                      onChange={(e) => setGoalFormDesc(e.target.value)}
-                      placeholder="Mandate & strategic focus..."
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إضافة الهدف العام' : 'Add Strategic Goal'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created Goals List */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-300 block">
-                  {lang === 'ar' ? 'الأهداف العامة المسجلة:' : 'Configured Strategic Goals:'} ({customGoals.length})
-                </span>
-
-                {customGoals.length === 0 ? (
-                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/50">
-                    <Compass className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">
-                      {lang === 'ar'
-                        ? 'لم يتم إضافة أهداف عامة بعد. استخدم النموذج أعلاه أو اضغط زر "✨ تعبئة الأهداف العامة".'
-                        : 'No goals added yet. Use the form above or click "✨ Fill Demo Goals".'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2.5">
-                    {customGoals.map((g) => (
-                      <div
-                        key={g.id}
-                        className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start justify-between gap-3"
-                      >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {g.code}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                              {lang === 'ar' ? `تابع للركيزة ${g.pillarCode}` : `Under Pillar ${g.pillarCode}`}
-                            </span>
-                            <span className="font-bold text-xs text-white">{g.title}</span>
-                          </div>
-                          {g.titleAr && <p className="text-xs text-slate-400" dir="rtl">{g.titleAr}</p>}
-                          {g.desc && <p className="text-[11px] text-slate-400">{g.desc}</p>}
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setCustomGoals(customGoals.filter((item) => item.id !== g.id))}
-                          className="text-slate-500 hover:text-red-400 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 5: STRATEGIC OBJECTIVES (Chapter 3.3) */}
-          {/* "then Strategic Objectives" */}
-          {/* ========================================================== */}
-          {currentStep === 5 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 5 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic Objectives'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'صياغة الأهداف الاستراتيجية (Strategic Objectives)' : 'Formulate Strategic Objectives (OKRs)'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الخطوة الثالثة: صياغة الأهداف الاستراتيجية الذكية القابلة للقياس وربطها بالهدف العام والركيزة، وتعيين الإدارة المسؤولة.'
-                      : 'Step 3: Define measurable objectives linked to your goals and pillars, with owners, departments, and SMART assist.'}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
+                  {/* Single Sparkles Lucide Icon without repeating emoji */}
                   <button
                     type="button"
-                    onClick={fillStep5DemoData}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                    onClick={fillStep1DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>{lang === 'ar' ? '✨ تعبئة الأهداف' : '✨ Fill Demo Objectives'}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Add Objective Form */}
-              <form onSubmit={handleAddObjective} className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">
-                    {lang === 'ar' ? '+ إضافة هدف استراتيجي جديد' : '+ Add Strategic Objective'}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleApplySmartAssist}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-400 hover:text-purple-300 cursor-pointer"
-                  >
-                    <Sparkles className="w-3 h-3" />
-                    <span>{lang === 'ar' ? 'مساعد SMART الذكي' : 'SMART AI Assistant'}</span>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة هوية الأحساء' : 'Fill Demo Identity'}</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'رمز الهدف' : 'Objective Code'}</label>
-                    <input
-                      type="text"
-                      value={objFormCode}
-                      onChange={(e) => setObjFormCode(e.target.value)}
-                      placeholder="e.g. SO-01"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الركيزة التابعة' : 'Linked Pillar'}</label>
-                    <select
-                      value={objFormPillarCode}
-                      onChange={(e) => setObjFormPillarCode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {customPillars.map((p) => (
-                        <option key={p.id} value={p.code}>
-                          {p.code} - {p.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الهدف العام' : 'Linked Goal'}</label>
-                    <select
-                      value={objFormGoalCode}
-                      onChange={(e) => setObjFormGoalCode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {customGoals.map((g) => (
-                        <option key={g.id} value={g.code}>
-                          {g.code} - {g.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'سنة الإنجاز المستهدفة' : 'Target Year'}</label>
-                    <input
-                      type="number"
-                      value={objFormYear}
-                      onChange={(e) => setObjFormYear(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'عنوان الهدف (English)' : 'Objective Title (English)'}</label>
-                    <input
-                      type="text"
-                      value={objFormTitle}
-                      onChange={(e) => setObjFormTitle(e.target.value)}
-                      placeholder="e.g. Elevate Sustainable Heritage & Agri-Tourism Capacity"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'عنوان الهدف (العربية)' : 'Objective Title (Arabic)'}</label>
-                    <input
-                      type="text"
-                      value={objFormTitleAr}
-                      onChange={(e) => setObjFormTitleAr(e.target.value)}
-                      placeholder="مثال: الارتقاء بالطاقة الاستيعابية للسياحة التراثية والزراعية"
-                      dir="rtl"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'المسؤول / المشرف' : 'Lead Custodian / Owner'}</label>
-                    <input
-                      type="text"
-                      value={objFormOwner}
-                      onChange={(e) => setObjFormOwner(e.target.value)}
-                      placeholder="e.g. Dr. Tariq Al-Ghamdi"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الإدارة المسؤولة' : 'Responsible Department'}</label>
-                    <input
-                      type="text"
-                      value={objFormDepartment}
-                      onChange={(e) => setObjFormDepartment(e.target.value)}
-                      placeholder="e.g. Tourism Destination Management Office"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-4">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'وصف النطاق ومخرجات الهدف' : 'Objective Scope & SMART Deliverables'}</label>
-                    <textarea
-                      rows={2}
-                      value={objFormDesc}
-                      onChange={(e) => setObjFormDesc(e.target.value)}
-                      placeholder="Specific scope, key outcomes, and success boundaries..."
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إضافة الهدف الاستراتيجي' : 'Add Strategic Objective'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created Objectives List */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-300 block">
-                  {lang === 'ar' ? 'الأهداف الاستراتيجية المسجلة:' : 'Configured Strategic Objectives:'} ({customObjectives.length})
-                </span>
-
-                {customObjectives.length === 0 ? (
-                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/50">
-                    <Layers className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">
-                      {lang === 'ar'
-                        ? 'لم يتم إضافة أهداف استراتيجية بعد. استخدم النموذج أعلاه أو اضغط زر "✨ تعبئة الأهداف".'
-                        : 'No objectives added yet. Use the form above or click "✨ Fill Demo Objectives".'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2.5">
-                    {customObjectives.map((o) => (
-                      <div
-                        key={o.id}
-                        className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start justify-between gap-3"
-                      >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {o.code}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                              Pillar {o.pillarCode} • Goal {o.goalCode}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                              Target {o.targetYear}
-                            </span>
-                            <span className="font-bold text-xs text-white">{o.title}</span>
-                          </div>
-                          {o.titleAr && <p className="text-xs text-slate-400" dir="rtl">{o.titleAr}</p>}
-                          <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-1">
-                            <span>👤 {o.owner}</span>
-                            <span>🏢 {o.department}</span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setCustomObjectives(customObjectives.filter((item) => item.id !== o.id))}
-                          className="text-slate-500 hover:text-red-400 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 6: KEY PERFORMANCE INDICATORS (Chapter 3.4) */}
-          {/* "then Key Performance Indicators" */}
-          {/* ========================================================== */}
-          {currentStep === 6 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 6 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'مؤشرات قياس الأداء' : 'KPIs & Metrics'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'مؤشرات قياس الأداء وقواعد الاحتساب (KPIs)' : 'Key Performance Indicators & Calculation Rules'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الخطوة الرابعة: ربط مؤشرات الأداء بالأهداف، صياغة معادلات الاحتساب، وتحديد خط الأساس والمستهدف والنوع (استباقي/لاحق).'
-                      : 'Step 4: Establish KPIs under objectives with explicit mathematical formulas, baselines, targets, and leading/lagging types.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep6DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة مؤشرات الأحساء' : '✨ Fill Demo KPIs'}</span>
-                </button>
-              </div>
-
-              {/* Add KPI Form */}
-              <form onSubmit={handleAddKpi} className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
-                <span className="text-xs font-bold text-white block">
-                  {lang === 'ar' ? '+ إضافة مؤشر قياس أداء جديد' : '+ Add Key Performance Indicator'}
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'رمز المؤشر' : 'KPI Code'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormCode}
-                      onChange={(e) => setKpiFormCode(e.target.value)}
-                      placeholder="e.g. 2.1.1"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الهدف الاستراتيجي التابع له' : 'Parent Objective'}</label>
-                    <select
-                      value={kpiFormObjCode}
-                      onChange={(e) => setKpiFormObjCode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {customObjectives.map((o) => (
-                        <option key={o.id} value={o.code}>
-                          {o.code} - {o.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'اسم المؤشر (English)' : 'KPI Name (English)'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormName}
-                      onChange={(e) => setKpiFormName(e.target.value)}
-                      placeholder="e.g. Event Visitor Engagement Indicator"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'اسم المؤشر (العربية)' : 'KPI Name (Arabic)'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormNameAr}
-                      onChange={(e) => setKpiFormNameAr(e.target.value)}
-                      placeholder="مثال: مؤشر تفاعل وحضور زوار الفعاليات"
-                      dir="rtl"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'معادلة الاحتساب وقاعدة القياس' : 'Mathematical Formula'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormFormula}
-                      onChange={(e) => setKpiFormFormula(e.target.value)}
-                      placeholder="e.g. (Total Actual Visitors - Target) / Target * 100%"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'وحدة القياس' : 'Unit'}</label>
-                    <select
-                      value={kpiFormUnit}
-                      onChange={(e) => setKpiFormUnit(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      <option value="%">% (Percentage)</option>
-                      <option value="Score">Score (1-100)</option>
-                      <option value="SAR">SAR (Currency)</option>
-                      <option value="Number">Number / Count</option>
-                      <option value="M Visitors">Million Visitors</option>
-                      <option value="Days">Days</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'خط الأساس (Baseline)' : 'Baseline'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormBaseline}
-                      onChange={(e) => setKpiFormBaseline(e.target.value)}
-                      placeholder="e.g. 50%"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'المستهدف (Target)' : 'Target'}</label>
-                    <input
-                      type="number"
-                      value={kpiFormTarget}
-                      onChange={(e) => setKpiFormTarget(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الفعلي الحالي (Actual)' : 'Current Actual'}</label>
-                    <input
-                      type="number"
-                      value={kpiFormActual}
-                      onChange={(e) => setKpiFormActual(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'دورية القياس' : 'Frequency'}</label>
-                    <select
-                      value={kpiFormFrequency}
-                      onChange={(e) => setKpiFormFrequency(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      <option value="Quarterly">Quarterly (ربع سنوي)</option>
-                      <option value="Annual">Annual (سنوي)</option>
-                      <option value="Monthly">Monthly (شهري)</option>
-                      <option value="Bi-Annual">Bi-Annual (نصف سنوي)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'نوع المؤشر' : 'KPI Type'}</label>
-                    <select
-                      value={kpiFormType}
-                      onChange={(e) => setKpiFormType(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      <option value="Lagging">Lagging (مؤشر نتيجي / أثر)</option>
-                      <option value="Leading">Leading (مؤشر استباقي / محفز)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الوزن النسبي %' : 'Weight %'}</label>
-                    <input
-                      type="number"
-                      value={kpiFormWeight}
-                      onChange={(e) => setKpiFormWeight(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'مالك المؤشر' : 'Owner'}</label>
-                    <input
-                      type="text"
-                      value={kpiFormOwner}
-                      onChange={(e) => setKpiFormOwner(e.target.value)}
-                      placeholder="e.g. Dr. Tariq Al-Ghamdi"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إضافة مؤشر الأداء' : 'Add KPI'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created KPIs List */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-300 block">
-                  {lang === 'ar' ? 'مؤشرات الأداء المسجلة:' : 'Configured Key Performance Indicators:'} ({customKpis.length})
-                </span>
-
-                {customKpis.length === 0 ? (
-                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/50">
-                    <BarChart3 className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">
-                      {lang === 'ar'
-                        ? 'لم يتم إضافة مؤشرات أداء بعد. استخدم النموذج أعلاه أو اضغط زر "✨ تعبئة مؤشرات الأحساء".'
-                        : 'No KPIs added yet. Use the form above or click "✨ Fill Demo KPIs".'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {customKpis.map((k) => (
-                      <div
-                        key={k.id}
-                        className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start justify-between gap-4"
-                      >
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {k.code}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                              Obj: {k.objCode}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                              {k.type}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/20 text-teal-300">
-                              {k.frequency}
-                            </span>
-                            <span className="font-bold text-xs text-white">{k.name}</span>
-                          </div>
-
-                          {k.nameAr && <p className="text-xs text-slate-400" dir="rtl">{k.nameAr}</p>}
-
-                          <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-[11px] font-mono text-slate-400 flex items-center gap-2">
-                            <Calculator className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                            <span>{k.formula}</span>
-                          </div>
-
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'الأساس:' : 'Baseline:'} </span>
-                              <span className="text-slate-200 font-mono">{k.baseline}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'المستهدف:' : 'Target:'} </span>
-                              <span className="text-emerald-400 font-mono font-bold">{k.target} {k.unit}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'الفعلي:' : 'Actual:'} </span>
-                              <span className="text-blue-400 font-mono font-bold">{k.actual} {k.unit}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'المسؤول:' : 'Owner:'} </span>
-                              <span className="text-slate-300">{k.owner}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setCustomKpis(customKpis.filter((item) => item.id !== k.id))}
-                          className="text-slate-500 hover:text-red-400 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 7: STRATEGIC INITIATIVES & FLAGSHIP PROJECTS (Chapter 3.5) */}
-          {/* "then Strategic Initiatives & Flagship Projects" */}
-          {/* ========================================================== */}
-          {currentStep === 7 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 7 OF 9
-                    </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'المبادرات والمشاريع الكبرى' : 'Initiatives & Projects'}</span>
-                  </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع الكبرى القيادية' : 'Strategic Initiatives & Flagship Delivery Projects'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الخطوة الخامسة: بناء المبادرات التنفيذية والمشاريع الكبرى (Flagship Projects)، ربطها بالأهداف، تحديد الميزانيات SAR، وجدولة المعالم.'
-                      : 'Step 5: Formulate execution initiatives & flagship projects linked to objectives, complete with budgets and milestones.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={fillStep7DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ تعبئة مبادرات ومشاريع الأحساء' : '✨ Fill Demo Initiatives'}</span>
-                </button>
-              </div>
-
-              {/* Add Initiative Form */}
-              <form onSubmit={handleAddInitiative} className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
-                <span className="text-xs font-bold text-white block">
-                  {lang === 'ar' ? '+ إضافة مبادرة استراتيجية ومشروع قيادي' : '+ Add Strategic Initiative & Flagship Project'}
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'رمز المبادرة' : 'Initiative Code'}</label>
-                    <input
-                      type="text"
-                      value={initFormCode}
-                      onChange={(e) => setInitFormCode(e.target.value)}
-                      placeholder="e.g. INIT-06"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الهدف الاستراتيجي التابع له' : 'Linked Objective'}</label>
-                    <select
-                      value={initFormObjCode}
-                      onChange={(e) => setInitFormObjCode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {customObjectives.map((o) => (
-                        <option key={o.id} value={o.code}>
-                          {o.code} - {o.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'عنوان المبادرة (English)' : 'Initiative Title (English)'}</label>
-                    <input
-                      type="text"
-                      value={initFormTitle}
-                      onChange={(e) => setInitFormTitle(e.target.value)}
-                      placeholder="e.g. Raise awareness of Al-Ahsa Strategy & Digital Civic Engagement"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'عنوان المبادرة (العربية)' : 'Initiative Title (Arabic)'}</label>
-                    <input
-                      type="text"
-                      value={initFormTitleAr}
-                      onChange={(e) => setInitFormTitleAr(e.target.value)}
-                      placeholder="مثال: رفع الوعي باستراتيجية تطوير الأحساء وتعزيز التفاعل الرقمي"
-                      dir="rtl"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-amber-300 mb-1 flex items-center gap-1.5">
-                      <FolderGit2 className="w-3.5 h-3.5" />
-                      <span>{lang === 'ar' ? 'المشروع القيادي الكبير (Flagship Project)' : 'Flagship Project Name'}</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={initFormFlagshipProject}
-                      onChange={(e) => setInitFormFlagshipProject(e.target.value)}
-                      placeholder="e.g. Al-Ahsa Strategy Awareness Project"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-amber-500/50 text-white text-xs focus:outline-none focus:ring-1 focus:ring-amber-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الميزانية المعتمدة (SAR)' : 'Budget (SAR)'}</label>
-                    <input
-                      type="number"
-                      value={initFormBudgetSAR}
-                      onChange={(e) => setInitFormBudgetSAR(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'المصروف حتى الآن (SAR)' : 'Spent (SAR)'}</label>
-                    <input
-                      type="number"
-                      value={initFormSpentSAR}
-                      onChange={(e) => setInitFormSpentSAR(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'تاريخ البداية' : 'Start Date'}</label>
-                    <input
-                      type="date"
-                      value={initFormStartDate}
-                      onChange={(e) => setInitFormStartDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'تاريخ الانتهاء' : 'End Date'}</label>
-                    <input
-                      type="date"
-                      value={initFormEndDate}
-                      onChange={(e) => setInitFormEndDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'مالك المبادرة' : 'Initiative Owner'}</label>
-                    <input
-                      type="text"
-                      value={initFormOwner}
-                      onChange={(e) => setInitFormOwner(e.target.value)}
-                      placeholder="e.g. Tourism Destination Management Office"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">{lang === 'ar' ? 'الإدارة المنفذة' : 'Executing Department'}</label>
-                    <input
-                      type="text"
-                      value={initFormDepartment}
-                      onChange={(e) => setInitFormDepartment(e.target.value)}
-                      placeholder="e.g. Marketing & Public Relations"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Milestones Mini-Builder */}
-                  <div className="sm:col-span-4 p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-                    <span className="text-xs font-semibold text-slate-300 block">
-                      {lang === 'ar' ? 'معالم الإنجاز الرئيسية (Key Milestones)' : 'Key Delivery Milestones'}
-                    </span>
-                    <div className="flex flex-col sm:flex-row gap-2">
+                {/* Form Card Grid */}
+                <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* Entity Name EN */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'اسم الجهة بالإنجليزية' : 'Official Entity Name (English)'}
+                      </label>
                       <input
                         type="text"
-                        value={initFormMilestoneTitle}
-                        onChange={(e) => setInitFormMilestoneTitle(e.target.value)}
-                        placeholder="e.g. Launch multimedia digital engagement portal"
-                        className="flex-1 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
+                        value={orgName}
+                        onChange={(e) => setOrgName(e.target.value)}
+                        placeholder="e.g. Al-Ahsa Development Authority"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
                       />
+                    </div>
+
+                    {/* Entity Name AR */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'اسم الجهة بالعربية' : 'Official Entity Name (Arabic)'}
+                      </label>
                       <input
-                        type="date"
-                        value={initFormMilestoneDate}
-                        onChange={(e) => setInitFormMilestoneDate(e.target.value)}
-                        className="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
+                        type="text"
+                        value={orgNameAr}
+                        onChange={(e) => setOrgNameAr(e.target.value)}
+                        placeholder="مثال: هيئة تطوير محافظة الأحساء"
+                        dir="rtl"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+
+                    {/* Short Code */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرمز المختصر' : 'Short Code / Acronym'}
+                      </label>
+                      <input
+                        type="text"
+                        value={orgShortCode}
+                        onChange={(e) => setOrgShortCode(e.target.value)}
+                        placeholder="e.g. AHDA"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs uppercase transition-all"
+                      />
+                    </div>
+
+                    {/* Color Theme Selector */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'نسق وألوان الهوية' : 'Branding Theme Color'}
+                      </label>
+                      <div className="flex items-center gap-2 pt-0.5">
+                        {COLOR_THEMES.map((th) => (
+                          <button
+                            key={th.id}
+                            type="button"
+                            onClick={() => setOrgThemeColor(th.id)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                              orgThemeColor === th.id
+                                ? 'bg-white border-blue-600 text-slate-900 ring-2 ring-blue-500/20 shadow-xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            <span className={`w-3 h-3 rounded-full ${th.bg}`} />
+                            <span className="text-[11px] font-semibold">{th.name.split(' ')[1] || th.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Leadership: Board Chair */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'رئيس مجلس الإدارة' : 'Chairman of the Board'}
+                      </label>
+                      <input
+                        type="text"
+                        value={orgBoardChair}
+                        onChange={(e) => setOrgBoardChair(e.target.value)}
+                        placeholder="e.g. HRH Prince Saud bin Talal bin Badr Al Saud"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+
+                    {/* Leadership: CEO */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرئيس التنفيذي' : 'Chief Executive Officer (CEO)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={orgCeo}
+                        onChange={(e) => setOrgCeo(e.target.value)}
+                        placeholder="e.g. Dr. Faisal Al-Husseini"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Logo Selection & Custom Upload */}
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800">
+                        {lang === 'ar' ? 'شعار المنظومة الرسمي' : 'Official Organization Emblem / Logo'}
+                      </span>
+                      {orgLogoUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setOrgLogoUrl('')}
+                          className="text-[11px] text-red-600 hover:underline cursor-pointer"
+                        >
+                          {lang === 'ar' ? 'إلغاء الشعار المرفوع' : 'Remove Custom Logo'}
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {PRESET_LOGOS.map((pl) => (
+                        <button
+                          key={pl.id}
+                          type="button"
+                          onClick={() => {
+                            setOrgLogo(pl.id);
+                            setOrgLogoUrl('');
+                          }}
+                          className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
+                            orgLogo === pl.id && !orgLogoUrl
+                              ? 'bg-blue-50 border-blue-600 text-blue-900 ring-2 ring-blue-500/20 shadow-xs'
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                          }`}
+                        >
+                          <pl.icon className="w-6 h-6 text-blue-600" />
+                          <span className="text-[11px] text-center font-medium">
+                            {lang === 'ar' ? pl.nameAr : pl.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Upload File Input */}
+                    <div className="pt-2 flex items-center gap-3">
+                      <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer transition-colors border border-slate-300 shadow-2xs">
+                        <Upload className="w-3.5 h-3.5 text-blue-600" />
+                        <span>{lang === 'ar' ? 'رفع شعار مخصص (PNG/SVG)' : 'Upload Custom Logo'}</span>
+                        <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                      </label>
+                      {orgLogoUrl && (
+                        <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          {lang === 'ar' ? 'تم تجهيز الشعار المخصص' : 'Custom logo active'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Vision & Mission Statements */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرؤية المؤسسية (English)' : 'Vision Statement (English)'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={orgVision}
+                        onChange={(e) => setOrgVision(e.target.value)}
+                        placeholder="Enter long-term institutional vision..."
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرؤية المؤسسية (العربية)' : 'Vision Statement (Arabic)'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={orgVisionAr}
+                        onChange={(e) => setOrgVisionAr(e.target.value)}
+                        placeholder="أدخل نص الرؤية المؤسسية..."
+                        dir="rtl"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرسالة المؤسسية (English)' : 'Mission Statement (English)'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={orgMission}
+                        onChange={(e) => setOrgMission(e.target.value)}
+                        placeholder="Enter strategic mandate and mission..."
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'الرسالة المؤسسية (العربية)' : 'Mission Statement (Arabic)'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={orgMissionAr}
+                        onChange={(e) => setOrgMissionAr(e.target.value)}
+                        placeholder="أدخل نص الرسالة المؤسسية..."
+                        dir="rtl"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Core Values Tags */}
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                    <label className="block text-xs font-bold text-slate-700">
+                      {lang === 'ar' ? 'القيم المؤسسية الجوهرية' : 'Core Values & Cultural Principles'}
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newValueInput}
+                        onChange={(e) => setNewValueInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddValue())}
+                        placeholder={lang === 'ar' ? 'أضف قيمة جديدة (مثال: الاستدامة البيئية)' : 'Add a core value...'}
+                        className="flex-1 px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
                       />
                       <button
                         type="button"
-                        onClick={handleAddMilestoneToInitForm}
-                        className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium cursor-pointer"
+                        onClick={handleAddValue}
+                        className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
                       >
-                        + {lang === 'ar' ? 'إضافة معلم' : 'Add Milestone'}
+                        <Plus className="w-4 h-4" />
                       </button>
                     </div>
-
-                    {initFormMilestonesList.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {initFormMilestonesList.map((m, i) => (
+                    {orgValues.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {orgValues.map((val, idx) => (
                           <span
-                            key={i}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-[11px] text-slate-300 font-mono"
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 text-slate-800 text-xs shadow-2xs"
                           >
-                            <span>📌 {m.title} ({m.dueDate})</span>
+                            <span>{val}</span>
                             <button
                               type="button"
-                              onClick={() => setInitFormMilestonesList(initFormMilestonesList.filter((_, idx) => idx !== i))}
-                              className="text-slate-400 hover:text-red-400"
+                              onClick={() => handleRemoveValue(idx)}
+                              className="text-slate-400 hover:text-red-600"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -3049,87 +1721,160 @@ export const SetupWizardPage: React.FC = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
 
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إضافة المبادرة والمشروع' : 'Add Initiative & Project'}</span>
-                  </button>
-                </div>
-              </form>
-
-              {/* Created Initiatives List */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-300 block">
-                  {lang === 'ar' ? 'المبادرات والمشاريع الكبرى المسجلة:' : 'Configured Strategic Initiatives & Projects:'} ({customInitiatives.length})
-                </span>
-
-                {customInitiatives.length === 0 ? (
-                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/50">
-                    <TrendingUp className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">
+            {/* ========================================================== */}
+            {/* STEP 2: ORGANIZATIONAL STRUCTURE & PERMISSIONS (Chapter 2) */}
+            {/* ========================================================== */}
+            {currentStep === 2 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 2 • STEP 2 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'الهيكل التنظيمي والصلاحيات' : 'Org Hierarchy'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'الهيكل الإداري والقطاعات ومصفوفة الصلاحيات' : 'Sectors, Departments & Permissions Matrix'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
                       {lang === 'ar'
-                        ? 'لم يتم إضافة مبادرات بعد. استخدم النموذج أعلاه أو اضغط زر "✨ تعبئة مبادرات ومشاريع الأحساء".'
-                        : 'No initiatives added yet. Use the form above or click "✨ Fill Demo Initiatives".'}
+                        ? 'بناء القطاعات التنفيذية، الإدارات التشغيلية، ومصفوفة صلاحيات الأدوار (تعديل، اعتماد، مراجعة، استعراض).'
+                        : 'Structure organizational sectors, operational departments, and fine-grained roles & permissions matrix.'}
                     </p>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {customInitiatives.map((init) => (
-                      <div
-                        key={init.id}
-                        className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex items-start justify-between gap-4"
-                      >
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              {init.code}
-                            </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                              Obj: {init.objCode}
-                            </span>
-                            <span className="font-bold text-xs text-white">{init.title}</span>
-                          </div>
 
-                          {init.flagshipProject && (
-                            <div className="flex items-center gap-1.5 text-xs text-amber-300 font-semibold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">
-                              <FolderGit2 className="w-3.5 h-3.5 shrink-0" />
-                              <span>{lang === 'ar' ? 'المشروع القيادي: ' : 'Flagship Project: '}</span>
-                              <span className="text-white">{init.flagshipProject}</span>
+                  <button
+                    type="button"
+                    onClick={fillStep2DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة هيكل المنظومة' : 'Fill Demo Structure'}</span>
+                  </button>
+                </div>
+
+                {/* Leadership Tier Card */}
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-800">
+                    {lang === 'ar' ? 'المستوى القيادي الأعلى (مجلس الإدارة ومكتب الرئيس)' : 'Executive Leadership Tier'}
+                  </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        {lang === 'ar' ? 'الرئيس التنفيذي / الإدارة العليا' : 'CEO Office & Executive Title'}
+                      </label>
+                      <input
+                        type="text"
+                        value={leadershipCeoTitle}
+                        onChange={(e) => setLeadershipCeoTitle(e.target.value)}
+                        placeholder="e.g. Dr. Faisal Al-Husseini - Chief Executive Officer"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        {lang === 'ar' ? 'نائب الرئيس التنفيذي للاستراتيجية' : 'Deputy CEO / VP for Strategy'}
+                      </label>
+                      <input
+                        type="text"
+                        value={leadershipDeputyCeo}
+                        onChange={(e) => setLeadershipDeputyCeo(e.target.value)}
+                        placeholder="e.g. Eng. Mansour Al-Ghamdi - Deputy CEO"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sectors Builder Form Card */}
+                <form onSubmit={handleAddSector} className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">
+                      {lang === 'ar' ? 'إضافة قطاع تنفيذي جديد (+ القطاعات)' : '+ Add Executive Sector'}
+                    </span>
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                      {customSectors.length} {lang === 'ar' ? 'قطاعات مسجلة' : 'Sectors Registered'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-600 mb-1">{lang === 'ar' ? 'رمز القطاع' : 'Sector Code'}</label>
+                      <input
+                        type="text"
+                        value={sectorFormCode}
+                        onChange={(e) => setSectorFormCode(e.target.value)}
+                        placeholder="e.g. SUD"
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs shadow-2xs"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[10px] font-bold text-slate-600 mb-1">{lang === 'ar' ? 'اسم القطاع (EN/AR)' : 'Sector Name'}</label>
+                      <input
+                        type="text"
+                        value={sectorFormName}
+                        onChange={(e) => setSectorFormName(e.target.value)}
+                        placeholder="e.g. Spatial & Urban Development Sector"
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs shadow-2xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-600 mb-1">{lang === 'ar' ? 'رئيس القطاع' : 'Sector Head'}</label>
+                      <input
+                        type="text"
+                        value={sectorFormHead}
+                        onChange={(e) => setSectorFormHead(e.target.value)}
+                        placeholder="e.g. Eng. Fahad Al-Subaie"
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer shadow-2xs"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>{lang === 'ar' ? 'إضافة القطاع' : 'Add Sector'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created Sectors Cards */}
+                {customSectors.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {customSectors.map((sec) => (
+                      <div
+                        key={sec.id}
+                        className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start justify-between"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold">
+                              {sec.code}
+                            </span>
+                            <span className="text-xs font-bold text-slate-900">{sec.name}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500">{sec.head}</p>
+                          {sec.departments.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {sec.departments.map((d, i) => (
+                                <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                  {d}
+                                </span>
+                              ))}
                             </div>
                           )}
-
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'الميزانية:' : 'Budget:'} </span>
-                              <span className="text-emerald-400 font-mono font-bold">
-                                {init.budgetSAR.toLocaleString()} SAR
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'المصروف:' : 'Spent:'} </span>
-                              <span className="text-blue-400 font-mono font-bold">
-                                {init.spentSAR.toLocaleString()} SAR
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'المالك:' : 'Owner:'} </span>
-                              <span className="text-slate-300">{init.owner}</span>
-                            </div>
-                            <div>
-                              <span className="text-slate-500">{lang === 'ar' ? 'المعالم:' : 'Milestones:'} </span>
-                              <span className="text-purple-300 font-mono font-bold">{init.milestones.length} milestones</span>
-                            </div>
-                          </div>
                         </div>
-
                         <button
                           type="button"
-                          onClick={() => setCustomInitiatives(customInitiatives.filter((item) => item.id !== init.id))}
-                          className="text-slate-500 hover:text-red-400 p-1"
+                          onClick={() => setCustomSectors(customSectors.filter((s) => s.id !== sec.id))}
+                          className="text-slate-400 hover:text-red-600 p-1"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -3137,509 +1882,1778 @@ export const SetupWizardPage: React.FC = () => {
                     ))}
                   </div>
                 )}
-              </div>
-            </div>
-          )}
 
-          {/* ========================================================== */}
-          {/* STEP 8: STRATEGY PLAN ATTACHMENT & BINDING (Chapter 3.6) */}
-          {/* "so that we can attach them to the strategy" */}
-          {/* ========================================================== */}
-          {currentStep === 8 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                      CHAPTER 3 • STEP 8 OF 9
+                {/* Roles & Permissions Matrix Table */}
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">
+                      {lang === 'ar' ? 'مصفوفة حوكمة الأدوار والصلاحيات (Permissions Matrix)' : 'Roles & Permissions Matrix'}
                     </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'ربط واعتماد الاستراتيجية' : 'Strategy Plan Binding'}</span>
+                    <p className="text-[11px] text-slate-500">
+                      {lang === 'ar'
+                        ? 'تخصيص الصلاحيات الدقيقة لكل دور (تعديل/إضافة، اعتماد، مراجعة، استعراض فقط) لمنع التداخل بين الاستراتيجية والمخاطر.'
+                        : 'Granular permissions matrix separating Strategy, KPIs, Risk, and Governance per persona.'}
+                    </p>
                   </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'ربط وتجميع وثيقة الاستراتيجية المعتمدة' : 'Strategy Plan Formulation & Cascading Attachment'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'الآن بعد تأسيس الركائز والأهداف العامة والاستراتيجية والمؤشرات والمبادرات، قم بربطهم جميعاً في وثيقة الاستراتيجية الكبرى.'
-                      : 'Now that all building blocks are created, bind the pillars, goals, objectives, KPIs, and initiatives into the master strategy.'}
-                  </p>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={fillStep8DemoData}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{lang === 'ar' ? '✨ ربط كافة العناصر تلقائياً' : '✨ Bind All Elements'}</span>
-                </button>
-              </div>
-
-              {/* Master Strategy Plan Inputs */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'اسم وثيقة الاستراتيجية (English)' : 'Master Strategy Plan Name (English)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={strategyPlanName}
-                    onChange={(e) => setStrategyPlanName(e.target.value)}
-                    placeholder="e.g. Al-Ahsa Regional Sustainable Transformation Strategy 2026–2030"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'اسم وثيقة الاستراتيجية (العربية)' : 'Master Strategy Plan Name (Arabic)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={strategyPlanNameAr}
-                    onChange={(e) => setStrategyPlanNameAr(e.target.value)}
-                    placeholder="مثال: استراتيجية هيئة تطوير الأحساء للتنمية الإقليمية المستدامة 2026–2030"
-                    dir="rtl"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'المدى والمدة الزمنية للدورة' : 'Strategic Horizon & Cycle Duration'}
-                  </label>
-                  <input
-                    type="text"
-                    value={strategyDuration}
-                    onChange={(e) => setStrategyDuration(e.target.value)}
-                    placeholder="2026 – 2030 (5-Year Strategic Cycle)"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'سنوات البداية والانتهاء' : 'Cycle Horizon Years'}
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="number"
-                      value={strategyStartYear}
-                      onChange={(e) => setStrategyStartYear(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
-                    />
-                    <span className="text-slate-400">➔</span>
-                    <input
-                      type="number"
-                      value={strategyEndYear}
-                      onChange={(e) => setStrategyEndYear(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
-                    />
+                  <div className="overflow-x-auto rounded-xl border border-slate-200">
+                    <table className="w-full text-start text-xs">
+                      <thead className="bg-slate-50 text-slate-700 border-b border-slate-200 font-bold">
+                        <tr>
+                          <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'الدور الوظيفي' : 'Role / Persona'}</th>
+                          <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'الاستراتيجية والأهداف' : 'Strategy & OKRs'}</th>
+                          <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'مؤشرات الأداء' : 'KPI Tracking'}</th>
+                          <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'المخاطر وBCM' : 'Risk & BCM'}</th>
+                          <th className="py-2.5 px-3 text-start">{lang === 'ar' ? 'إدارة المنظومة' : 'Governance'}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-slate-700">
+                        {permissionMatrix.map((pm, i) => (
+                          <tr key={i} className="hover:bg-slate-50/70">
+                            <td className="py-2.5 px-3 font-semibold text-slate-900 flex items-center gap-1.5">
+                              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                              <span>{lang === 'ar' ? pm.roleAr : pm.role}</span>
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-50 text-blue-700 border border-blue-200 font-semibold">
+                                {pm.strategy}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-teal-50 text-teal-700 border border-teal-200 font-semibold">
+                                {pm.kpis}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-50 text-amber-700 border border-amber-200 font-semibold">
+                                {pm.risk}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+                                {pm.governance}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {lang === 'ar' ? 'البيان الاستراتيجي والتفويض التنفيذي (Executive Mandate Statement)' : 'Executive Mandate Statement'}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={strategyMandateStatement}
-                    onChange={(e) => setStrategyMandateStatement(e.target.value)}
-                    placeholder="State the core executive mandate, socio-economic rationale, and sovereign direction..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
               </div>
+            )}
 
-              {/* Multi-Select Cascade Attachment Panels */}
-              <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/80 space-y-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FolderGit2 className="w-5 h-5 text-blue-400" />
+            {/* ========================================================== */}
+            {/* STEP 3: STRATEGIC PILLARS (Chapter 3.1) */}
+            {/* "first we should create the Strategic Pillar" */}
+            {/* ========================================================== */}
+            {currentStep === 3 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 3 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'تأسيس الركائز الاستراتيجية الكبرى (Pillars / Themes)' : 'Create Strategic Pillars & Themes'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الخطوة الأولى في الاستراتيجية: تأسيس المحاور والركائز الكبرى (الرمز، العنوان، الوزن النسبي، والوصف).'
+                        : 'Step 1 in strategy creation: Establish overarching strategic themes & pillars before defining goals.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep3DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة ركائز الأحساء الأربع' : 'Fill Demo Pillars'}</span>
+                  </button>
+                </div>
+
+                {/* Add Strategic Pillar Form Card */}
+                <form onSubmit={handleAddPillar} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">
+                    {lang === 'ar' ? '+ إضافة ركيزة استراتيجية جديدة' : '+ Add Strategic Pillar'}
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
-                      <h2 className="text-sm font-bold text-white">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'رمز الركيزة' : 'Pillar Code'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pillarFormCode}
+                        onChange={(e) => setPillarFormCode(e.target.value)}
+                        placeholder="e.g. 01 or PL-01"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'عنوان الركيزة (English)' : 'Pillar Title (English)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pillarFormTitle}
+                        onChange={(e) => setPillarFormTitle(e.target.value)}
+                        placeholder="e.g. Economic Diversification & Tourism Growth"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'الوزن النسبي %' : 'Strategic Weight %'}
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        value={pillarFormWeight}
+                        onChange={(e) => setPillarFormWeight(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'عنوان الركيزة (العربية)' : 'Pillar Title (Arabic)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pillarFormTitleAr}
+                        onChange={(e) => setPillarFormTitleAr(e.target.value)}
+                        placeholder="مثال: النمو الاقتصادي وتطوير السياحة"
+                        dir="rtl"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'اللون المميز للركيزة' : 'Pillar Accent Color'}
+                      </label>
+                      <div className="flex items-center gap-2 pt-1">
+                        {['blue', 'teal', 'emerald', 'indigo', 'purple', 'amber'].map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setPillarFormColor(c)}
+                            className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
+                              pillarFormColor === c ? 'border-slate-800 scale-110 shadow-xs' : 'border-transparent opacity-75'
+                            } ${
+                              c === 'blue'
+                                ? 'bg-blue-600'
+                                : c === 'teal'
+                                ? 'bg-teal-600'
+                                : c === 'emerald'
+                                ? 'bg-emerald-600'
+                                : c === 'indigo'
+                                ? 'bg-indigo-600'
+                                : c === 'purple'
+                                ? 'bg-purple-600'
+                                : 'bg-amber-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-4">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'وصف الركيزة ونطاق الأثر' : 'Pillar Description & Strategic Scope'}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={pillarFormDesc}
+                        onChange={(e) => setPillarFormDesc(e.target.value)}
+                        placeholder="Explain the overarching purpose and systemic scope of this pillar..."
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'إضافة الركيزة' : 'Add Strategic Pillar'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created Pillars Cards */}
+                <div className="space-y-3">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    {lang === 'ar' ? 'الركائز الاستراتيجية المسجلة:' : 'Configured Strategic Pillars:'} ({customPillars.length})
+                  </span>
+
+                  {customPillars.length === 0 ? (
+                    <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-white">
+                      <Target className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'لم يتم إضافة ركائز بعد. استخدم النموذج أعلاه أو اضغط زر تعبئة ركائز الأحساء الأربع.'
+                          : 'No pillars added yet. Use the form above or click "Fill Demo Pillars".'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {customPillars.map((p) => (
+                        <div
+                          key={p.id}
+                          className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                                {p.code}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                  {p.weight}% {lang === 'ar' ? 'وزن' : 'weight'}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setCustomPillars(customPillars.filter((item) => item.id !== p.id))}
+                                  className="text-slate-400 hover:text-red-600 p-1"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                            <h3 className="font-bold text-sm text-slate-900">{p.title}</h3>
+                            {p.titleAr && <p className="text-xs text-slate-500 mt-0.5" dir="rtl">{p.titleAr}</p>}
+                            {p.desc && <p className="text-xs text-slate-600 mt-2 line-clamp-2">{p.desc}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================== */}
+            {/* STEP 4: STRATEGIC GOALS (Chapter 3.2) */}
+            {/* "then Strategic Goals" */}
+            {/* ========================================================== */}
+            {currentStep === 4 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 4 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'الأهداف العامة' : 'Strategic Goals'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'صياغة الأهداف العامة (Strategic Goals)' : 'Formulate Overarching Strategic Goals'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الخطوة الثانية في الاستراتيجية: إنشاء الأهداف العامة وربطها بالركائز الاستراتيجية المحددة في الخطوة السابقة.'
+                        : 'Step 2: Define overarching goals and attach them to the strategic pillars created in step 3.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep4DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة الأهداف العامة' : 'Fill Demo Goals'}</span>
+                  </button>
+                </div>
+
+                {/* Add Goal Form Card */}
+                <form onSubmit={handleAddGoal} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">
+                    {lang === 'ar' ? '+ إضافة هدف عام جديد وربطه بركيزة' : '+ Add Strategic Goal'}
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'رمز الهدف العام' : 'Goal Code'}
+                      </label>
+                      <input
+                        type="text"
+                        value={goalFormCode}
+                        onChange={(e) => setGoalFormCode(e.target.value)}
+                        placeholder="e.g. SG-1.1"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'الركيزة التابع لها' : 'Parent Pillar'}
+                      </label>
+                      <select
+                        value={goalFormPillarCode}
+                        onChange={(e) => setGoalFormPillarCode(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        {customPillars.length === 0 ? (
+                          <option value="01">Pillar 01 (Default)</option>
+                        ) : (
+                          customPillars.map((p) => (
+                            <option key={p.id} value={p.code}>
+                              {p.code} - {p.title}
+                            </option>
+                          ))
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'عنوان الهدف العام (English)' : 'Goal Title (English)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={goalFormTitle}
+                        onChange={(e) => setGoalFormTitle(e.target.value)}
+                        placeholder="e.g. Establish Al-Ahsa as Global Oasis Tourism Destination"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'عنوان الهدف العام (العربية)' : 'Goal Title (Arabic)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={goalFormTitleAr}
+                        onChange={(e) => setGoalFormTitleAr(e.target.value)}
+                        placeholder="مثال: ترسيخ الأحساء كوجهة عالمية رائدة لسياحة الواحات"
+                        dir="rtl"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        {lang === 'ar' ? 'وصف الهدف العام' : 'Goal Strategic Mandate'}
+                      </label>
+                      <input
+                        type="text"
+                        value={goalFormDesc}
+                        onChange={(e) => setGoalFormDesc(e.target.value)}
+                        placeholder="Mandate & strategic focus..."
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'إضافة الهدف العام' : 'Add Strategic Goal'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created Goals List */}
+                <div className="space-y-3">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    {lang === 'ar' ? 'الأهداف العامة المسجلة:' : 'Configured Strategic Goals:'} ({customGoals.length})
+                  </span>
+
+                  {customGoals.length === 0 ? (
+                    <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-white">
+                      <Compass className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'لم يتم إضافة أهداف عامة بعد. استخدم النموذج أعلاه أو اضغط زر تعبئة الأهداف العامة.'
+                          : 'No goals added yet. Use the form above or click "Fill Demo Goals".'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {customGoals.map((g) => (
+                        <div
+                          key={g.id}
+                          className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start justify-between gap-3"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                                {g.code}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                {lang === 'ar' ? `تابع للركيزة ${g.pillarCode}` : `Under Pillar ${g.pillarCode}`}
+                              </span>
+                              <span className="font-bold text-xs text-slate-900">{g.title}</span>
+                            </div>
+                            {g.titleAr && <p className="text-xs text-slate-500" dir="rtl">{g.titleAr}</p>}
+                            {g.desc && <p className="text-[11px] text-slate-600">{g.desc}</p>}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setCustomGoals(customGoals.filter((item) => item.id !== g.id))}
+                            className="text-slate-400 hover:text-red-600 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================== */}
+            {/* STEP 5: STRATEGIC OBJECTIVES (Chapter 3.3) */}
+            {/* "then Strategic Objectives" */}
+            {/* ========================================================== */}
+            {currentStep === 5 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 5 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic Objectives'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'صياغة الأهداف الاستراتيجية (Strategic Objectives)' : 'Formulate Strategic Objectives (OKRs)'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الخطوة الثالثة: صياغة الأهداف الاستراتيجية الذكية القابلة للقياس وربطها بالهدف العام والركيزة، وتعيين الإدارة المسؤولة.'
+                        : 'Step 3: Define measurable objectives linked to your goals and pillars, with owners, departments, and SMART assist.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep5DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة الأهداف الاستراتيجية' : 'Fill Demo Objectives'}</span>
+                  </button>
+                </div>
+
+                {/* Add Objective Form Card */}
+                <form onSubmit={handleAddObjective} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900">
+                      {lang === 'ar' ? '+ إضافة هدف استراتيجي جديد' : '+ Add Strategic Objective'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleApplySmartAssist}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1 rounded-lg cursor-pointer transition-all"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                      <span>{lang === 'ar' ? 'مساعد SMART الذكي' : 'SMART AI Assistant'}</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'رمز الهدف' : 'Objective Code'}</label>
+                      <input
+                        type="text"
+                        value={objFormCode}
+                        onChange={(e) => setObjFormCode(e.target.value)}
+                        placeholder="e.g. SO-01"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الركيزة التابعة' : 'Linked Pillar'}</label>
+                      <select
+                        value={objFormPillarCode}
+                        onChange={(e) => setObjFormPillarCode(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        {customPillars.map((p) => (
+                          <option key={p.id} value={p.code}>
+                            {p.code} - {p.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الهدف العام' : 'Linked Goal'}</label>
+                      <select
+                        value={objFormGoalCode}
+                        onChange={(e) => setObjFormGoalCode(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        {customGoals.map((g) => (
+                          <option key={g.id} value={g.code}>
+                            {g.code} - {g.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'سنة الإنجاز المستهدفة' : 'Target Year'}</label>
+                      <input
+                        type="number"
+                        value={objFormYear}
+                        onChange={(e) => setObjFormYear(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'عنوان الهدف (English)' : 'Objective Title (English)'}</label>
+                      <input
+                        type="text"
+                        value={objFormTitle}
+                        onChange={(e) => setObjFormTitle(e.target.value)}
+                        placeholder="e.g. Elevate Sustainable Heritage & Agri-Tourism Capacity"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'عنوان الهدف (العربية)' : 'Objective Title (Arabic)'}</label>
+                      <input
+                        type="text"
+                        value={objFormTitleAr}
+                        onChange={(e) => setObjFormTitleAr(e.target.value)}
+                        placeholder="مثال: الارتقاء بالطاقة الاستيعابية للسياحة التراثية والزراعية"
+                        dir="rtl"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'المسؤول / المشرف' : 'Lead Custodian / Owner'}</label>
+                      <input
+                        type="text"
+                        value={objFormOwner}
+                        onChange={(e) => setObjFormOwner(e.target.value)}
+                        placeholder="e.g. Dr. Tariq Al-Ghamdi"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الإدارة المسؤولة' : 'Responsible Department'}</label>
+                      <input
+                        type="text"
+                        value={objFormDepartment}
+                        onChange={(e) => setObjFormDepartment(e.target.value)}
+                        placeholder="e.g. Tourism Destination Management Office"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-4">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'وصف النطاق ومخرجات الهدف' : 'Objective Scope & SMART Deliverables'}</label>
+                      <textarea
+                        rows={2}
+                        value={objFormDesc}
+                        onChange={(e) => setObjFormDesc(e.target.value)}
+                        placeholder="Specific scope, key outcomes, and success boundaries..."
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'إضافة الهدف الاستراتيجي' : 'Add Strategic Objective'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created Objectives List */}
+                <div className="space-y-3">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    {lang === 'ar' ? 'الأهداف الاستراتيجية المسجلة:' : 'Configured Strategic Objectives:'} ({customObjectives.length})
+                  </span>
+
+                  {customObjectives.length === 0 ? (
+                    <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-white">
+                      <Layers className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'لم يتم إضافة أهداف استراتيجية بعد. استخدم النموذج أعلاه أو اضغط زر تعبئة الأهداف.'
+                          : 'No objectives added yet. Use the form above or click "Fill Demo Objectives".'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {customObjectives.map((o) => (
+                        <div
+                          key={o.id}
+                          className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start justify-between gap-3"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                                {o.code}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                Pillar {o.pillarCode} • Goal {o.goalCode}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+                                Target {o.targetYear}
+                              </span>
+                              <span className="font-bold text-xs text-slate-900">{o.title}</span>
+                            </div>
+                            {o.titleAr && <p className="text-xs text-slate-500" dir="rtl">{o.titleAr}</p>}
+                            <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-1">
+                              <span className="flex items-center gap-1">
+                                <User className="w-3 h-3 text-slate-400" />
+                                {o.owner}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Building2 className="w-3 h-3 text-slate-400" />
+                                {o.department}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setCustomObjectives(customObjectives.filter((item) => item.id !== o.id))}
+                            className="text-slate-400 hover:text-red-600 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================== */}
+            {/* STEP 6: KEY PERFORMANCE INDICATORS (Chapter 3.4) */}
+            {/* "then Key Performance Indicators" */}
+            {/* ========================================================== */}
+            {currentStep === 6 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 6 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'مؤشرات قياس الأداء' : 'KPIs & Metrics'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'مؤشرات قياس الأداء وقواعد الاحتساب (KPIs)' : 'Key Performance Indicators & Calculation Rules'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الخطوة الرابعة: ربط مؤشرات الأداء بالأهداف، صياغة معادلات الاحتساب، وتحديد خط الأساس والمستهدف والنوع (استباقي/لاحق).'
+                        : 'Step 4: Establish KPIs under objectives with explicit mathematical formulas, baselines, targets, and leading/lagging types.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep6DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة مؤشرات الأحساء' : 'Fill Demo KPIs'}</span>
+                  </button>
+                </div>
+
+                {/* Add KPI Form Card */}
+                <form onSubmit={handleAddKpi} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">
+                    {lang === 'ar' ? '+ إضافة مؤشر قياس أداء جديد' : '+ Add Key Performance Indicator'}
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'رمز المؤشر' : 'KPI Code'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormCode}
+                        onChange={(e) => setKpiFormCode(e.target.value)}
+                        placeholder="e.g. 2.1.1"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الهدف الاستراتيجي التابع له' : 'Parent Objective'}</label>
+                      <select
+                        value={kpiFormObjCode}
+                        onChange={(e) => setKpiFormObjCode(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        {customObjectives.map((o) => (
+                          <option key={o.id} value={o.code}>
+                            {o.code} - {o.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'اسم المؤشر (English)' : 'KPI Name (English)'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormName}
+                        onChange={(e) => setKpiFormName(e.target.value)}
+                        placeholder="e.g. Event Visitor Engagement Indicator"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'اسم المؤشر (العربية)' : 'KPI Name (Arabic)'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormNameAr}
+                        onChange={(e) => setKpiFormNameAr(e.target.value)}
+                        placeholder="مثال: مؤشر تفاعل وحضور زوار الفعاليات"
+                        dir="rtl"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'معادلة الاحتساب وقاعدة القياس' : 'Mathematical Formula'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormFormula}
+                        onChange={(e) => setKpiFormFormula(e.target.value)}
+                        placeholder="e.g. (Total Actual Visitors - Target) / Target * 100%"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'وحدة القياس' : 'Unit'}</label>
+                      <select
+                        value={kpiFormUnit}
+                        onChange={(e) => setKpiFormUnit(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        <option value="%">% (Percentage)</option>
+                        <option value="Score">Score (1-100)</option>
+                        <option value="SAR">SAR (Currency)</option>
+                        <option value="Number">Number / Count</option>
+                        <option value="M Visitors">Million Visitors</option>
+                        <option value="Days">Days</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'خط الأساس (Baseline)' : 'Baseline'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormBaseline}
+                        onChange={(e) => setKpiFormBaseline(e.target.value)}
+                        placeholder="e.g. 50%"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'المستهدف (Target)' : 'Target'}</label>
+                      <input
+                        type="number"
+                        value={kpiFormTarget}
+                        onChange={(e) => setKpiFormTarget(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الفعلي الحالي (Actual)' : 'Current Actual'}</label>
+                      <input
+                        type="number"
+                        value={kpiFormActual}
+                        onChange={(e) => setKpiFormActual(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'دورية القياس' : 'Frequency'}</label>
+                      <select
+                        value={kpiFormFrequency}
+                        onChange={(e) => setKpiFormFrequency(e.target.value as any)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        <option value="Quarterly">Quarterly (ربع سنوي)</option>
+                        <option value="Annual">Annual (سنوي)</option>
+                        <option value="Monthly">Monthly (شهري)</option>
+                        <option value="Bi-Annual">Bi-Annual (نصف سنوي)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'نوع المؤشر' : 'KPI Type'}</label>
+                      <select
+                        value={kpiFormType}
+                        onChange={(e) => setKpiFormType(e.target.value as any)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        <option value="Lagging">Lagging (مؤشر نتيجي / أثر)</option>
+                        <option value="Leading">Leading (مؤشر استباقي / محفز)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الوزن النسبي %' : 'Weight %'}</label>
+                      <input
+                        type="number"
+                        value={kpiFormWeight}
+                        onChange={(e) => setKpiFormWeight(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'مالك المؤشر' : 'Owner'}</label>
+                      <input
+                        type="text"
+                        value={kpiFormOwner}
+                        onChange={(e) => setKpiFormOwner(e.target.value)}
+                        placeholder="e.g. Dr. Tariq Al-Ghamdi"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'إضافة مؤشر الأداء' : 'Add KPI'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created KPIs List */}
+                <div className="space-y-3">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    {lang === 'ar' ? 'مؤشرات الأداء المسجلة:' : 'Configured Key Performance Indicators:'} ({customKpis.length})
+                  </span>
+
+                  {customKpis.length === 0 ? (
+                    <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-white">
+                      <BarChart3 className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'لم يتم إضافة مؤشرات أداء بعد. استخدم النموذج أعلاه أو اضغط زر تعبئة مؤشرات الأحساء.'
+                          : 'No KPIs added yet. Use the form above or click "Fill Demo KPIs".'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {customKpis.map((k) => (
+                        <div
+                          key={k.id}
+                          className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start justify-between gap-4"
+                        >
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                                {k.code}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                Obj: {k.objCode}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+                                {k.type}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200 font-semibold">
+                                {k.frequency}
+                              </span>
+                              <span className="font-bold text-xs text-slate-900">{k.name}</span>
+                            </div>
+
+                            {k.nameAr && <p className="text-xs text-slate-500" dir="rtl">{k.nameAr}</p>}
+
+                            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-700 flex items-center gap-2">
+                              <Calculator className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                              <span>{k.formula}</span>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'الأساس:' : 'Baseline:'} </span>
+                                <span className="text-slate-800 font-mono font-semibold">{k.baseline}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'المستهدف:' : 'Target:'} </span>
+                                <span className="text-emerald-600 font-mono font-bold">{k.target} {k.unit}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'الفعلي:' : 'Actual:'} </span>
+                                <span className="text-blue-600 font-mono font-bold">{k.actual} {k.unit}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'المسؤول:' : 'Owner:'} </span>
+                                <span className="text-slate-800 font-semibold">{k.owner}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setCustomKpis(customKpis.filter((item) => item.id !== k.id))}
+                            className="text-slate-400 hover:text-red-600 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================== */}
+            {/* STEP 7: STRATEGIC INITIATIVES & FLAGSHIP PROJECTS (Chapter 3.5) */}
+            {/* "then Strategic Initiatives & Flagship Projects" */}
+            {/* ========================================================== */}
+            {currentStep === 7 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 7 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'المبادرات والمشاريع الكبرى' : 'Initiatives & Projects'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع الكبرى القيادية' : 'Strategic Initiatives & Flagship Delivery Projects'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الخطوة الخامسة: بناء المبادرات التنفيذية والمشاريع الكبرى (Flagship Projects)، ربطها بالأهداف، تحديد الميزانيات SAR، وجدولة المعالم.'
+                        : 'Step 5: Formulate execution initiatives & flagship projects linked to objectives, complete with budgets and milestones.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep7DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'تعبئة مبادرات ومشاريع الأحساء' : 'Fill Demo Initiatives'}</span>
+                  </button>
+                </div>
+
+                {/* Add Initiative Form Card */}
+                <form onSubmit={handleAddInitiative} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">
+                    {lang === 'ar' ? '+ إضافة مبادرة استراتيجية ومشروع قيادي' : '+ Add Strategic Initiative & Flagship Project'}
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'رمز المبادرة' : 'Initiative Code'}</label>
+                      <input
+                        type="text"
+                        value={initFormCode}
+                        onChange={(e) => setInitFormCode(e.target.value)}
+                        placeholder="e.g. INIT-06"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الهدف الاستراتيجي التابع له' : 'Linked Objective'}</label>
+                      <select
+                        value={initFormObjCode}
+                        onChange={(e) => setInitFormObjCode(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      >
+                        {customObjectives.map((o) => (
+                          <option key={o.id} value={o.code}>
+                            {o.code} - {o.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'عنوان المبادرة (English)' : 'Initiative Title (English)'}</label>
+                      <input
+                        type="text"
+                        value={initFormTitle}
+                        onChange={(e) => setInitFormTitle(e.target.value)}
+                        placeholder="e.g. Raise awareness of Al-Ahsa Strategy & Digital Civic Engagement"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'عنوان المبادرة (العربية)' : 'Initiative Title (Arabic)'}</label>
+                      <input
+                        type="text"
+                        value={initFormTitleAr}
+                        onChange={(e) => setInitFormTitleAr(e.target.value)}
+                        placeholder="مثال: رفع الوعي باستراتيجية تطوير الأحساء وتعزيز التفاعل الرقمي"
+                        dir="rtl"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-amber-800 mb-1 flex items-center gap-1.5">
+                        <FolderGit2 className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{lang === 'ar' ? 'المشروع القيادي الكبير (Flagship Project)' : 'Flagship Project Name'}</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={initFormFlagshipProject}
+                        onChange={(e) => setInitFormFlagshipProject(e.target.value)}
+                        placeholder="e.g. Al-Ahsa Strategy Awareness Project"
+                        className="w-full px-3.5 py-2 rounded-xl bg-amber-50/50 border border-amber-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الميزانية المعتمدة (SAR)' : 'Budget (SAR)'}</label>
+                      <input
+                        type="number"
+                        value={initFormBudgetSAR}
+                        onChange={(e) => setInitFormBudgetSAR(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'المصروف حتى الآن (SAR)' : 'Spent (SAR)'}</label>
+                      <input
+                        type="number"
+                        value={initFormSpentSAR}
+                        onChange={(e) => setInitFormSpentSAR(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'تاريخ البداية' : 'Start Date'}</label>
+                      <input
+                        type="date"
+                        value={initFormStartDate}
+                        onChange={(e) => setInitFormStartDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'تاريخ الانتهاء' : 'End Date'}</label>
+                      <input
+                        type="date"
+                        value={initFormEndDate}
+                        onChange={(e) => setInitFormEndDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'مالك المبادرة' : 'Initiative Owner'}</label>
+                      <input
+                        type="text"
+                        value={initFormOwner}
+                        onChange={(e) => setInitFormOwner(e.target.value)}
+                        placeholder="e.g. Tourism Destination Management Office"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الإدارة المنفذة' : 'Executing Department'}</label>
+                      <input
+                        type="text"
+                        value={initFormDepartment}
+                        onChange={(e) => setInitFormDepartment(e.target.value)}
+                        placeholder="e.g. Marketing & Public Relations"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    {/* Milestones Mini-Builder */}
+                    <div className="sm:col-span-4 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                      <span className="text-xs font-bold text-slate-800 block">
+                        {lang === 'ar' ? 'معالم الإنجاز الرئيسية (Key Milestones)' : 'Key Delivery Milestones'}
+                      </span>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="text"
+                          value={initFormMilestoneTitle}
+                          onChange={(e) => setInitFormMilestoneTitle(e.target.value)}
+                          placeholder="e.g. Launch multimedia digital engagement portal"
+                          className="flex-1 px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs shadow-2xs"
+                        />
+                        <input
+                          type="date"
+                          value={initFormMilestoneDate}
+                          onChange={(e) => setInitFormMilestoneDate(e.target.value)}
+                          className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs shadow-2xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddMilestoneToInitForm}
+                          className="px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-semibold cursor-pointer shadow-2xs transition-colors"
+                        >
+                          + {lang === 'ar' ? 'إضافة معلم' : 'Add Milestone'}
+                        </button>
+                      </div>
+
+                      {initFormMilestonesList.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {initFormMilestonesList.map((m, i) => (
+                            <span
+                              key={i}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] text-slate-700 font-mono shadow-2xs"
+                            >
+                              <MilestoneIcon className="w-3 h-3 text-blue-600" />
+                              <span>{m.title} ({m.dueDate})</span>
+                              <button
+                                type="button"
+                                onClick={() => setInitFormMilestonesList(initFormMilestonesList.filter((_, idx) => idx !== i))}
+                                className="text-slate-400 hover:text-red-600"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'إضافة المبادرة والمشروع' : 'Add Initiative & Project'}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Created Initiatives List */}
+                <div className="space-y-3">
+                  <span className="text-xs font-bold text-slate-800 block">
+                    {lang === 'ar' ? 'المبادرات والمشاريع الكبرى المسجلة:' : 'Configured Strategic Initiatives & Projects:'} ({customInitiatives.length})
+                  </span>
+
+                  {customInitiatives.length === 0 ? (
+                    <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-white">
+                      <TrendingUp className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'لم يتم إضافة مبادرات بعد. استخدم النموذج أعلاه أو اضغط زر تعبئة مبادرات ومشاريع الأحساء.'
+                          : 'No initiatives added yet. Use the form above or click "Fill Demo Initiatives".'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {customInitiatives.map((init) => (
+                        <div
+                          key={init.id}
+                          className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start justify-between gap-4"
+                        >
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                                {init.code}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                Obj: {init.objCode}
+                              </span>
+                              <span className="font-bold text-xs text-slate-900">{init.title}</span>
+                            </div>
+
+                            {init.flagshipProject && (
+                              <div className="flex items-center gap-1.5 text-xs text-amber-900 font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
+                                <FolderGit2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                <span>{lang === 'ar' ? 'المشروع القيادي: ' : 'Flagship Project: '}</span>
+                                <span className="text-slate-900">{init.flagshipProject}</span>
+                              </div>
+                            )}
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'الميزانية:' : 'Budget:'} </span>
+                                <span className="text-emerald-700 font-mono font-bold">
+                                  {init.budgetSAR.toLocaleString()} SAR
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'المصروف:' : 'Spent:'} </span>
+                                <span className="text-blue-700 font-mono font-bold">
+                                  {init.spentSAR.toLocaleString()} SAR
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'المالك:' : 'Owner:'} </span>
+                                <span className="text-slate-800 font-semibold">{init.owner}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500">{lang === 'ar' ? 'المعالم:' : 'Milestones:'} </span>
+                                <span className="text-purple-700 font-mono font-bold">{init.milestones.length} milestones</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setCustomInitiatives(customInitiatives.filter((item) => item.id !== init.id))}
+                            className="text-slate-400 hover:text-red-600 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================== */}
+            {/* STEP 8: STRATEGY PLAN ATTACHMENT & BINDING (Chapter 3.6) */}
+            {/* "so that we can attach them to the strategy" */}
+            {/* ========================================================== */}
+            {currentStep === 8 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        CHAPTER 3 • STEP 8 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'ربط واعتماد الاستراتيجية' : 'Strategy Plan Binding'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'ربط وتجميع وثيقة الاستراتيجية المعتمدة' : 'Strategy Plan Formulation & Cascading Attachment'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'الآن بعد تأسيس الركائز والأهداف العامة والاستراتيجية والمؤشرات والمبادرات، قم بربطهم جميعاً في وثيقة الاستراتيجية الكبرى.'
+                        : 'Now that all building blocks are created, bind the pillars, goals, objectives, KPIs, and initiatives into the master strategy.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fillStep8DemoData}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{lang === 'ar' ? 'ربط كافة العناصر تلقائياً' : 'Bind All Elements'}</span>
+                  </button>
+                </div>
+
+                {/* Master Strategy Plan Inputs Card */}
+                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'اسم وثيقة الاستراتيجية (English)' : 'Master Strategy Plan Name (English)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={strategyPlanName}
+                        onChange={(e) => setStrategyPlanName(e.target.value)}
+                        placeholder="e.g. Al-Ahsa Regional Sustainable Transformation Strategy 2026–2030"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'اسم وثيقة الاستراتيجية (العربية)' : 'Master Strategy Plan Name (Arabic)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={strategyPlanNameAr}
+                        onChange={(e) => setStrategyPlanNameAr(e.target.value)}
+                        placeholder="مثال: استراتيجية هيئة تطوير الأحساء للتنمية الإقليمية المستدامة 2026–2030"
+                        dir="rtl"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'المدى والمدة الزمنية للدورة' : 'Strategic Horizon & Cycle Duration'}
+                      </label>
+                      <input
+                        type="text"
+                        value={strategyDuration}
+                        onChange={(e) => setStrategyDuration(e.target.value)}
+                        placeholder="2026 – 2030 (5-Year Strategic Cycle)"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'سنوات البداية والانتهاء' : 'Cycle Horizon Years'}
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="number"
+                          value={strategyStartYear}
+                          onChange={(e) => setStrategyStartYear(Number(e.target.value))}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono shadow-2xs"
+                        />
+                        <span className="text-slate-400">➔</span>
+                        <input
+                          type="number"
+                          value={strategyEndYear}
+                          onChange={(e) => setStrategyEndYear(Number(e.target.value))}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-mono shadow-2xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        {lang === 'ar' ? 'البيان الاستراتيجي والتفويض التنفيذي (Executive Mandate Statement)' : 'Executive Mandate Statement'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={strategyMandateStatement}
+                        onChange={(e) => setStrategyMandateStatement(e.target.value)}
+                        placeholder="State the core executive mandate, socio-economic rationale, and sovereign direction..."
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Multi-Select Cascade Attachment Panels */}
+                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-5">
+                  <div className="flex items-center gap-2">
+                    <FolderGit2 className="w-5 h-5 text-blue-600" />
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">
                         {lang === 'ar' ? 'عناصر الاستراتيجية المرتبطة بوثيقة الاعتماد' : 'Elements Attached to Strategy'}
                       </h2>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-500">
                         {lang === 'ar' ? 'حدد المكونات التي ترغب بربطها بهذه الاستراتيجية' : 'Select all created components to bind to this strategy blueprint'}
                       </p>
                     </div>
                   </div>
+
+                  {/* 1. Attached Pillars */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">
+                        1. {lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'} ({attachedPillarCodes.length}/{customPillars.length})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedPillarCodes(customPillars.map((p) => p.code))}
+                        className="text-blue-600 hover:underline text-[11px] font-semibold cursor-pointer"
+                      >
+                        {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {customPillars.map((p) => {
+                        const isSel = attachedPillarCodes.includes(p.code);
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => toggleAttached('pillar', p.code)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
+                              isSel
+                                ? 'bg-blue-50 border-blue-500 text-blue-900 shadow-2xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            {isSel ? <CheckSquare className="w-3.5 h-3.5 text-blue-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                            <span>{p.code} - {p.title}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 2. Attached Goals */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">
+                        2. {lang === 'ar' ? 'الأهداف العامة' : 'Strategic Goals'} ({attachedGoalCodes.length}/{customGoals.length})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedGoalCodes(customGoals.map((g) => g.code))}
+                        className="text-blue-600 hover:underline text-[11px] font-semibold cursor-pointer"
+                      >
+                        {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {customGoals.map((g) => {
+                        const isSel = attachedGoalCodes.includes(g.code);
+                        return (
+                          <button
+                            key={g.id}
+                            type="button"
+                            onClick={() => toggleAttached('goal', g.code)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
+                              isSel
+                                ? 'bg-teal-50 border-teal-500 text-teal-900 shadow-2xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            {isSel ? <CheckSquare className="w-3.5 h-3.5 text-teal-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                            <span>{g.code} - {g.title}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3. Attached Objectives */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">
+                        3. {lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic Objectives'} ({attachedObjectiveCodes.length}/{customObjectives.length})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedObjectiveCodes(customObjectives.map((o) => o.code))}
+                        className="text-blue-600 hover:underline text-[11px] font-semibold cursor-pointer"
+                      >
+                        {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {customObjectives.map((o) => {
+                        const isSel = attachedObjectiveCodes.includes(o.code);
+                        return (
+                          <button
+                            key={o.id}
+                            type="button"
+                            onClick={() => toggleAttached('objective', o.code)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
+                              isSel
+                                ? 'bg-purple-50 border-purple-500 text-purple-900 shadow-2xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            {isSel ? <CheckSquare className="w-3.5 h-3.5 text-purple-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                            <span>{o.code} - {o.title}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 4. Attached KPIs */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">
+                        4. {lang === 'ar' ? 'مؤشرات قياس الأداء' : 'Key Performance Indicators'} ({attachedKpiCodes.length}/{customKpis.length})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedKpiCodes(customKpis.map((k) => k.code))}
+                        className="text-blue-600 hover:underline text-[11px] font-semibold cursor-pointer"
+                      >
+                        {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {customKpis.map((k) => {
+                        const isSel = attachedKpiCodes.includes(k.code);
+                        return (
+                          <button
+                            key={k.id}
+                            type="button"
+                            onClick={() => toggleAttached('kpi', k.code)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
+                              isSel
+                                ? 'bg-amber-50 border-amber-500 text-amber-900 shadow-2xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            {isSel ? <CheckSquare className="w-3.5 h-3.5 text-amber-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                            <span>{k.code} - {k.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 5. Attached Initiatives & Flagship Projects */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">
+                        5. {lang === 'ar' ? 'المبادرات والمشاريع الكبرى' : 'Initiatives & Flagship Projects'} ({attachedInitiativeCodes.length}/{customInitiatives.length})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedInitiativeCodes(customInitiatives.map((i) => i.code))}
+                        className="text-blue-600 hover:underline text-[11px] font-semibold cursor-pointer"
+                      >
+                        {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {customInitiatives.map((i) => {
+                        const isSel = attachedInitiativeCodes.includes(i.code);
+                        return (
+                          <button
+                            key={i.id}
+                            type="button"
+                            onClick={() => toggleAttached('initiative', i.code)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
+                              isSel
+                                ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-2xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            {isSel ? <CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                            <span>{i.code} - {i.flagshipProject || i.title}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
-                {/* 1. Attached Pillars */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">
-                      1. {lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'} ({attachedPillarCodes.length}/{customPillars.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedPillarCodes(customPillars.map((p) => p.code))}
-                      className="text-blue-400 hover:underline text-[11px] cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {customPillars.map((p) => {
-                      const isSel = attachedPillarCodes.includes(p.code);
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => toggleAttached('pillar', p.code)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                            isSel
-                              ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                        >
-                          {isSel ? <CheckSquare className="w-3.5 h-3.5 text-blue-400" /> : <Square className="w-3.5 h-3.5 text-slate-500" />}
-                          <span>{p.code} - {p.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 2. Attached Goals */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">
-                      2. {lang === 'ar' ? 'الأهداف العامة' : 'Strategic Goals'} ({attachedGoalCodes.length}/{customGoals.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedGoalCodes(customGoals.map((g) => g.code))}
-                      className="text-blue-400 hover:underline text-[11px] cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {customGoals.map((g) => {
-                      const isSel = attachedGoalCodes.includes(g.code);
-                      return (
-                        <button
-                          key={g.id}
-                          type="button"
-                          onClick={() => toggleAttached('goal', g.code)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                            isSel
-                              ? 'bg-teal-600/30 border-teal-500 text-white shadow-sm'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                        >
-                          {isSel ? <CheckSquare className="w-3.5 h-3.5 text-teal-400" /> : <Square className="w-3.5 h-3.5 text-slate-500" />}
-                          <span>{g.code} - {g.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 3. Attached Objectives */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">
-                      3. {lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic Objectives'} ({attachedObjectiveCodes.length}/{customObjectives.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedObjectiveCodes(customObjectives.map((o) => o.code))}
-                      className="text-blue-400 hover:underline text-[11px] cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {customObjectives.map((o) => {
-                      const isSel = attachedObjectiveCodes.includes(o.code);
-                      return (
-                        <button
-                          key={o.id}
-                          type="button"
-                          onClick={() => toggleAttached('objective', o.code)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                            isSel
-                              ? 'bg-purple-600/30 border-purple-500 text-white shadow-sm'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                        >
-                          {isSel ? <CheckSquare className="w-3.5 h-3.5 text-purple-400" /> : <Square className="w-3.5 h-3.5 text-slate-500" />}
-                          <span>{o.code} - {o.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 4. Attached KPIs */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">
-                      4. {lang === 'ar' ? 'مؤشرات قياس الأداء' : 'Key Performance Indicators'} ({attachedKpiCodes.length}/{customKpis.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedKpiCodes(customKpis.map((k) => k.code))}
-                      className="text-blue-400 hover:underline text-[11px] cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {customKpis.map((k) => {
-                      const isSel = attachedKpiCodes.includes(k.code);
-                      return (
-                        <button
-                          key={k.id}
-                          type="button"
-                          onClick={() => toggleAttached('kpi', k.code)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                            isSel
-                              ? 'bg-amber-600/30 border-amber-500 text-white shadow-sm'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                        >
-                          {isSel ? <CheckSquare className="w-3.5 h-3.5 text-amber-400" /> : <Square className="w-3.5 h-3.5 text-slate-500" />}
-                          <span>{k.code} - {k.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 5. Attached Initiatives & Flagship Projects */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">
-                      5. {lang === 'ar' ? 'المبادرات والمشاريع الكبرى' : 'Initiatives & Flagship Projects'} ({attachedInitiativeCodes.length}/{customInitiatives.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedInitiativeCodes(customInitiatives.map((i) => i.code))}
-                      className="text-blue-400 hover:underline text-[11px] cursor-pointer"
-                    >
-                      {lang === 'ar' ? 'تحديد الكل' : 'Select All'}
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {customInitiatives.map((i) => {
-                      const isSel = attachedInitiativeCodes.includes(i.code);
-                      return (
-                        <button
-                          key={i.id}
-                          type="button"
-                          onClick={() => toggleAttached('initiative', i.code)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                            isSel
-                              ? 'bg-emerald-600/30 border-emerald-500 text-white shadow-sm'
-                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                        >
-                          {isSel ? <CheckSquare className="w-3.5 h-3.5 text-emerald-400" /> : <Square className="w-3.5 h-3.5 text-slate-500" />}
-                          <span>{i.code} - {i.flagshipProject || i.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Hierarchy Tree Visual Preview */}
-              <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-900/60 flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-blue-400" />
-                  <span className="text-xs font-bold text-white">
-                    {lang === 'ar' ? 'ملخص الهيكل الهرمي المرتبط:' : 'Cascading Blueprint Hierarchy:'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 font-mono text-xs text-blue-300">
-                  <span>{attachedPillarCodes.length} Pillars</span>
-                  <span>➔</span>
-                  <span>{attachedGoalCodes.length} Goals</span>
-                  <span>➔</span>
-                  <span>{attachedObjectiveCodes.length} OKRs</span>
-                  <span>➔</span>
-                  <span>{attachedKpiCodes.length} KPIs</span>
-                  <span>➔</span>
-                  <span>{attachedInitiativeCodes.length} Flagships</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================== */}
-          {/* STEP 9: MONITORING, EXECUTIVE SCORECARD & LAUNCH (Chapter 4) */}
-          {/* ========================================================== */}
-          {currentStep === 9 && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
+                {/* Hierarchy Tree Visual Preview Banner */}
+                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      CHAPTER 4 • STEP 9 OF 9
+                    <Compass className="w-5 h-5 text-blue-600" />
+                    <span className="text-xs font-bold text-blue-900">
+                      {lang === 'ar' ? 'ملخص الهيكل الهرمي المرتبط:' : 'Cascading Blueprint Hierarchy:'}
                     </span>
-                    <span className="text-xs text-slate-400">{lang === 'ar' ? 'استعراض الأداء والإطلاق' : 'Review & Launch'}</span>
                   </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                    {lang === 'ar' ? 'استعراض بطاقة الأداء المتوازن وإطلاق المنظومة' : 'Executive Scorecard Review & Platform Launch'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {lang === 'ar'
-                      ? 'مراجعة الميثاق الاستراتيجي الكامل، تصدير التقارير، وتفعيل المنظومة لتعكس البيانات فوراً عبر كافة شاشات المنصة.'
-                      : 'Final review of strategy architecture, export options, and live platform deployment.'}
-                  </p>
+                  <div className="flex items-center gap-2 font-mono text-xs text-blue-800 font-semibold">
+                    <span>{attachedPillarCodes.length} Pillars</span>
+                    <span>➔</span>
+                    <span>{attachedGoalCodes.length} Goals</span>
+                    <span>➔</span>
+                    <span>{attachedObjectiveCodes.length} OKRs</span>
+                    <span>➔</span>
+                    <span>{attachedKpiCodes.length} KPIs</span>
+                    <span>➔</span>
+                    <span>{attachedInitiativeCodes.length} Flagships</span>
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* Scorecard KPI Summary Metrics */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
-                  <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-                    <span>{lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'}</span>
-                    <Target className="w-4 h-4 text-blue-400" />
+            {/* ========================================================== */}
+            {/* STEP 9: MONITORING, EXECUTIVE SCORECARD & LAUNCH (Chapter 4) */}
+            {/* ========================================================== */}
+            {currentStep === 9 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        CHAPTER 4 • STEP 9 OF 9
+                      </span>
+                      <span className="text-xs text-slate-500">{lang === 'ar' ? 'استعراض الأداء والإطلاق' : 'Review & Launch'}</span>
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                      {lang === 'ar' ? 'استعراض بطاقة الأداء المتوازن وإطلاق المنظومة' : 'Executive Scorecard Review & Platform Launch'}
+                    </h1>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {lang === 'ar'
+                        ? 'مراجعة الميثاق الاستراتيجي الكامل، تصدير التقارير، وتفعيل المنظومة لتعكس البيانات فوراً عبر كافة شاشات المنصة.'
+                        : 'Final review of strategy architecture, export options, and live platform deployment.'}
+                    </p>
                   </div>
-                  <div className="text-2xl font-bold text-white font-mono">{customPillars.length}</div>
-                  <span className="text-[10px] text-slate-400">{attachedPillarCodes.length} attached</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
-                  <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-                    <span>{lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic OKRs'}</span>
-                    <Layers className="w-4 h-4 text-purple-400" />
+                {/* Scorecard KPI Summary Metrics */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                    <div className="flex items-center justify-between text-slate-500 text-xs mb-1">
+                      <span>{lang === 'ar' ? 'الركائز الاستراتيجية' : 'Strategic Pillars'}</span>
+                      <Target className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-slate-900 font-mono">{customPillars.length}</div>
+                    <span className="text-[10px] text-slate-500">{attachedPillarCodes.length} attached</span>
                   </div>
-                  <div className="text-2xl font-bold text-white font-mono">{customObjectives.length}</div>
-                  <span className="text-[10px] text-slate-400">{attachedObjectiveCodes.length} attached</span>
+
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                    <div className="flex items-center justify-between text-slate-500 text-xs mb-1">
+                      <span>{lang === 'ar' ? 'الأهداف الاستراتيجية' : 'Strategic OKRs'}</span>
+                      <Layers className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-slate-900 font-mono">{customObjectives.length}</div>
+                    <span className="text-[10px] text-slate-500">{attachedObjectiveCodes.length} attached</span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                    <div className="flex items-center justify-between text-slate-500 text-xs mb-1">
+                      <span>{lang === 'ar' ? 'مؤشرات الأداء (KPIs)' : 'Active KPIs'}</span>
+                      <BarChart3 className="w-4 h-4 text-teal-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-slate-900 font-mono">{customKpis.length}</div>
+                    <span className="text-[10px] text-slate-500">{attachedKpiCodes.length} monitored</span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                    <div className="flex items-center justify-between text-slate-500 text-xs mb-1">
+                      <span>{lang === 'ar' ? 'إجمالي الميزانيات SAR' : 'Total Capex SAR'}</span>
+                      <DollarSign className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div className="text-xl font-bold text-emerald-700 font-mono">
+                      {(customInitiatives.reduce((acc, cur) => acc + (cur.budgetSAR || 0), 0) / 1000000).toFixed(1)}M
+                    </div>
+                    <span className="text-[10px] text-slate-500">{customInitiatives.length} initiatives</span>
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
-                  <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-                    <span>{lang === 'ar' ? 'مؤشرات الأداء (KPIs)' : 'Active KPIs'}</span>
-                    <BarChart3 className="w-4 h-4 text-teal-400" />
+                {/* Master Charter Review Card */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <OrganizationLogo logoId={orgLogo} logoUrl={orgLogoUrl} size="md" />
+                      <div>
+                        <h2 className="text-base font-bold text-slate-900">
+                          {orgName || 'Al-Ahsa Development Authority'}
+                        </h2>
+                        <p className="text-xs text-blue-600 font-semibold">
+                          {strategyPlanName || 'AHDA Comprehensive Transformation Strategy 2026–2030'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      STATUS: READY TO LAUNCH
+                    </span>
                   </div>
-                  <div className="text-2xl font-bold text-white font-mono">{customKpis.length}</div>
-                  <span className="text-[10px] text-slate-400">{attachedKpiCodes.length} monitored</span>
-                </div>
 
-                <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
-                  <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-                    <span>{lang === 'ar' ? 'إجمالي الميزانيات SAR' : 'Total Capex SAR'}</span>
-                    <DollarSign className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="text-xl font-bold text-emerald-400 font-mono">
-                    {(customInitiatives.reduce((acc, cur) => acc + (cur.budgetSAR || 0), 0) / 1000000).toFixed(1)}M
-                  </div>
-                  <span className="text-[10px] text-slate-400">{customInitiatives.length} initiatives</span>
-                </div>
-              </div>
-
-              {/* Master Charter Review Card */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700 space-y-4">
-                <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-700">
-                  <div className="flex items-center gap-3">
-                    <OrganizationLogo logoId={orgLogo} logoUrl={orgLogoUrl} size="md" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <h2 className="text-base font-bold text-white">
-                        {orgName || 'Al-Ahsa Development Authority'}
-                      </h2>
-                      <p className="text-xs text-blue-400 font-medium">
-                        {strategyPlanName || 'AHDA Comprehensive Transformation Strategy 2026–2030'}
+                      <span className="text-slate-500 block mb-1 font-semibold">{lang === 'ar' ? 'الرؤية:' : 'Vision:'}</span>
+                      <p className="text-slate-800 italic">
+                        "{orgVision || 'To establish Al-Ahsa as a global benchmark for sustainable oasis living, UNESCO heritage excellence, and economic prosperity.'}"
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block mb-1 font-semibold">{lang === 'ar' ? 'الرسالة والتفويض:' : 'Mission & Mandate:'}</span>
+                      <p className="text-slate-800 italic">
+                        "{orgMission || 'To spearhead integrated spatial planning and unleash investments across Al-Ahsa.'}"
                       </p>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    STATUS: READY TO LAUNCH
-                  </span>
+
+                  {/* Quick Export Actions */}
+                  <div className="pt-2 flex items-center gap-3 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => toast.success(lang === 'ar' ? 'تم تجهيز تقرير الميثاق الاستراتيجي PDF' : 'PDF Strategy Charter Generated')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer shadow-2xs"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-blue-600" />
+                      <span>{lang === 'ar' ? 'تصدير وثيقة الميثاق (PDF)' : 'Export Strategy Charter (PDF)'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => toast.success(lang === 'ar' ? 'تم تجهيز جدول البيانات Excel' : 'Excel Matrix Generated')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer shadow-2xs"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{lang === 'ar' ? 'تصدير مصفوفة المؤشرات (Excel)' : 'Export Matrix (Excel)'}</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <span className="text-slate-400 block mb-1">{lang === 'ar' ? 'الرؤية:' : 'Vision:'}</span>
-                    <p className="text-slate-200 italic">
-                      "{orgVision || 'To establish Al-Ahsa as a global benchmark for sustainable oasis living, UNESCO heritage excellence, and economic prosperity.'}"
+                {/* Big Launch Platform Banner */}
+                <div className="pt-4 flex flex-col items-center justify-center p-8 rounded-3xl bg-gradient-to-r from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 text-center space-y-4 shadow-xs">
+                  <div className="p-3 bg-white rounded-2xl shadow-xs border border-blue-100 text-blue-600">
+                    <Sparkles className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-slate-900">
+                      {lang === 'ar' ? 'هل أنت مستعد لإطلاق المنظومة؟' : 'Ready to Launch Strategy Suite?'}
+                    </h3>
+                    <p className="text-xs text-slate-600 max-w-md mx-auto">
+                      {lang === 'ar'
+                        ? 'سيتم حفظ كافة البيانات المدخلة في المتصفح وتحديث المنظومة بالكامل، مع تفعيل كافة الشاشات التشغيلية.'
+                        : 'All configured entities, pillars, goals, OKRs, KPIs, and initiatives will be saved and reflected live across the platform.'}
                     </p>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block mb-1">{lang === 'ar' ? 'الرسالة والتفويض:' : 'Mission & Mandate:'}</span>
-                    <p className="text-slate-200 italic">
-                      "{orgMission || 'To spearhead integrated spatial planning and unleash investments across Al-Ahsa.'}"
-                    </p>
-                  </div>
-                </div>
-
-                {/* Quick Export Actions */}
-                <div className="pt-2 flex items-center gap-3 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => toast.success(lang === 'ar' ? 'تم تجهيز تقرير الميثاق الاستراتيجي PDF' : 'PDF Strategy Charter Generated')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 font-medium cursor-pointer"
-                  >
-                    <FileText className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{lang === 'ar' ? 'تصدير وثيقة الميثاق (PDF)' : 'Export Strategy Charter (PDF)'}</span>
-                  </button>
 
                   <button
                     type="button"
-                    onClick={() => toast.success(lang === 'ar' ? 'تم تجهيز جدول البيانات Excel' : 'Excel Matrix Generated')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 font-medium cursor-pointer"
+                    onClick={handleCompleteAndLaunch}
+                    className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition-all transform hover:scale-[1.02] cursor-pointer flex items-center gap-2"
                   >
-                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{lang === 'ar' ? 'تصدير مصفوفة المؤشرات (Excel)' : 'Export Matrix (Excel)'}</span>
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>
+                      {lang === 'ar' ? 'حفظ البيانات وتفعيل المنظومة والاستراتيجية' : 'Save & Launch Enterprise Strategy Suite'}
+                    </span>
                   </button>
                 </div>
               </div>
-
-              {/* Big Launch Platform Button */}
-              <div className="pt-4 flex flex-col items-center justify-center p-8 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-emerald-900/40 border border-blue-500/40 text-center space-y-4">
-                <Sparkles className="w-10 h-10 text-amber-300 animate-bounce" />
-                <div className="space-y-1">
-                  <h3 className="text-xl font-bold text-white">
-                    {lang === 'ar' ? 'هل أنت مستعد لإطلاق المنظومة؟' : 'Ready to Launch Strategy Suite?'}
-                  </h3>
-                  <p className="text-xs text-slate-300 max-w-md mx-auto">
-                    {lang === 'ar'
-                      ? 'سيتم حفظ كافة البيانات المدخلة في المتصفح وتحديث المنظومة بالكامل، مع تفعيل كافة الشاشات التشغيلية.'
-                      : 'All configured entities, pillars, goals, OKRs, KPIs, and initiatives will be saved and reflected live.'}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleCompleteAndLaunch}
-                  className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-600/40 transition-all transform hover:scale-[1.02] cursor-pointer flex items-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>
-                    {lang === 'ar' ? '🚀 حفظ البيانات وتفعيل المنظومة والاستراتيجية' : '🚀 Save & Launch Enterprise Strategy Suite'}
-                  </span>
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* ========================================================== */}
-          {/* BOTTOM STEP NAVIGATION FOOTER */}
+          {/* BOTTOM STEP NAVIGATION FOOTER (CLEAN WHITE) */}
           {/* ========================================================== */}
-          <div className="pt-8 mt-8 border-t border-slate-800 flex items-center justify-between gap-4">
+          <div className="bg-white border-t border-slate-200 px-6 py-4 flex items-center justify-between sticky bottom-0 z-30 shadow-xs">
             <button
               type="button"
               disabled={currentStep === 1}
               onClick={prevStep}
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
                 currentStep === 1
-                  ? 'opacity-40 cursor-not-allowed border-slate-800 text-slate-500'
-                  : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-white cursor-pointer'
+                  ? 'opacity-40 cursor-not-allowed border-slate-200 text-slate-400 bg-slate-50'
+                  : 'bg-white hover:bg-slate-50 border-slate-300 text-slate-700 cursor-pointer shadow-2xs'
               }`}
             >
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
               <span>{lang === 'ar' ? 'السابق' : 'Previous Step'}</span>
             </button>
 
-            <span className="text-xs text-slate-500 font-mono">
+            <span className="text-xs text-slate-500 font-mono font-semibold">
               {lang === 'ar' ? `الخطوة ${currentStep} من 9` : `Step ${currentStep} of 9`}
             </span>
 
@@ -3647,7 +3661,7 @@ export const SetupWizardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={nextStep}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
               >
                 <span>{lang === 'ar' ? 'التالي' : 'Next Step'}</span>
                 <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -3656,7 +3670,7 @@ export const SetupWizardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleCompleteAndLaunch}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>{lang === 'ar' ? 'إطلاق المنظومة' : 'Launch Platform'}</span>
