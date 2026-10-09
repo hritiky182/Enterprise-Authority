@@ -171,11 +171,11 @@ export const LoginPage: React.FC = () => {
               : 'Institutional Strategy, Planning & Performance Suite'}
           </h2>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
+          {/* <p className="text-xs text-slate-400 leading-relaxed">
             {lang === 'ar'
               ? 'بوابة موحدة لإعداد هوية الهيئة، صياغة الاستراتيجية (الاسم والمدى والبيان)، مواءمة الركائز والمستهدفات والمؤشرات والمبادرات، ومتابعة الأداء مع التصدير التنفيذي.'
               : 'Unified SaaS platform empowering Strategy Specialists to configure institutional branding, define strategy horizons, cascade objectives to KPIs, and generate executive dossiers.'}
-          </p>
+          </p> */}
 
           {/* Strategy Specialist Role Card */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-blue-950/60 border border-blue-800/60 shadow-lg text-start">
@@ -213,7 +213,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           {/* 4-Chapter Journey Workflow */}
-          <div className="space-y-2 pt-1 text-start">
+          {/* <div className="space-y-2 pt-1 text-start">
             <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400">
               {lang === 'ar' ? 'مراحل رحلة العرض الأربعة :' : ' Strategic Journey Flow:'}
             </label>
@@ -237,7 +237,7 @@ export const LoginPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Column: Glassmorphism Login Form */}

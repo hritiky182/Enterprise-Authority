@@ -1326,7 +1326,7 @@ export const SetupWizardPage: React.FC = () => {
 
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Quick Demo Fill All - Single Sparkles icon, no duplicate emoji */}
-          <button
+          {/* <button
             type="button"
             onClick={fillAllDemoData}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
@@ -1335,7 +1335,7 @@ export const SetupWizardPage: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
             <span className="hidden md:inline">{lang === 'ar' ? 'تعبئة كامل بيانات العرض' : 'Fill All Demo Data'}</span>
             <span className="md:hidden">{lang === 'ar' ? 'بيانات تجريبية' : 'Demo All'}</span>
-          </button>
+          </button> */}
 
           {/* Quick Jump / Exit */}
           <button
@@ -1380,22 +1380,20 @@ export const SetupWizardPage: React.FC = () => {
                     key={c.step}
                     type="button"
                     onClick={() => setCurrentStep(c.step)}
-                    className={`w-full text-start p-2.5 rounded-xl flex items-start gap-3 transition-all cursor-pointer ${
-                      isActive
+                    className={`w-full text-start p-2.5 rounded-xl flex items-start gap-3 transition-all cursor-pointer ${isActive
                         ? 'bg-blue-600 text-white shadow-md shadow-blue-900/40'
                         : isPast
-                        ? 'text-slate-300 hover:bg-slate-800/80'
-                        : 'text-slate-400 hover:bg-slate-800/50'
-                    }`}
+                          ? 'text-slate-300 hover:bg-slate-800/80'
+                          : 'text-slate-400 hover:bg-slate-800/50'
+                      }`}
                   >
                     <div
-                      className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center font-mono text-xs font-bold transition-all ${
-                        isActive
+                      className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center font-mono text-xs font-bold transition-all ${isActive
                           ? 'bg-white/20 text-white'
                           : isPast
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-slate-800 text-slate-500'
-                      }`}
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-slate-800 text-slate-500'
+                        }`}
                     >
                       {isPast ? <Check className="w-3.5 h-3.5" /> : c.step}
                     </div>
@@ -1523,11 +1521,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={th.id}
                             type="button"
                             onClick={() => setOrgThemeColor(th.id)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
-                              orgThemeColor === th.id
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${orgThemeColor === th.id
                                 ? 'bg-white border-blue-600 text-slate-900 ring-2 ring-blue-500/20 shadow-xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             <span className={`w-3 h-3 rounded-full ${th.bg}`} />
                             <span className="text-[11px] font-semibold">{th.name.split(' ')[1] || th.name}</span>
@@ -1591,11 +1588,10 @@ export const SetupWizardPage: React.FC = () => {
                             setOrgLogo(pl.id);
                             setOrgLogoUrl('');
                           }}
-                          className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
-                            orgLogo === pl.id && !orgLogoUrl
+                          className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${orgLogo === pl.id && !orgLogoUrl
                               ? 'bg-blue-50 border-blue-600 text-blue-900 ring-2 ring-blue-500/20 shadow-xs'
                               : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
-                          }`}
+                            }`}
                         >
                           <pl.icon className="w-6 h-6 text-blue-600" />
                           <span className="text-[11px] text-center font-medium">
@@ -2048,21 +2044,19 @@ export const SetupWizardPage: React.FC = () => {
                             key={c}
                             type="button"
                             onClick={() => setPillarFormColor(c)}
-                            className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
-                              pillarFormColor === c ? 'border-slate-800 scale-110 shadow-xs' : 'border-transparent opacity-75'
-                            } ${
-                              c === 'blue'
+                            className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${pillarFormColor === c ? 'border-slate-800 scale-110 shadow-xs' : 'border-transparent opacity-75'
+                              } ${c === 'blue'
                                 ? 'bg-blue-600'
                                 : c === 'teal'
-                                ? 'bg-teal-600'
-                                : c === 'emerald'
-                                ? 'bg-emerald-600'
-                                : c === 'indigo'
-                                ? 'bg-indigo-600'
-                                : c === 'purple'
-                                ? 'bg-purple-600'
-                                : 'bg-amber-600'
-                            }`}
+                                  ? 'bg-teal-600'
+                                  : c === 'emerald'
+                                    ? 'bg-emerald-600'
+                                    : c === 'indigo'
+                                      ? 'bg-indigo-600'
+                                      : c === 'purple'
+                                        ? 'bg-purple-600'
+                                        : 'bg-amber-600'
+                              }`}
                           />
                         ))}
                       </div>
@@ -3301,11 +3295,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={p.id}
                             type="button"
                             onClick={() => toggleAttached('pillar', p.code)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                              isSel
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${isSel
                                 ? 'bg-blue-50 border-blue-500 text-blue-900 shadow-2xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             {isSel ? <CheckSquare className="w-3.5 h-3.5 text-blue-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{p.code} - {p.title}</span>
@@ -3337,11 +3330,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={g.id}
                             type="button"
                             onClick={() => toggleAttached('goal', g.code)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                              isSel
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${isSel
                                 ? 'bg-teal-50 border-teal-500 text-teal-900 shadow-2xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             {isSel ? <CheckSquare className="w-3.5 h-3.5 text-teal-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{g.code} - {g.title}</span>
@@ -3373,11 +3365,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={o.id}
                             type="button"
                             onClick={() => toggleAttached('objective', o.code)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                              isSel
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${isSel
                                 ? 'bg-purple-50 border-purple-500 text-purple-900 shadow-2xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             {isSel ? <CheckSquare className="w-3.5 h-3.5 text-purple-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{o.code} - {o.title}</span>
@@ -3409,11 +3400,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={k.id}
                             type="button"
                             onClick={() => toggleAttached('kpi', k.code)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                              isSel
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${isSel
                                 ? 'bg-amber-50 border-amber-500 text-amber-900 shadow-2xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             {isSel ? <CheckSquare className="w-3.5 h-3.5 text-amber-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{k.code} - {k.name}</span>
@@ -3445,11 +3435,10 @@ export const SetupWizardPage: React.FC = () => {
                             key={i.id}
                             type="button"
                             onClick={() => toggleAttached('initiative', i.code)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${
-                              isSel
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-2 cursor-pointer transition-all ${isSel
                                 ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-2xs'
                                 : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             {isSel ? <CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{i.code} - {i.flagshipProject || i.title}</span>
@@ -3643,11 +3632,10 @@ export const SetupWizardPage: React.FC = () => {
               type="button"
               disabled={currentStep === 1}
               onClick={prevStep}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                currentStep === 1
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all ${currentStep === 1
                   ? 'opacity-40 cursor-not-allowed border-slate-200 text-slate-400 bg-slate-50'
                   : 'bg-white hover:bg-slate-50 border-slate-300 text-slate-700 cursor-pointer shadow-2xs'
-              }`}
+                }`}
             >
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
               <span>{lang === 'ar' ? 'السابق' : 'Previous Step'}</span>
