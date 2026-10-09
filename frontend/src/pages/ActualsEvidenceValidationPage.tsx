@@ -70,11 +70,6 @@ export const ActualsEvidenceValidationPage: React.FC = () => {
                 ? 'إدخال الفعليات، إرفاق الأدلة، ودورة المراجعة والاعتماد المستقلة'
                 : 'KPI Actual Submission, Evidence Dossier & Independent Review Loop'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'إدخال القيمة الفعلية للمؤشر، وإرفاق الأدلة الإثباتية، وتفسير التباين، مع محاكاة دورة الحوكمة الكاملة: رفع ➔ إعادة للتصحيح ➔ تصحيح وإعادة رفع ➔ اعتماد رسمي من مراجع مستقل.'
-                : 'Enter KPI actual value with supporting documentary evidence and variance explanation. Simulate: Submit ➔ Return for correction ➔ Resubmit with verified logs ➔ Independent auditor sign-off & lock.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

@@ -65,11 +65,6 @@ export const StrategyApprovalPage: React.FC = () => {
                 ? 'دورة اعتماد الاستراتيجية ونشر خط الأساس المحكوم (Controlled Baseline)'
                 : 'Strategy Approval Governance, Return Loop & Controlled Baseline Locking'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'رفع المسودة للاعتماد، وإرجاع المعاملة مع الملاحظات، وحل الملاحظات، واعتماد الاستراتيجية، ثم نشر خط الأساس المحكوم مع إثبات تقييد التعديل على المحتوى المعتمد.'
-                : 'Simulate full governance lifecycle: submit draft ➔ return with review comments ➔ resolve & resubmit ➔ formal approval ➔ publish controlled baseline, strictly locking approved content against unauthorized edits.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

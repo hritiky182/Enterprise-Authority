@@ -76,9 +76,6 @@ export const BCMPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('BCM & Emergency Operational Resilience')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Business Impact Analysis (BIA), Recovery Time Objectives (RTO/RPO), and Disaster Simulation Exercises.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">

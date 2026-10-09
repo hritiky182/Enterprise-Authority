@@ -215,9 +215,6 @@ export const AdminPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('System Administration, Users & RBAC Simulator')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Manage organizational roles, inspect department allocations, and simulate stakeholder experiences.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
@@ -299,11 +296,6 @@ export const AdminPage: React.FC = () => {
                   <span>{lang === 'ar' ? 'مركز دمج ونقل البيانات المؤسسية' : 'DATA INTEGRATION & MIGRATION HUB'}</span>
                 </div>
                 <h2 className="text-xl font-bold">{lang === 'ar' ? 'إدارة البيانات المؤسسية والاستيراد المجمع' : 'Enterprise Data Management & Bulk Ingestion'}</h2>
-                <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                  {lang === 'ar'
-                    ? 'استيراد قوائم الموظفين، والهيكل الإداري، وحزم الإعدادات من ملفات CSV وجداول البيانات.'
-                    : 'Import employee account rosters, departmental hierarchies, and master configuration packages from CSV and JSON spreadsheets.'}
-                </p>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">

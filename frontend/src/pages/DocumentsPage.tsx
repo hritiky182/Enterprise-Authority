@@ -91,9 +91,6 @@ export const DocumentsPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Document & Compliance Evidence Repository')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Centralized document management for Policies, BCM Plans, Risk Registers & ISO Evidence.')}
-          </p>
         </div>
 
         <button

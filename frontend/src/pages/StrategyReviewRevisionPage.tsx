@@ -100,11 +100,6 @@ export const StrategyReviewRevisionPage: React.FC = () => {
                 ? 'قرارات المراجعة الدورية، تجميد اللقطة، والتعديل المستقبلي المحكوم'
                 : 'Quarterly Strategy Review Decisions, Snapshot Freezing & Target Amendments'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'توثيق قرارات المراجعة وتعيين ملاكها ومواعيدها، وتجميد لقطة الأداء الفصلي (Freeze Snapshot)، واقتراح تعديل مستهدف مستقبلي مع ضمان بقاء التقارير التاريخية السابقة محصنة وغير قابلة للتغيير.'
-                : 'Record governance review decisions, owners, and deadlines. Freeze performance snapshots and propose forward-looking target amendments while proving historical approved reports remain completely immutable.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

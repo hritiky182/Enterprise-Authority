@@ -42,11 +42,6 @@ export const StrategyPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Strategy Architecture & Cascading Matrix')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? `الرؤية: ${organization.visionAr || organization.vision} — مواءمة الأهداف والمؤشرات والمشاريع التمكينية`
-              : `Vision: ${organization.vision} — Cascaded Objectives, KPIs & Projects`}
-          </p>
         </div>
 
         {/* Action Buttons: Export PDF & Create Strategy */}

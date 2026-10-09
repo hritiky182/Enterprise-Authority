@@ -89,9 +89,6 @@ export const ReportsPage: React.FC = () => {
             <span>{t('EXECUTIVE REPORTING & ANALYTICS CENTER')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">{t('Executive Reports & Artifact Generator')}</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Generate, preview and export official PDF/Excel reports for enterprise leadership.')}
-          </p>
         </div>
       </div>
 

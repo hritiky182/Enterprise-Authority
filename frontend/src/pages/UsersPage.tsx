@@ -235,11 +235,6 @@ export const UsersPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'المستخدمون والأدوار المؤسسية' : 'Users & Organizational Roles'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'إدارة حسابات الكوادر وتعيين وتعديل الأدوار والصلاحيات المؤسسية عبر المنظومة.'
-              : 'Manage authority personnel, view assigned roles, and modify role permissions across the suite.'}
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">

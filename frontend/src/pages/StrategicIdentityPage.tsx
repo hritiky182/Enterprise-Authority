@@ -112,11 +112,6 @@ export const StrategicIdentityPage: React.FC = () => {
                 ? 'الهوية الاستراتيجية وربط الركائز بالأولويات الوطنية'
                 : 'Strategic Identity, Themes & National Alignment Lineage'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'صياغة الرؤية والرسالة والقيم المؤسسية، وربط الركائز الاستراتيجية بالأولويات المفاضلة في الخطوة 7 وأهداف رؤية السعودية 2030 الوطنية.'
-                : 'Define Vision, Mission, Core Values, and Strategic Themes, connecting each pillar directly to prioritized choices from Step 7 and national Saudi Vision 2030 objectives.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

@@ -319,11 +319,6 @@ export const ObjectivesPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'الأهداف الاستراتيجية (OKRs)' : 'Strategic Objectives (OKRs)'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'إدارة وحوكمة الأهداف المؤسسية التفصيلية، ومتابعة نسب الإنجاز والمواءمة مع الركائز ومؤشرات الأداء.'
-              : 'Portfolio tracking of institutional strategic objectives, milestone targets, and operational department alignments.'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

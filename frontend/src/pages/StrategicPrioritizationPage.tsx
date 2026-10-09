@@ -178,11 +178,6 @@ export const StrategicPrioritizationPage: React.FC = () => {
                 ? 'مصفوفة المفاضلة متعددة المعايير (MCDA) وإعادة الترتيب التفاعلي'
                 : 'Multi-Criteria Decision Analysis (MCDA) & Live Ranking Engine'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'قارن بين البدائل الاستراتيجية باستخدام أوزان المعايير المعتمدة، وأعد حساب الترتيب مباشرة مع توثيق أسباب قبول الأولويات أو تأجيلها أو رفضها.'
-                : 'Compare strategic response options using agreed criteria weights, recalculate rankings live, select approved priorities, and document why options were deferred or rejected.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

@@ -130,11 +130,6 @@ export const PlanningCyclePage: React.FC = () => {
                 ? 'إدارة المدى الاستراتيجي ودورات التقارير والاعتماد'
                 : 'Strategic Horizon, Planning Cycle & Reporting Governance'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'تحديد المدى الزمني للاستراتيجية (2026-2030)، ودورة التخطيط السنوية، وفترات التقرير، ومراحل الاعتماد مع مقارنة الخطة السابقة المعتمدة بالمسودة الجديدة.'
-                : 'Configure the 5-year strategy horizon, annual planning cycles, reporting deadlines, and approval stages, comparing the previous approved baseline with the new draft plan.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

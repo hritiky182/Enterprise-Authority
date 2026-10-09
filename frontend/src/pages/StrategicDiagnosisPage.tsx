@@ -480,11 +480,6 @@ export const StrategicDiagnosisPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'التشخيص الاستراتيجي المؤسسي (SWOT & PESTEL)' : 'Corporate Strategic Diagnosis (SWOT & PESTEL)'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'تحليل متكامل للبيئة الداخلية (نقاط القوة والضعف) والبيئة الخارجية (الفرص والمخاطر ومحاور PESTEL) المعتمدة لهيئة تطوير الأحساء.'
-              : 'Enterprise assessment of internal attributes and external environment with full traceability to strategic issues.'}
-          </p>
         </div>
 
         {/* View Switcher Tabs (Corporater Style) */}

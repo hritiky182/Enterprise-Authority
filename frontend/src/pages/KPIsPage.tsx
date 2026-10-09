@@ -434,11 +434,6 @@ export const KPIsPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'مؤشرات الأداء الرئيسية (KPIs)' : 'Key Performance Indicators (KPIs)'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            {lang === 'ar'
-              ? 'متابعة المؤشرات المعتمدة مع المعادلات الرياضية، والمستهدفات متعددة السنوات (2026/2027)، ودعم مدمج بالذكاء الاصطناعي لاقتراح وصياغة المؤشرات.'
-              : 'Measurable telemetry metrics with mathematical calculation formulas, multi-year targets (2026/2027), and embedded AI Copilot capabilities.'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

@@ -68,9 +68,6 @@ export const TasksPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Kanban Task Execution & Sprint Board')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Operational workflow stage tracking across To Do, In Progress, Blocked & Completed.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

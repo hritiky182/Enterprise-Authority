@@ -166,23 +166,6 @@ export const DashboardPage: React.FC = () => {
                 ? (lang === 'ar' ? 'لوحة تحكم الإدارات التشغيلية' : 'Departmental Operations & Scorecard Dashboard')
                 : (lang === 'ar' ? 'مركز القيادة الاستراتيجية والتنفيذية للهيئة' : 'Executive Leadership & Strategy Governance Dashboard')}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {activeLevel === 'strategy'
-                ? (lang === 'ar'
-                  ? 'رؤية مركزة على صياغة ومتابعة الأهداف والمؤشرات والمبادرات ومواءمة بطاقة الأداء دون تداخل مع بيانات المخاطر أو استمرارية الأعمال.'
-                  : 'Isolated, uncluttered oversight of Strategic Objectives, KPIs, Initiatives, and Balanced Scorecards for strategy practitioners.')
-                : activeLevel === 'grc'
-                ? (lang === 'ar'
-                  ? 'رصد وإدارة سجل المخاطر المؤسسية ومصفوفة 5×5 ونسب معالجة المخاطر ومستوى الالتزام بضوابط الأمن والأنظمة الوطنية.'
-                  : 'Enterprise Risk Management (ERM), 5x5 heatmap, mitigation treatment, and regulatory compliance audit oversight.')
-                : activeLevel === 'bcm'
-                ? (lang === 'ar'
-                  ? 'تحليل الأثر على الأعمال (BIA) ومؤشرات RTO/RPO واختبارات الجاهزية التشغيلية للطوارئ واستمرارية الخدمات.'
-                  : 'Business Impact Analysis (BIA), critical process recovery, RTO/RPO metrics, and emergency response readiness.')
-                : (lang === 'ar'
-                  ? 'لوحة القيادة الموحدة: استعراض شامل للأداء المؤسسي (88.4%)، والالتزام التنظيمي (96.5%)، ومصفوفة المخاطر، والخطط التصحيحية.'
-                  : 'Unified executive oversight of Institutional Performance (88.4%), Compliance (96.5%), Enterprise Risk & BCM readiness.')}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

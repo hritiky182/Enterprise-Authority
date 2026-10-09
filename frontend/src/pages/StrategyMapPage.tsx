@@ -147,11 +147,6 @@ export const StrategyMapPage: React.FC = () => {
                 ? 'خريطة العلاقات السببية وبطاقة تفاصيل المستهدف الاستراتيجي'
                 : 'Directional Strategy Map & Interactive Objective Intelligence Cards'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'استعراض العلاقات السببية المباشرة بين محاور بطاقة الأداء المتوازن (من القدرات المؤسسية صعوداً إلى الأثر المالي)، مع إمكانية فتح أي هدف لعرض بطاقة تفاصيله ومؤشراته ومبادراته واعتمادياته.'
-                : 'Visualize directional cause-and-effect links across BSC perspectives (Capacity ➔ Internal ➔ Customer ➔ Financial). Click any objective to inspect its detailed measures, owner, initiatives and dependencies.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

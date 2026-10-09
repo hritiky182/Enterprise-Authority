@@ -61,9 +61,6 @@ export const GovernancePage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Corporate Governance, Committees & Policies')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Executive steering committees, board meeting schedules, and institutional policy governance registers.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">

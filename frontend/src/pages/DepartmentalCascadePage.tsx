@@ -102,11 +102,6 @@ export const DepartmentalCascadePage: React.FC = () => {
                 ? 'مواءمة المستهدفات الإدارية والملكية المشتركة لمؤشرات الأداء'
                 : 'Bidirectional Departmental Cascading & Shared KPI Ownership'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'ربط المستهدفات المؤسسية الكبرى بالمستهدفات التشغيلية للإدارات بالاتجاهين (Top-Down و Bottom-Up)، مع إثبات الملكية المشتركة للمؤشرات دون تكرار السجلات المرجعية.'
-                : 'Connect corporate strategic objectives to departmental supporting objectives bidirectionally, demonstrating shared KPI ownership and contribution weights without duplicating authoritative records.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

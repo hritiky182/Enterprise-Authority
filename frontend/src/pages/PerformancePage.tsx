@@ -202,11 +202,6 @@ export const PerformancePage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'ملخص الأداء المؤسسي (Performance Summary)' : 'Performance Summary'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'متابعة أداء الأهداف ومؤشرات القياس عبر منظور بطاقة الأداء المتوازن مع سجل التقييم النوعي.'
-              : 'Holistic performance presentation with period trend line, quick metrics, and qualitative assessments.'}
-          </p>
         </div>
 
         {/* View Switcher & Period Controls */}

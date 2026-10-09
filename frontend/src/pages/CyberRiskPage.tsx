@@ -49,9 +49,6 @@ export const CyberRiskPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Cybersecurity Risk & Critical IT Assets')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Real-time threat landscape, vulnerability management (CVEs), and NCA ECC / ISO 27001 security controls.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">

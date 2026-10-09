@@ -1446,11 +1446,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'تأسيس وهوية المنظومة / الجهة' : 'Organization Setup & Official Identity'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'حدد الاسم الرسمي، الشعار، ألوان الهوية، الرؤية، الرسالة، ورؤساء المنظومة كما في صفحة إعدادات الجهة.'
-                        : 'Configure official name, emblem logo, branding colors, mission statement, and executive leadership.'}
-                    </p>
                   </div>
 
                   {/* Single Sparkles Lucide Icon without repeating emoji */}
@@ -1736,11 +1731,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'الهيكل الإداري والقطاعات ومصفوفة الصلاحيات' : 'Sectors, Departments & Permissions Matrix'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'بناء القطاعات التنفيذية، الإدارات التشغيلية، ومصفوفة صلاحيات الأدوار (تعديل، اعتماد، مراجعة، استعراض).'
-                        : 'Structure organizational sectors, operational departments, and fine-grained roles & permissions matrix.'}
-                    </p>
                   </div>
 
                   <button
@@ -1956,11 +1946,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'تأسيس الركائز الاستراتيجية الكبرى (Pillars / Themes)' : 'Create Strategic Pillars & Themes'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الخطوة الأولى في الاستراتيجية: تأسيس المحاور والركائز الكبرى (الرمز، العنوان، الوزن النسبي، والوصف).'
-                        : 'Step 1 in strategy creation: Establish overarching strategic themes & pillars before defining goals.'}
-                    </p>
                   </div>
 
                   <button
@@ -2156,11 +2141,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'صياغة الأهداف العامة (Strategic Goals)' : 'Formulate Overarching Strategic Goals'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الخطوة الثانية في الاستراتيجية: إنشاء الأهداف العامة وربطها بالركائز الاستراتيجية المحددة في الخطوة السابقة.'
-                        : 'Step 2: Define overarching goals and attach them to the strategic pillars created in step 3.'}
-                    </p>
                   </div>
 
                   <button
@@ -2334,11 +2314,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'صياغة الأهداف الاستراتيجية (Strategic Objectives)' : 'Formulate Strategic Objectives (OKRs)'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الخطوة الثالثة: صياغة الأهداف الاستراتيجية الذكية القابلة للقياس وربطها بالهدف العام والركيزة، وتعيين الإدارة المسؤولة.'
-                        : 'Step 3: Define measurable objectives linked to your goals and pillars, with owners, departments, and SMART assist.'}
-                    </p>
                   </div>
 
                   <button
@@ -2567,11 +2542,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'مؤشرات قياس الأداء وقواعد الاحتساب (KPIs)' : 'Key Performance Indicators & Calculation Rules'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الخطوة الرابعة: ربط مؤشرات الأداء بالأهداف، صياغة معادلات الاحتساب، وتحديد خط الأساس والمستهدف والنوع (استباقي/لاحق).'
-                        : 'Step 4: Establish KPIs under objectives with explicit mathematical formulas, baselines, targets, and leading/lagging types.'}
-                    </p>
                   </div>
 
                   <button
@@ -2855,11 +2825,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع الكبرى القيادية' : 'Strategic Initiatives & Flagship Delivery Projects'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الخطوة الخامسة: بناء المبادرات التنفيذية والمشاريع الكبرى (Flagship Projects)، ربطها بالأهداف، تحديد الميزانيات SAR، وجدولة المعالم.'
-                        : 'Step 5: Formulate execution initiatives & flagship projects linked to objectives, complete with budgets and milestones.'}
-                    </p>
                   </div>
 
                   <button
@@ -3163,11 +3128,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'ربط وتجميع وثيقة الاستراتيجية المعتمدة' : 'Strategy Plan Formulation & Cascading Attachment'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'الآن بعد تأسيس الركائز والأهداف العامة والاستراتيجية والمؤشرات والمبادرات، قم بربطهم جميعاً في وثيقة الاستراتيجية الكبرى.'
-                        : 'Now that all building blocks are created, bind the pillars, goals, objectives, KPIs, and initiatives into the master strategy.'}
-                    </p>
                   </div>
 
                   <button
@@ -3488,11 +3448,6 @@ export const SetupWizardPage: React.FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                       {lang === 'ar' ? 'استعراض بطاقة الأداء المتوازن وإطلاق المنظومة' : 'Executive Scorecard Review & Platform Launch'}
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {lang === 'ar'
-                        ? 'مراجعة الميثاق الاستراتيجي الكامل، تصدير التقارير، وتفعيل المنظومة لتعكس البيانات فوراً عبر كافة شاشات المنصة.'
-                        : 'Final review of strategy architecture, export options, and live platform deployment.'}
-                    </p>
                   </div>
                 </div>
 

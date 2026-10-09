@@ -121,9 +121,6 @@ export const ActionsPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Cross-Domain Action Plans & Corrective Measures')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Single-pane-of-glass execution tracking across Strategy, ERM Risk, Cyber, Governance, Compliance & BCM.')}
-          </p>
         </div>
 
         {permissions.canCreateAction && (

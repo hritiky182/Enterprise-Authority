@@ -185,11 +185,6 @@ export const PersonalWorkspacePage: React.FC = () => {
                 ? `مرحباً بك، ${currentUser.nameAr || currentUser.name}`
                 : `Welcome, ${currentUser.name}`}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'استعرض مهامك المكلفة، والاعتمادات المعلقة، والتحديثات المتأخرة وفق دورك التنظيمي وصلاحياتك المعتمدة.'
-                : 'Review your personalized task queue, pending governance approvals, and overdue compliance updates based on your organizational role.'}
-            </p>
           </div>
 
           {/* Quick Language & Account Actions */}

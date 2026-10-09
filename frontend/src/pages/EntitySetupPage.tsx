@@ -174,11 +174,6 @@ export const EntitySetupPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'إعداد المنظومة وتخصيص الهوية والميثاق' : 'Entity Setup & White-Label Customization'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-3xl leading-relaxed">
-            {lang === 'ar'
-              ? 'تخصيص الهوية المؤسسية الكاملة للهيئة: الشعار، الألوان، الرؤية، الرسالة، والقيم الاستراتيجية.'
-              : 'Configure full corporate identity: Official branding, emblem, palette, vision, mission, and core values.'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

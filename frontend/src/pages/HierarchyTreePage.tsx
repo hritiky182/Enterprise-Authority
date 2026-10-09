@@ -76,11 +76,6 @@ export const HierarchyTreePage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'شجرة الركائز والاستراتيجية المؤسسية' : 'Strategy Hierarchy & Cascading Tree'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'الربط التفاعلي المتسلسل بين الركائز الاستراتيجية ➔ الأهداف الرئيسية ➔ الأهداف التفصيلية (OKRs) ➔ المؤشرات والمشاريع.'
-              : 'Cascading visual architecture linking Strategic Themes (Pillars) ➔ Strategic Goals ➔ Strategic Objectives (OKRs) ➔ KPIs & Initiatives.'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2.5">

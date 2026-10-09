@@ -88,9 +88,6 @@ export const CompliancePage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {t('Compliance Management & Audit Findings')}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('ISO 27001, ISO 22301, ISO 31000, NCA ECC and NIST CSF regulatory control matrices.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">

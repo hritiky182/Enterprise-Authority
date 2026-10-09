@@ -159,11 +159,6 @@ export const PerformanceCollectionPage: React.FC = () => {
                 ? 'فتح فترات التقارير، مهام الجمع، ومعاينة الاستيراد الذكية'
                 : 'Reporting Period Collection Tasks, Reminders & Smart Import Validation'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'فتح فترة التقرير وتوليد مهام جمع البيانات مع تواريخ الاستحقاق والتنبيهات، ومعاينة استيراد الملفات مع كشف واستبعاد السجلات الخاطئة والمكررة.'
-                : 'Open active reporting window, auto-generate collection tasks with due dates and overdue escalation alerts. Preview bulk file imports with automated rejection of invalid or duplicate records.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

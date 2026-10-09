@@ -124,9 +124,6 @@ export const EnterpriseRiskPage: React.FC = () => {
             <span>{t('ENTERPRISE RISK MANAGEMENT (ISO 31000)')}</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900">{t('Enterprise Risk Register & Heatmap')}</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {t('Identify, assess, and treat strategic, operational, financial, and compliance risk exposures across all organizational departments.')}
-          </p>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">

@@ -367,11 +367,6 @@ export const InitiativesPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'المبادرات الاستراتيجية والمشاريع' : 'Strategic Initiatives & Projects'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            {lang === 'ar'
-              ? 'إدارة محافظ المبادرات الممولة، والميزانيات المعتمدة بالريال السعودي، ومحطات المعالم التنفيذية مع مساعد مدمج بالذكاء الاصطناعي لاقتراح المشاريع.'
-              : 'Funded implementation initiatives, capital allocations (SAR), deliverables, milestone checklists, and embedded AI Project Recommender.'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

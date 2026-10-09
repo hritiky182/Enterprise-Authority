@@ -134,11 +134,6 @@ export const BscConfigPage: React.FC = () => {
                 ? 'تهيئة محاور بطاقة الأداء المتوازن والتحقق من الأوزان (100%)'
                 : 'Balanced Scorecard Perspectives, Ownership & 100% Weight Calibration'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'تحديد المحاور الأربعة لبطاقة الأداء المتوازن، وترتيب عرضها، وملاكها التنفيذيين، وتوزيع الأهداف وربطها بالركائز مع التحقق الصارم من اكتمال مجموع الأوزان 100%.'
-                : 'Configure the four BSC perspectives, display order, executive owners, placed objectives, and validate strict completeness ensuring total weight equals exactly 100%.'}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

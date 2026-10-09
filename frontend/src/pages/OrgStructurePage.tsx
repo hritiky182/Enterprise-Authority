@@ -18,11 +18,6 @@ export const OrgStructurePage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900">
             {lang === 'ar' ? 'الهيكل التنظيمي والقطاعات التشغيلية' : 'Authority Operational Structure & Sectors'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {lang === 'ar'
-              ? 'الهيكلية التنظيمية المعتمدة لهيئة تطوير محافظة الأحساء، وتشمل الرقابة المستقلة، والمكاتب الاستشارية، ومكتب الرئيس التنفيذي، والقطاعات التشغيلية الخمسة.'
-              : 'Institutional governance architecture comprising Independent Oversight, Board Advisory, CEO Office, 5 Operational Sectors, and Department Directory.'}
-          </p>
         </div>
       </div>
 

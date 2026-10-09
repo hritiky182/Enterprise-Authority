@@ -275,11 +275,6 @@ export const OperationalStructureView: React.FC = () => {
             <h2 className="text-xl font-bold font-sans">
               {lang === 'ar' ? 'إطار الهيكل التنظيمي والصلاحيات المؤسسية' : 'Al Ahsa Development Authority Hierarchy & RBAC'}
             </h2>
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              {lang === 'ar'
-                ? 'الهيكل الإداري التنفيذي الرسمي الذي يشمل مجلس الهيئة، ومكتب الرئيس التنفيذي، والإدارات الرقابية، و5 قطاعات تشغيلية متخصصة مع إدارة ديناميكية للصلاحيات والوحدات.'
-                : 'Executive architecture encompassing the Authority Board, CEO Office, oversight directorates, and 5 specialized operational sectors with active unit and permission management.'}
-            </p>
           </div>
 
           {/* Action buttons */}

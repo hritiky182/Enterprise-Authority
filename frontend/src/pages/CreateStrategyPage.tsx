@@ -1195,11 +1195,6 @@ export const CreateStrategyPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             {lang === 'ar' ? 'صياغة الأداء والمواءمة الاستراتيجية' : 'Strategic Cascade & Entity Alignment'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-3xl">
-            {lang === 'ar'
-              ? 'اختر الركيزة الاستراتيجية ثم حدد أهدافاً ومستهدفات ومؤشرات ومبادرات متعددة من السجلات لربطها في مصفوفة مواءمة استراتيجية متكاملة.'
-              : 'Select a Strategic Pillar, then pick multiple Strategic Goals, Objectives, KPIs, and Initiatives from the registers to bind them into an aligned strategy cascade.'}
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
